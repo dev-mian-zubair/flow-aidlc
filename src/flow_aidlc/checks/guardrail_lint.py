@@ -27,6 +27,10 @@ def lint(guardrails_dir: Path | str) -> list[str]:
         # Skip *.ask.md — those are prompt-variant stubs, not guardrail specs.
         if md_file.name.endswith(".ask.md"):
             continue
+        # Skip the always-on authoring aids shipped by the engine — README.md is
+        # prose and TEMPLATE.md is a fill-in scaffold, not enforceable guardrails.
+        if md_file.name in ("README.md", "TEMPLATE.md"):
+            continue
 
         rel = str(md_file.relative_to(guardrails_dir))
         text = md_file.read_text(encoding="utf-8")
