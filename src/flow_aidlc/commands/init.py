@@ -13,13 +13,12 @@ Idempotence guard: refuses to run over an existing ``.flow/`` unless ``--force``
 from __future__ import annotations
 
 import argparse
-import json
 import shutil
 import sys
 from pathlib import Path
 
 from flow_aidlc import __version__
-from flow_aidlc.engine_assets import TOKEN_DEFAULTS, engine_dir, render
+from flow_aidlc.engine_assets import TOKEN_DEFAULTS, engine_dir, merge_settings, render
 
 # Files under engine/flow/ that are rendered separately (skip on the verbatim copy).
 _FLOW_TMPL_SKIP = {"config.tmpl.yaml", "knowledge-map.tmpl.yaml"}
@@ -163,7 +162,7 @@ def run(argv: list[str]) -> int:
     # ---- settings.json merge ----------------------------------------------
     action(f"merge Claude hooks into {claude_dir / 'settings.json'}")
     if not dry:
-        _merge_settings(eng / "claude" / "settings.json", claude_dir / "settings.json")
+        merge_settings(eng / "claude" / "settings.json", claude_dir / "settings.json")
 
     # ---- .gitignore -------------------------------------------------------
     action("ensure .gitignore contains worklog/.active and .superpowers/")
@@ -218,50 +217,6 @@ def _render_file(src: Path, dst: Path, values: dict[str, str]) -> None:
     """Token-render ``src`` and write the result to ``dst``."""
     dst.parent.mkdir(parents=True, exist_ok=True)
     dst.write_text(render(src.read_text(encoding="utf-8"), values), encoding="utf-8")
-
-
-def _merge_settings(engine_settings: Path, target_settings: Path) -> None:
-    """Deep-merge the engine's hooks into an existing settings.json, or copy it.
-
-    Appends engine hook entries under each event key without duplicating an
-    identical command, and preserves the user's other top-level keys.
-    """
-    if not target_settings.exists():
-        target_settings.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(engine_settings, target_settings)
-        return
-
-    engine_data = json.loads(engine_settings.read_text(encoding="utf-8"))
-    try:
-        user_data = json.loads(target_settings.read_text(encoding="utf-8"))
-    except json.JSONDecodeError:
-        # Unparseable user settings: don't clobber; leave engine hooks unmerged.
-        sys.stderr.write(
-            f"WARNING: {target_settings} is not valid JSON — leaving it untouched.\n"
-        )
-        return
-
-    user_hooks = user_data.setdefault("hooks", {})
-    for event, engine_groups in engine_data.get("hooks", {}).items():
-        existing_groups = user_hooks.setdefault(event, [])
-        existing_cmds = {
-            h.get("command")
-            for group in existing_groups
-            for h in group.get("hooks", [])
-        }
-        for group in engine_groups:
-            new_hooks = [
-                h for h in group.get("hooks", [])
-                if h.get("command") not in existing_cmds
-            ]
-            if not new_hooks:
-                continue
-            merged_group = dict(group)
-            merged_group["hooks"] = new_hooks
-            existing_groups.append(merged_group)
-            existing_cmds.update(h.get("command") for h in new_hooks)
-
-    target_settings.write_text(json.dumps(user_data, indent=2) + "\n", encoding="utf-8")
 
 
 def _ensure_gitignore(path: Path, entries: list[str]) -> None:

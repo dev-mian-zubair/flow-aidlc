@@ -1,0 +1,86 @@
+# Publishing `flow-aidlc` to PyPI
+
+The package name is **`flow-aidlc`**; it installs the **`flow`** CLI
+(`[project.scripts] flow = "flow_aidlc.cli:main"`). The engine assets under
+`src/flow_aidlc/engine/` ship as package data — `flow init` / `flow upgrade`
+read them from the installed package, so they MUST be bundled in both the wheel
+and the sdist (they are — see below).
+
+> **Maintainer-only.** The steps below upload to a public index and require a
+> PyPI API token. Run them yourself, with your own credentials — never commit a
+> token, and never let an automated agent upload.
+
+## 1. Pre-flight
+
+```bash
+# From the repo root, on a clean tree at the version you intend to release.
+python -m pytest -q                       # all tests green
+grep '^version' pyproject.toml            # confirm the release version
+cat src/flow_aidlc/__init__.py | grep __version__   # must match pyproject
+cat src/flow_aidlc/engine/flow/VERSION    # the engine VERSION seed — bump in lock-step
+```
+
+Bump the version in **three** places together (they are asserted equal by the
+upgrade path and tests): `pyproject.toml`, `src/flow_aidlc/__init__.py`
+(`__version__`), and `src/flow_aidlc/engine/flow/VERSION`.
+
+## 2. Build the distributions
+
+```bash
+python -m pip install --upgrade build twine   # one-time, in your build env
+rm -rf dist/
+python -m build                               # writes dist/*.whl and dist/*.tar.gz
+```
+
+`python -m build` produces both an sdist (`.tar.gz`) and a wheel
+(`.whl`). Engine assets are included via:
+
+- **wheel** — `[tool.setuptools.package-data]` in `pyproject.toml`
+  (`engine/**/*` + `engine/**/.*` for any dot-prefixed files), and
+- **sdist** — `MANIFEST.in` (`recursive-include src/flow_aidlc/engine *`).
+
+## 3. Verify the artifacts before uploading
+
+```bash
+twine check dist/*        # metadata sanity — expect PASSED for both files
+
+# Confirm the engine is actually bundled in the wheel:
+python -c "import zipfile,glob; z=zipfile.ZipFile(glob.glob('dist/*.whl')[0]); \
+print([n for n in z.namelist() if 'engine/flow/playbook.md' in n or 'engine/claude/commands' in n][:5])"
+```
+
+Optionally install the built wheel into a throwaway venv and smoke-test:
+
+```bash
+python -m venv /tmp/flow-smoke && /tmp/flow-smoke/bin/pip install dist/*.whl
+/tmp/flow-smoke/bin/flow version
+/tmp/flow-smoke/bin/flow init --yes --path /tmp/flow-smoke-repo && \
+  /tmp/flow-smoke/bin/flow check /tmp/flow-smoke-repo
+```
+
+## 4. Upload
+
+Test against TestPyPI first (recommended):
+
+```bash
+twine upload --repository testpypi dist/*
+python -m pip install --index-url https://test.pypi.org/simple/ flow-aidlc
+```
+
+Then the real index:
+
+```bash
+twine upload dist/*
+# Username: __token__
+# Password: <your PyPI API token, starts with "pypi-">
+```
+
+Prefer a `~/.pypirc` or the `TWINE_USERNAME=__token__` / `TWINE_PASSWORD=<token>`
+environment variables over typing the token interactively.
+
+## 5. Post-release
+
+- Tag the release: `git tag vX.Y.Z && git push --tags`.
+- Verify the published install: `pip install --upgrade flow-aidlc && flow version`.
+- Existing installs upgrade their engine assets with `flow upgrade` (instance
+  files — config, guardrails, knowledge maps/decisions — are preserved).

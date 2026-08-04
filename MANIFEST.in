@@ -1,0 +1,11 @@
+# Ship the packaged engine assets in the sdist (wheel coverage is via
+# [tool.setuptools.package-data] in pyproject.toml). recursive-include walks the
+# whole engine tree — playbook, steps, templates, guardrails, Claude wiring
+# (agents/commands/hooks/settings), knowledge scaffolding, manifest, and the
+# .tmpl config seeds. The second line picks up dot-prefixed engine files, if any.
+recursive-include src/flow_aidlc/engine *
+recursive-include src/flow_aidlc/engine .*
+
+include README.md
+include LICENSE
+include ARCHITECTURE.md
