@@ -40,11 +40,11 @@ project-specific reference. Source: the reference instance's `.flow/`, `.claude/
 - [ ] `flow map add <glob> <doc>` — scaffold a map doc with provenance frontmatter + wire knowledge-map.yaml.
 - [ ] `flow doctor` — hooks installed? structure valid? MCP configured? (generalize `flow-doctor.sh`).
 
-## M5 — `flow upgrade` + packaging
+## M5 — `flow upgrade` + packaging ✅ DONE (manifest-driven; wheel bundles engine)
 - [ ] `flow upgrade` — replace engine files by manifest, never touch instance files; bump `.flow/VERSION`.
 - [ ] Publish to PyPI (`flow-aidlc`); a `flow --version` self-check.
 
-## M6 — Claude Code plugin
+## M6 — Claude Code plugin ✅ DONE (10 cmd / 14 agent / 7 hook; generated from engine)
 - [ ] Wrap `.claude/*` as a plugin (marketplace manifest); the plugin's `/flow-init` shells to the CLI.
 
 ## Notes
