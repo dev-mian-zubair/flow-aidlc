@@ -1,0 +1,57 @@
+# Engine manifest — drives `flow upgrade`.
+#
+# Every shipped path under engine/ is classified as one of:
+#
+#   engine   — owned by this package. Replaced verbatim on `flow upgrade`.
+#              Do not hand-edit in an installed project; changes are overwritten.
+#   instance — a seed. Written ONCE into a project at `flow init` (the .tmpl
+#              files render into real instance files; the always-on guardrails
+#              dir and knowledge maps/decisions accumulate project content).
+#              NEVER overwritten on upgrade — this is the user's own material.
+#
+# Matching is glob-based; a more specific `engine` entry wins over a broader
+# `instance` one (e.g. the always-on README/TEMPLATE are engine even though the
+# directory they live in is where instance guardrails land).
+
+version: 0.1.0
+
+engine:
+  - README.md
+  - manifest.yaml
+
+  # Flow orchestration (engine-owned)
+  - flow/playbook.md
+  - flow/VERSION
+  - flow/steps/**
+  - flow/templates/**
+
+  # Guardrails: optional starters ship generic; always-on authoring aids ship
+  # with the engine (the dir itself is an instance seed — see below).
+  - flow/guardrails/optional/**
+  - flow/guardrails/always-on/README.md
+  - flow/guardrails/always-on/TEMPLATE.md
+
+  # Claude wiring (agents, commands, hooks, settings)
+  - claude/agents/**
+  - claude/commands/**
+  - claude/hooks/**
+  - claude/settings.json
+
+  # Knowledge scaffolding READMEs are engine; their contents are instance.
+  - knowledge/map/README.md
+  - knowledge/decisions/README.md
+
+instance:
+  # Config templates render into real instance files at `flow init`.
+  - flow/config.tmpl.yaml
+  - flow/knowledge-map.tmpl.yaml
+  - claude/mcp.tmpl.json
+
+  # Where a project's own always-on guardrails land (README/TEMPLATE excepted
+  # above as engine). Never overwritten.
+  - flow/guardrails/always-on/**
+
+  # Project knowledge accumulates here (READMEs excepted above as engine).
+  - knowledge/map/**
+  - knowledge/decisions/**
+  - knowledge/practices.md

@@ -1,0 +1,7 @@
+# Knowledge map — links each knowledge/map/ doc to the source paths it derives
+# from, so `flow refresh` can re-derive stale docs from current code.
+#
+# This starts EMPTY. Populate it with `flow map add <doc> <glob>...`, which
+# appends a maps[] entry pairing a knowledge/map/<name>.md doc with the
+# code globs it summarizes.
+maps: []

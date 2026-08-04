@@ -1,0 +1,29 @@
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    },
+    "_disabled": {
+      "_comment": "Uncomment and lift these into mcpServers to enable. postgres gives the curator/map tooling read-only DB introspection; set FLOW_DB_READONLY_URI to a read-only DSN. playwright is used by build-verify for browser checks.",
+      "postgres": {
+        "command": "npx",
+        "args": ["-y", "@crystaldba/postgres-mcp"],
+        "env": {
+          "DATABASE_URI": "{{FLOW_DB_READONLY_URI}}"
+        }
+      },
+      "playwright": {
+        "command": "npx",
+        "args": ["-y", "@playwright/mcp"]
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+version: 0.1.0
+worklog:
+  committed: true                 # worklog/<{{ID_PREFIX}}-NNN>/ is committed (locked decision)
+guardrails:
+  # always_on is empty on a fresh project: a new repo has no invariants to
+  # protect yet. Author one guardrail per invariant with `flow guardrail add
+  # <name>` (see guardrails/always-on/README.md), then list its name here so
+  # the guardrail-verifier enforces it at Build/verify.
+  always_on: []
+  optional:  [security-baseline, resiliency-baseline, test-coverage]
+commands:                      # your project's shell commands; flow init fills these
+  test: "{{TEST_CMD}}"         # e.g. make test | npm test | pytest
+  build: "{{BUILD_CMD}}"       # e.g. make build | npm run build
+  lint: "{{LINT_CMD}}"         # e.g. make lint | ruff check
+  typecheck: "{{TYPECHECK_CMD}}"  # e.g. mypy | tsc --noEmit  (optional)
+tracker:
+  platform: "{{TRACKER_PLATFORM}}"   # github | jira | linear   (default: github)
+  mcp: "{{TRACKER_MCP}}"
+  repo: "{{TRACKER_REPO}}"
+  id_scheme: "{{ID_PREFIX}}-{n}"   # expands to {{ID_PREFIX}}- + the tracker issue number, no zero-padding; worklog dir is {{ID_PREFIX}}-<n>-<slug>
+  create:
+    dedupe: true
+    required_labels: [type, priority, area]
