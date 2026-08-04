@@ -35,7 +35,7 @@ project-specific reference. Source: the reference instance's `.flow/`, `.claude/
 - [ ] Idempotent + `--dry-run`; refuse to overwrite an existing instance without `--force`.
 - [ ] Acceptance: `flow init` into a temp git repo → `flow check` exits 0.
 
-## M4 — authoring helpers
+## M4 — authoring helpers ✅ DONE (guardrail add / map add / doctor; 70 tests)
 - [ ] `flow guardrail add <name>` — scaffold from `TEMPLATE.md`, register in config, regenerate the requirements checklist rows.
 - [ ] `flow map add <glob> <doc>` — scaffold a map doc with provenance frontmatter + wire knowledge-map.yaml.
 - [ ] `flow doctor` — hooks installed? structure valid? MCP configured? (generalize `flow-doctor.sh`).
