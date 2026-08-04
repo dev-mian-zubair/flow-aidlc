@@ -37,6 +37,12 @@ Scope (front door) → Shape → Build (per slice) → Ship
 | Ship  | learnings | ALWAYS | `steps/ship/learnings.md` | — | no |
 | Ship | handoff | ALWAYS | `steps/ship/handoff.md` | — | no |
 
+> **Scope classification.** `clarify` also classifies the idea as `bug | task |
+> feat | epic` (confirmed with the user) and, for an epic, decomposes it into
+> one-level child stubs. `story` then fills the matching `templates/scope/*`
+> template(s), and `publish` creates a single issue or an Epic parent + child
+> sub-issues linked via the tracker's sub-issue mechanism.
+
 ## Checkpoint Rule
 
 At each stage where `checkpoint: yes`, **stop and wait for `/flow-approve`** before advancing to the next stage. The `checkpoint-stop` hook enforces this automatically. Do not proceed past a checkpoint under any circumstance without explicit approval.

@@ -9,31 +9,60 @@ No repo access, no worklog — this step produces only the ticket draft.
 
 ## Inputs
 
-- Agreed intent, success criteria, and constraints from Scope / clarify.
-- Any answered questions from the question file.
+- Agreed intent, **ticket type** (`bug | task | feat | epic`), success criteria,
+  and constraints from Scope / clarify.
+- For an epic: the agreed **child breakdown** (list of child stubs).
+- Any answered questions from the conversation.
 
-## Draft the ticket
+## Draft from the type's template
 
-Write the following fields:
+Select the body template for the confirmed ticket type and fill every
+`<placeholder>` from the clarify output:
 
-| Field | Guidance |
-|---|---|
-| **Title** | Imperative, ≤72 characters. State the outcome, not the solution. |
-| **Description** | One paragraph: problem statement + why it matters now. |
-| **Acceptance criteria** | Bulleted, observable, testable. One criterion per bullet. |
-| **Labels** | Must include all three required labels from `config.yaml tracker.create.required_labels`: `type`, `priority`, `area`. |
+| Type | Template |
+|------|----------|
+| `bug`  | `templates/scope/bug.tmpl.md` |
+| `task` | `templates/scope/small-task.tmpl.md` |
+| `feat` | `templates/scope/feature.tmpl.md` |
+| `epic` | `templates/scope/epic.tmpl.md` (parent) **+ one child stub per child** |
 
-### Label values (from `config.yaml`)
+Each template has an `ISSUE BODY` block (created as the issue body) and a
+`NATIVE FIELDS` block (labels / type / board fields / milestone / parent —
+set by Scope / publish, not typed into the body). Fill both.
 
-```yaml
-required_labels: [type, priority, area]
-```
+**Acceptance criteria** are checkbox lines (`- [ ] AC1: <observable outcome>`) —
+if a criterion can't be checked by running something, rewrite it.
 
-Choose values appropriate to the work. Examples:
+**Severity ↔ Priority sync (bug):** the body Severity, the `priority:` label, and
+the board Priority field must all carry the same value — don't let them drift.
 
-- `type`: `feat`, `fix`, `chore`, `docs`
-- `priority`: `p0`, `p1`, `p2`, `p3`
-- `area`: match an existing area label in the tracker (e.g. `backend`, `frontend`, `infra`)
+**Ground in the Knowledge Map:** fill **Affected file(s)/module(s)** and choose
+`area` labels from `knowledge/map/` — module-level names via the
+`.flow/knowledge-map.yaml` `derives-from` globs (see `steps/shared/knowledge-map.md`).
+Exact `file:line` stays optional at Scope; Shape/map-existing confirms it.
+
+### Epic → parent + child stubs (hybrid)
+
+For an epic, draft:
+
+1. The **Epic parent** from `epic.tmpl.md` — goal, epic-level success criteria,
+   in-scope / non-goals, and a **child checklist** (`- [ ] <child title>`; the
+   real `#numbers` are filled in by publish once children exist).
+2. **One stub per child** from its own `feat`/`task` template, filling only the
+   lightweight fields the clarify breakdown produced (title, why / exact-change,
+   type, size). Leave detailed acceptance criteria as `<to be authored in this
+   child's Shape phase>` — stubs are intentionally thin.
+
+### Label values (from `config.yaml tracker.create.required_labels`)
+
+Required on every ticket: `type`, `priority`, `area`.
+
+- `type`: `bug` · `feat` · `task` · `epic` (matches the ticket type; a child
+  carries its own `feat`/`task`)
+- `priority`: `P0` · `P1` · `P2` · `P3` (uppercase — keep in sync with the body
+  Severity and the board Priority field)
+- `area`: an existing area label in the tracker (e.g. `backend`, `frontend`,
+  `infra`); more than one is allowed
 
 ## Output
 

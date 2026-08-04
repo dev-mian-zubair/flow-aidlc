@@ -21,3 +21,9 @@ tracker:
   create:
     dedupe: true
     required_labels: [type, priority, area]
+    ticket_types: [bug, feat, task, epic]   # classified in Scope/clarify; epic -> parent + child sub-issues
+    priority_scheme: [P0, P1, P2, P3]        # keep body Severity, the priority label, and the tracker priority field in sync
+    epic_children: sub_issues                # create an Epic parent + child stubs, linked via the tracker's sub-issue link
+knowledge:
+  map_index: knowledge/map/README.md          # curated Knowledge Map — Scope/Shape read it for grounding (see steps/shared/knowledge-map.md)
+  map_machine_index: .flow/knowledge-map.yaml  # derives-from globs for naming affected file(s)/module(s)
