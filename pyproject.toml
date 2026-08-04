@@ -26,3 +26,7 @@ include = ["flow_aidlc*"]
 # Ship the engine assets (playbook, steps, templates, commands, agents, hooks) as package data.
 [tool.setuptools.package-data]
 flow_aidlc = ["engine/**/*", "engine/**/.*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
