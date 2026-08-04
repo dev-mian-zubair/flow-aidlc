@@ -7,7 +7,7 @@ package + CLI. Milestones are ordered so each ends with something runnable.
 - [x] Repo + package skeleton (`src/flow_aidlc/`), pyproject, README, ARCHITECTURE.
 - [x] CLI dispatch (`flow <cmd>`) with subcommands wired (stubs where not yet built).
 
-## M1 — Engine extraction (de-PIP-ify)
+## M1 — Engine extraction (de-PIP-ify) ✅ DONE (82 files, coupling sweep clean)
 Bundle the generic engine assets under `src/flow_aidlc/engine/`, stripped of any
 project-specific reference. Source: the reference instance's `.flow/`, `.claude/`,
 `scripts/flow-checks/`.
@@ -23,12 +23,12 @@ project-specific reference. Source: the reference instance's `.flow/`, `.claude/
 - [ ] `engine/knowledge/{map/README.md,decisions/README.md,practices.md}` — scaffolds.
 - [ ] A `manifest.yaml` marking each shipped path `engine` or `instance` (drives `upgrade`).
 
-## M2 — `checks/` (the gate, generalized)
+## M2 — `checks/` (the gate, generalized) ✅ DONE (58 tests)
 - [ ] Vendor the `flow_checks` modules (guardrail_lint, structure_check, freshness, traceability, learnings, scorer, reference_check, artifact_sensor, gate) into `flow_aidlc/checks/` — they are already project-agnostic; adjust only path assumptions (repo root discovery).
 - [ ] `flow check` / `flow selftest` / `flow refresh` call them against the target repo's `.flow/`.
 - [ ] Port the tests.
 
-## M3 — `flow init` (the flagship)
+## M3 — `flow init` (the flagship) ✅ DONE (init → gate PASSED, 61 tests)
 - [ ] Interactive prompts: tracker (github/jira/linear), repo slug, id-scheme, detected stack.
 - [ ] Copy `engine/*` → target `.flow/`, `.claude/`, `knowledge/`; generate `config.yaml` + `knowledge-map.yaml` from answers.
 - [ ] Merge (not clobber) `.claude/settings.json`; install git hooks; add `.gitignore` entries; append a "The Flow" pointer to the host `CLAUDE.md` (create if absent).
