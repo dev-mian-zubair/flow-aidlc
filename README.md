@@ -50,6 +50,21 @@ Then, in Claude Code:
 
 See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the full model and [`docs/build-plan.md`](docs/build-plan.md) for the implementation roadmap.
 
+## Claude Code plugin
+
+Flow's Claude Code surface — the `/flow-*` commands, the phase agents, and the
+governance hooks — also ships as an installable **Claude Code plugin** under
+[`plugin/`](plugin/). It composes with the CLI:
+
+- the **plugin** provides the Claude Code surface (`/plugin install flow`);
+- the **`flow` CLI** provides the per-project scaffolding (`flow init`) and the
+  gate (`flow check`).
+
+Install the plugin **and** run `flow init` — the hooks and commands operate on
+the `.flow/` instance that `flow init` creates. See [`plugin/README.md`](plugin/README.md)
+for the install flow. `plugin/` is a build artifact regenerated from the engine
+by `flow plugin build` (single source of truth: `src/flow_aidlc/engine/claude/`).
+
 ## Status
 
 Early — under active extraction from the reference instance. See `docs/build-plan.md`.
