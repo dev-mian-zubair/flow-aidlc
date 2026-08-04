@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# Local scratch
+*.log
+.DS_Store
+
+# Flow's own SDD workspace (if the engine is dogfooded here)
+.superpowers/
+worklog/.active

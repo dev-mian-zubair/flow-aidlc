@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flow-aidlc"
+version = "0.1.0"
+description = "Flow — a governed, project-agnostic AI-DLC methodology (Scope → Shape → Build → Ship) you can drop into any repo."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Flow" }]
+keywords = ["ai-dlc", "claude-code", "methodology", "governance", "guardrails"]
+dependencies = ["pyyaml>=6"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+flow = "flow_aidlc.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["flow_aidlc*"]
+
+# Ship the engine assets (playbook, steps, templates, commands, agents, hooks) as package data.
+[tool.setuptools.package-data]
+flow_aidlc = ["engine/**/*", "engine/**/.*"]
