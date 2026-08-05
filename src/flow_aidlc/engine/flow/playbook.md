@@ -26,6 +26,7 @@ Scope (front door) → Shape → Build (per slice) → Ship
 | Scope | story | ALWAYS | `steps/scope/story.md` | — | no |
 | Scope | publish | ALWAYS | `steps/scope/publish.md` | — | yes (outward-write approval) |
 | Shape | map-existing | CONDITIONAL: brownfield | `steps/shape/map-existing.md` | — | no |
+| Shape | research | CONDITIONAL: new external dependency | `steps/shape/research.md` | `deep-research` | yes (adopt-a-dependency approval) |
 | Shape | requirements | ALWAYS | `steps/shape/requirements.md` | `superpowers:brainstorming` | yes |
 | Shape | design | ALWAYS | `steps/shape/design.md` | — | yes |
 | Shape | slicing | ALWAYS | `steps/shape/slicing.md` | — | no |
@@ -33,6 +34,7 @@ Scope (front door) → Shape → Build (per slice) → Ship
 | Build | code-plan | ALWAYS | `steps/build/code-plan.md` | — | yes |
 | Build | generate | ALWAYS | `steps/build/generate.md` | `superpowers:test-driven-development` | no |
 | Build | verify | ALWAYS | `steps/build/verify.md` | `superpowers:requesting-code-review` + `superpowers:verification-before-completion` | yes |
+| Ship | branch-hardening | ALWAYS | `steps/ship/branch-hardening.md` | `pr-review-toolkit` agents | yes (whole-branch review) |
 | Ship | release-checklist | ALWAYS | `steps/ship/release-checklist.md` | `superpowers:finishing-a-development-branch` | yes |
 | Ship  | learnings | ALWAYS | `steps/ship/learnings.md` | — | no |
 | Ship | handoff | ALWAYS | `steps/ship/handoff.md` | — | no |

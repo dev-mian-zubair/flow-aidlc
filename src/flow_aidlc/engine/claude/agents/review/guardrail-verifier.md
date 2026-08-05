@@ -36,11 +36,17 @@ guardrail files enabled by `config.yaml`:
   `.flow/guardrails/always-on/<name>.md`. These are your project's own
   invariants; read each file for its ID prefix and Verification steps.
 - **Optional (ship generic):** `security-baseline` (SEC), `resiliency-baseline`
-  (RES), `test-coverage` (TEST) under `.flow/guardrails/optional/`, enforced
-  only when enabled for the task.
+  (RES), `test-coverage` (TEST), `dependency-provenance` (DEP) under
+  `.flow/guardrails/optional/`, enforced only when enabled for the task.
 
 Always load the full guardrail file for authoritative text and follow its
 numbered Verification items — never a remembered summary.
+
+**dependency-provenance (DEP)** — when enabled: every newly-added external
+dependency (in the project's dependency manifests / lockfiles) traces to an
+approved research ADR that named that exact package and recorded a completed
+governance screen; no substituted or extra unreviewed deps. **N-A** when the diff
+adds no dependencies.
 
 ## Output format
 

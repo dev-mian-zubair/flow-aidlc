@@ -7,7 +7,7 @@ guardrails:
   # <name>` (see guardrails/always-on/README.md), then list its name here so
   # the guardrail-verifier enforces it at Build/verify.
   always_on: []
-  optional:  [security-baseline, resiliency-baseline, test-coverage]
+  optional:  [security-baseline, resiliency-baseline, test-coverage, dependency-provenance]
 commands:                      # your project's shell commands; flow init fills these
   test: "{{TEST_CMD}}"         # e.g. make test | npm test | pytest
   build: "{{BUILD_CMD}}"       # e.g. make build | npm run build
@@ -27,3 +27,11 @@ tracker:
 knowledge:
   map_index: knowledge/map/README.md          # curated Knowledge Map — Scope/Shape read it for grounding (see steps/shared/knowledge-map.md)
   map_machine_index: .flow/knowledge-map.yaml  # derives-from globs for naming affected file(s)/module(s)
+
+review:
+  branch_hardening:              # pr-review-toolkit agents run at Ship/branch-hardening (whole-branch, pre-PR)
+    - pr-review-toolkit:code-reviewer
+    - pr-review-toolkit:silent-failure-hunter
+    - pr-review-toolkit:pr-test-analyzer
+    - pr-review-toolkit:type-design-analyzer
+    - pr-review-toolkit:comment-analyzer

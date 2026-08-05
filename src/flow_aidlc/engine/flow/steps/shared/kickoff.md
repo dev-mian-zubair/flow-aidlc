@@ -6,7 +6,7 @@ Load this guide at the start of every Flow task, before any stage begins.
 
 1. Read `.flow/config.yaml` — note `guardrails.always_on[]`, `tracker.id_scheme`.
 2. Read `.flow/playbook.md` — know the stage sequence and which guides to load per stage.
-3. Identify the task id (format: `PI-NNN`). If no id is known yet, run Scope/clarify first.
+3. Identify the task id (format: `PI-NNN`), and confirm it exists in the tracker. If no id is known yet — or the id does not exist — do **not** scaffold a worklog; route to `/flow-scope` (the front door that creates the ticket) first. Shape requires a real, tracker-created ticket for traceability.
 4. Read `knowledge/practices.md` if present — accumulated working practices from prior tasks; apply them this task.
 
 ## Sync first

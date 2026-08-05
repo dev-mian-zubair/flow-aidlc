@@ -1,9 +1,9 @@
-"""Gate: compose guardrail_lint + structure_check + freshness + reference-selfcheck.
+"""Gate: compose guardrail_lint + structure_check + freshness + reference-selfcheck + config-consistency.
 
-Runs all four checks, prints a section per check, exits 1 if any blocking
+Runs all five checks, prints a section per check, exits 1 if any blocking
 check fails.  Freshness runs in warn-mode (non-blocking) by default so doc
 drift doesn't hard-block CI — structure and lint are the blocking checks.
-The reference self-consistency smoke (CHECK 4/4) is non-fatal-if-absent (no
+The reference self-consistency smoke (CHECK 4/5) is non-fatal-if-absent (no
 reference cases found → OK) but fatal-if-regressed (a golden case scoring
 below its own threshold → exit 1).
 
@@ -22,6 +22,7 @@ from flow_aidlc.checks.guardrail_lint import lint as guardrail_lint
 from flow_aidlc.checks.structure_check import check as structure_check
 from flow_aidlc.checks.freshness import check as freshness_check
 from flow_aidlc.checks.reference_check import check as reference_check
+from flow_aidlc.checks.config_consistency import check as config_consistency_check
 
 
 def run(repo_root: Path | str, strict_freshness: bool = False) -> int:
@@ -33,7 +34,7 @@ def run(repo_root: Path | str, strict_freshness: bool = False) -> int:
 
     # ---- 1. Guardrail lint ----
     print("=" * 60)
-    print("CHECK 1/4  guardrail-lint")
+    print("CHECK 1/5  guardrail-lint")
     print("=" * 60)
     lint_errors = guardrail_lint(guardrails_dir)
     if lint_errors:
@@ -47,7 +48,7 @@ def run(repo_root: Path | str, strict_freshness: bool = False) -> int:
     # ---- 2. Structure check ----
     print()
     print("=" * 60)
-    print("CHECK 2/4  structure-check")
+    print("CHECK 2/5  structure-check")
     print("=" * 60)
     struct_errors = structure_check(flow_dir)
     if struct_errors:
@@ -61,7 +62,7 @@ def run(repo_root: Path | str, strict_freshness: bool = False) -> int:
     # ---- 3. Freshness ----
     print()
     print("=" * 60)
-    print("CHECK 3/4  freshness")
+    print("CHECK 3/5  freshness")
     print("=" * 60)
     stale = freshness_check(repo_root)
     if stale:
@@ -77,11 +78,25 @@ def run(repo_root: Path | str, strict_freshness: bool = False) -> int:
     # ---- 4. Reference self-consistency smoke ----
     print()
     print("=" * 60)
-    print("CHECK 4/4  reference-selfcheck")
+    print("CHECK 4/5  reference-selfcheck")
     print("=" * 60)
     selfcheck_failed = _run_reference_selfcheck(repo_root)
     if selfcheck_failed:
         exit_code = 1
+
+    # ---- 5. Config consistency ----
+    print()
+    print("=" * 60)
+    print("CHECK 5/5  config-consistency")
+    print("=" * 60)
+    cfg_errors = config_consistency_check(repo_root)
+    if cfg_errors:
+        print("FAILED:")
+        for e in cfg_errors:
+            print(f"  {e}")
+        exit_code = 1
+    else:
+        print("OK")
 
     print()
     if exit_code == 0:

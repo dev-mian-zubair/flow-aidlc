@@ -43,7 +43,9 @@ For each subsystem the design touches, compare the design against its
 ## Graduate cross-cutting decisions
 
 A decision is **cross-cutting** if it affects more than one task, establishes a
-new pattern for the codebase, or has lasting architectural impact.
+new pattern for the codebase, or has lasting architectural impact. **Adopting an
+external dependency** (from Shape / research) is always cross-cutting — its ADR
+cites `worklog/<PI-NNN>/shape/research.md`.
 
 For each cross-cutting decision in the design:
 

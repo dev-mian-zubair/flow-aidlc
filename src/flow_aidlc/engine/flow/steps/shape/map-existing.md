@@ -6,21 +6,35 @@ existing code). Skip it for pure greenfield additions with no touched files.
 
 ## Purpose
 
-Understand what is already there — files, contracts, and boundaries — so the
-requirements and design steps build on accurate ground rather than assumptions.
+Survey the **relevant existing code** the ticket concerns — the terrain, not the
+change — so requirements and design build on accurate ground rather than
+assumptions. This step maps what *already exists*; it does **not** decide what to
+change (that is `shape-design`'s job). You are surveying the neighbourhood the
+ticket points at, not the exact files the eventual fix will edit.
 
-## Prefer the Explore agent
+## Seed from the ticket, then explore
 
-Delegate the mapping work to the `Explore` agent. It is optimised for read-only,
-scoped repository search.
+Do not explore blind. Start from what Scope already established, then drill in:
 
-```
-Agent: Explore
-Scope: files touched by <PI-NNN> (from ticket acceptance criteria and title)
-Depth: medium (adjust to deep if the touched surface is large)
-```
+1. **Seed from the ticket.** Take the `Area` label and the **Affected
+   file(s)/module(s)** from the ticket body as your starting coordinates.
+2. **Seed from the Knowledge Map.** For each area the ticket touches, read the
+   matching `knowledge/map/<subsystem>.md` (index: `knowledge/map/README.md`) for
+   the curated subsystem picture — contracts and boundaries are already summarised
+   there. Note its freshness (`status:` / `verified-at-sha`); if stale, treat it
+   as a hint and verify against code.
+3. **Explore outward.** Delegate to the `Explore` agent (read-only, scoped) to
+   confirm and extend the seed with concrete, current detail:
 
-The `Explore` agent must **read only** — no edits, no writes.
+   ```
+   Agent: Explore
+   Scope: the relevant existing surface the ticket concerns — seeded from the
+          ticket's Area + Affected file(s)/module(s) and the Knowledge Map
+          subsystem doc(s); expand only as contracts/callers require.
+   Depth: medium (adjust to deep if the relevant surface is large)
+   ```
+
+   The `Explore` agent must **read only** — no edits, no writes.
 
 ## What to map
 
@@ -33,7 +47,8 @@ For each file or module in scope, record:
 | **Callers / dependents** | Other files that import or call this file |
 | **Don't-change list** | Interfaces that must stay stable (other callers depend on them) |
 
-Limit the map to the touched surface. Do not map the full codebase.
+Limit the map to the **relevant existing surface** the ticket concerns (seeded
+above). Do not map the full codebase.
 
 ## Output
 
@@ -46,7 +61,7 @@ worklog/<PI-NNN>/shape/map-existing.md
 Format:
 
 ```markdown
-## Touched files
+## Relevant existing files
 
 - `path/to/file.py` — <one-line role>
 
@@ -66,3 +81,7 @@ Hand off to **Shape / requirements** once the map is written.
 - If the scope cannot be bounded (too many callers), flag this in the map and
   raise it in Shape / requirements as a constraint.
 - Do not make design decisions here — only observe and record.
+- **The map is a living input, not a final change-list.** It is a best-effort
+  survey scoped from the ticket. If `shape-design` later reaches code this map did
+  not cover, return here, widen the map for the newly-relevant surface, and
+  re-present design against the updated map.

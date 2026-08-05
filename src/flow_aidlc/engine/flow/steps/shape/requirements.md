@@ -17,6 +17,7 @@ Use the brainstorming output to surface:
 - Functional requirements derived from the ticket's acceptance criteria.
 - Non-functional requirements (performance, security, observability, accessibility).
 - Constraints inherited from the existing-code map (if Shape / map-existing ran).
+- Constraints and the chosen dependency from the external research (if Shape / research ran).
 - Edge cases and failure modes that acceptance criteria do not yet cover.
 
 ## Guardrail opt-in prompts

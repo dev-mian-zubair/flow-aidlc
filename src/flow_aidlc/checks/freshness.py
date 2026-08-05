@@ -52,14 +52,19 @@ def _read_verified_sha(doc_path: Path) -> Optional[str]:
     return None
 
 
-def _git_log_range(repo_root: Path, sha: str, globs: list[str]) -> list[str]:
-    """Return commit lines in <sha>..HEAD touching any of the globs."""
+def _git_log_range(repo_root: Path, sha: str, globs: list[str]) -> list[str] | None:
+    """Commit lines in <sha>..HEAD touching any glob.
+
+    Returns None when git itself errors (e.g. an unresolvable / garbage-collected
+    verified-at-sha) — the caller treats that as STALE rather than silently fresh,
+    since a broken provenance sha means the doc can no longer be verified.
+    """
     cmd = ["git", "log", "--oneline", f"{sha}..HEAD", "--"] + globs
     result = subprocess.run(
         cmd, cwd=repo_root, capture_output=True, text=True
     )
     if result.returncode != 0:
-        return []
+        return None
     return [line for line in result.stdout.splitlines() if line.strip()]
 
 
@@ -92,7 +97,8 @@ def check(repo_root: Path | str) -> list[str]:
             continue
 
         commits = _git_log_range(repo_root, sha, derives)
-        if commits:
+        if commits is None or commits:
+            # git error (e.g. unresolvable verified-at-sha) OR real changes → stale
             stale.append(doc_rel)
 
     return stale

@@ -42,22 +42,24 @@ Pre-merge checklist:
 - [ ] All `always_on` guardrails passed in the final `verify.md`.
 - [ ] If your project uses a coordination lock, it is released on merge.
 
-### 3 — Open the PR via GitHub MCP
+### 3 — Open the PR
 
-Use the GitHub MCP to open the pull request:
+Perform `OPEN_PR` via the **tracker adapter** (`steps/shared/tracker.md`):
 
 ```
-title:  <imperative subject — ≤72 chars>
-body:   Summary of changes + Fixes #<issue-number>
-        Why body (not just what)
-        Test plan
+OPEN_PR(
+  title: <imperative subject — ≤72 chars>,
+  body:  Summary of changes + Fixes <PI-NNN>,
+         Why body (not just what),
+         Test plan,
+)
 ```
 
-The PR description must include `Fixes #<PI-NNN>` so the issue auto-closes on merge.
+The PR body must include `Fixes <PI-NNN>` so the ticket auto-closes on merge.
 
 ### 4 — Post a summary to the ticket
 
-Comment on the GitHub issue `PI-NNN` with:
+Perform `COMMENT` (adapter) on ticket `PI-NNN` with:
 - PR link.
 - One-paragraph summary of what changed and why.
 - Any follow-on issues filed during the task.

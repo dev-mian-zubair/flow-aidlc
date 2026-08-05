@@ -8,11 +8,11 @@ without explicit human approval.
 
 ## Step 1 — Deduplicate
 
-Before creating anything, search the tracker for existing issues that overlap with
-this ticket's intent.
+Before creating anything, perform `DEDUP_SEARCH` (see `steps/shared/tracker.md`)
+for existing tickets that overlap this ticket's intent.
 
 ```
-Search query: <title keywords> in the tracker repo from config.yaml (tracker.repo)
+DEDUP_SEARCH(keywords: <title keywords>)   # adapter → the configured tracker
 ```
 
 - If a duplicate exists: **stop**. Link to it, explain the overlap to the user,
@@ -39,7 +39,7 @@ approval covers the batch.
 **CHECKPOINT — outward write requires explicit approval.**
 
 ```
-The following ticket will be created in the tracker repo from config.yaml (tracker.repo).
+The following ticket will be created in the tracker repo (`config.yaml` → `tracker.repo`).
 This action cannot be silently undone.
 
 [Show ticket draft here]
@@ -47,51 +47,41 @@ This action cannot be silently undone.
 Approve? (yes / no / edit)
 ```
 
-Do not call the tracker MCP until the user replies with explicit approval ("yes"
+Do not call the tracker until the user replies with explicit approval ("yes"
 or equivalent). A non-answer is not approval.
 
 ## Step 3 — Create the ticket(s)
 
-On approval, call the tracker MCP (`config.yaml tracker.mcp`). The method names
-below are the current issue toolset — if the connected server predates the
-consolidated tools, `issue_write(create)` maps to the older `create_issue`.
+On approval, perform the tracker operations below via the **tracker adapter**
+(`steps/shared/tracker.md`), which maps each to the configured platform's tools —
+this step names no platform-specific tool.
 
 **Single ticket (bug / task / feat):**
 
 ```
-mcp:        <config.yaml tracker.mcp>
-tool:       issue_write
-method:     create
-repo:       <config.yaml tracker.repo>
-title:      <title>
-body:       <filled ISSUE BODY block>
-labels:     [type:<type>, priority:<P0-P3>, area:<area>]
-type:       <Bug|Feature|Task>     # only if the tracker has issue types — see fallback
+CREATE_TICKET(
+  title:  <title>,
+  body:   <filled ISSUE BODY block>,
+  labels: [type:<type>, priority:<P0-P3>, area:<area>],
+  type:   <Bug|Feature|Task>,   # SET_TYPE — falls back to the type:<…> label where the platform lacks native types
+)
 ```
-
-**Issue-type fallback:** if the tracker has no matching issue type (or issue types
-are disabled), omit the `type:` field — the `type:<...>` **label** already carries
-the classification.
 
 **Epic (parent + child stubs):**
 
-1. Create the **Epic parent** with `issue_write(create)` (`type: Epic`, or label
-   fallback). Capture its issue number `#E`.
-2. For each child stub: `issue_write(create)` with the child's body + labels/type.
-   Capture each child number `#C`.
-3. Link every child under the parent via the tracker's sub-issue mechanism
-   (parent: `#E`, child: `#C`). The tracker then renders the child checklist +
-   progress rollup on the Epic automatically.
+1. `CREATE_TICKET` the **Epic parent** (`type: Epic`); capture its id `<E>`.
+2. `CREATE_TICKET` each **child stub** (its own body + labels/type); capture each id `<C>`.
+3. `ADD_SUB_ISSUE(parent: <E>, child: <C>)` for every child — the tracker then
+   renders the child checklist + progress rollup on the Epic.
 
-**Board fields (Priority / Effort / board Status):** not set by `issue_write`.
-They require a separate board write after adding the issue to the project board.
-For now set these **manually** in the sidebar (or defer to a follow-up) and note
-it in the approval summary — do not block creation on them.
+**Board / project fields** (Priority / Effort / Status) are `SET_FIELDS`. On some
+platforms (e.g. GitHub Projects v2) these are not set at create time and may be a
+manual step — see the adapter. Do not block creation on them.
 
 ## Output
 
 - **Ticket id(s)** — the assigned identifier(s) per the configured id-scheme
-  (`config.yaml` → `id_scheme`; the tracker issue number(s)). An epic returns the
+  (`config.yaml` → `id_scheme`; the tracker ticket number(s)). An epic returns the
   parent id plus each linked child id.
 - Hand a single ticket (or a chosen epic child) to `/flow-start` to begin Shape.
   The Epic parent itself is a tracking umbrella — Shape runs per child.

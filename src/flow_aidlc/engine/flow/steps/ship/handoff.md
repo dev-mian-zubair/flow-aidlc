@@ -36,8 +36,8 @@ Commit the reset with message: `chore(flow): release coordination lock — <PI-N
 
 ### 3 — Close the ticket
 
-Confirm the GitHub issue `PI-NNN` is closed. If auto-close via `Fixes #NNN` did not trigger,
-close it manually via the GitHub MCP and leave a closing comment referencing the merge commit.
+Confirm ticket `PI-NNN` is closed. If auto-close via `Fixes <PI-NNN>` did not trigger,
+perform `CLOSE` (adapter) and a `COMMENT` referencing the merge commit.
 
 ### 4 — Update the journal
 
