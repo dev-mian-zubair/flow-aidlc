@@ -43,7 +43,7 @@ Mirrors the canonical "Scope Ticket Templates" reference (Feature tab).
 <!-- ===== ISSUE BODY ↑ ===== -->
 
 <!-- ===== NATIVE FIELDS (set at scope/publish in the tracker sidebar — not body) =====
-Labels    : area:<area>[, area:<area2>], priority:P<0-3>, type:feature
+Labels    : area:<area>[, area:<area2>], priority:P<0-3>, type:feat
 Type      : Feature
 Priority  : <Urgent|High|Medium|Low>   (board field)
 Effort    : <S|M|L>   (mirror "Rough ticket size" above)

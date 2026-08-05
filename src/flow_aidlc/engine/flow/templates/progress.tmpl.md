@@ -29,6 +29,7 @@ Append one journal line to `journal.md` for every stage that closes.
 
 ## Ship
 
+- [ ] branch-hardening
 - [ ] release-checklist
 - [ ] learnings
 - [ ] handoff

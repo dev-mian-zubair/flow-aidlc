@@ -1,7 +1,7 @@
 ---
 name: build-verify
 description: Confirm the slice implementation is correct, guardrail-clean, and reviewed before the Build checkpoint.
-tools: Read, Bash, mcp__playwright
+tools: Read, Bash
 model: sonnet
 ---
 
@@ -24,7 +24,7 @@ Before running tests, run the artifact sensor against the slice's key artifacts:
 
 ```bash
 python -m flow_aidlc.checks.artifact_sensor worklog/<PI-NNN>/build/<slice-id>/code-plan.md \
-    --require "## Objective,## Checklist" \
+    --require "## Steps,## Tests" \
     --upstream "<slice design doc>"
 ```
 
@@ -60,7 +60,7 @@ Invoke `superpowers:verification-before-completion` to perform the final cross-c
 
 ## Checkpoint
 
-Stop here. Wait for `/flow-approve` before entering `steps/ship/release-checklist.md`.
+Stop here. Wait for `/flow-approve` before entering `steps/ship/branch-hardening.md` (the first Ship stage).
 
 Approval requires:
 - All guardrails passed (recorded in `verify.md`).

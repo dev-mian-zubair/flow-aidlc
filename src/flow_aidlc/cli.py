@@ -20,7 +20,7 @@ _COMMANDS: dict[str, tuple[str, str]] = {
     "doctor": ("doctor", "Health-check the install and integrations"),
     "check": ("check", "Run the quality gate"),
     "selftest": ("selftest", "Run the mechanical offline self-test"),
-    "refresh": ("refresh", "Re-derive stale knowledge maps (freshness loop)"),
+    "refresh": ("refresh", "Rebuild the code graph (structure freshness); /flow-refresh curates invariants"),
     "plugin": ("plugin", "Build the Claude Code plugin (e.g. `flow plugin build`)"),
     "upgrade": ("upgrade", "Update engine assets without touching your instance"),
     "version": ("version", "Print the engine version"),

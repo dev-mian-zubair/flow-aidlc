@@ -44,10 +44,17 @@ run and open the subsystem map(s) the idea touches. Reading the map is **not**
 reading source; Scope stays source-less and write-less.
 
 Use it to ground the classification, epic decomposition, and `area` below in real
-subsystem boundaries and names. Honor the freshness rule: the authoritative signal
-is git history vs each doc's `verified-at-sha`, **not** the `status:` line —
-see `steps/shared/knowledge-map.md`. Treat a stale map as provisional, and an unmapped
-area as an open question, never an invention.
+subsystem boundaries and names. The maps are **invariants** (structural freshness is
+retired — see `steps/shared/knowledge-map.md`); treat an unmapped area as an open
+question, never an invention.
+
+For **structural** grounding the curated map doesn't answer — *which* subsystems the
+idea actually touches and *how load-bearing* they are — query the code graph
+(`steps/shared/graph.md`, `config.graph.mcp`): `QUERY("<plain-language question>")` to
+locate the touched surface and `HUBS` to see if it lands on an architectural hub (a
+signal that an idea is epic-sized or spans subsystems). Read-only, still source-less.
+If the graph is unavailable, ground on the map + reasoning and flag structural unknowns
+as open questions.
 
 ## Classify the ticket type
 

@@ -35,8 +35,8 @@ python -m flow_aidlc.checks.traceability worklog/<PI-NNN> --write
 
 This command:
 
-1. Parses all FR/NFR IDs from `worklog/<PI-NNN>/requirements.md`.
-2. Parses all `Requirement refs` from `worklog/<PI-NNN>/slices.md`.
+1. Parses all FR/NFR IDs from `worklog/<PI-NNN>/shape/requirements.md`.
+2. Parses all `Requirement refs` from `worklog/<PI-NNN>/shape/slices.md`.
 3. Generates `worklog/<PI-NNN>/shape/traceability.md` with the matrix.
 4. Reports any uncovered requirements (error) or unknown requirement IDs
    (warning).

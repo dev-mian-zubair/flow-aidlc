@@ -17,7 +17,7 @@ from flow_aidlc.checks._root import find_repo_root
 def run(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(
         prog="flow check",
-        description="Run the Flow quality gate (guardrail-lint, structure, freshness, reference-selfcheck).",
+        description="Run the Flow quality gate (guardrail-lint, structure, reference-selfcheck, config-consistency).",
     )
     parser.add_argument(
         "path",
@@ -28,7 +28,7 @@ def run(argv: list[str]) -> int:
     parser.add_argument(
         "--strict",
         action="store_true",
-        help="Treat freshness drift as blocking (default: warn-only).",
+        help="Accepted for compatibility (structural freshness is retired — no-op).",
     )
     parsed = parser.parse_args(argv)
 

@@ -1,16 +1,20 @@
-"""Gate: compose guardrail_lint + structure_check + freshness + reference-selfcheck + config-consistency.
+"""Gate: compose guardrail_lint + structure_check + reference-selfcheck + config-consistency.
 
-Runs all five checks, prints a section per check, exits 1 if any blocking
-check fails.  Freshness runs in warn-mode (non-blocking) by default so doc
-drift doesn't hard-block CI — structure and lint are the blocking checks.
-The reference self-consistency smoke (CHECK 4/5) is non-fatal-if-absent (no
-reference cases found → OK) but fatal-if-regressed (a golden case scoring
-below its own threshold → exit 1).
+Runs all four checks, prints a section per check, exits 1 if any blocking
+check fails. The reference self-consistency smoke (CHECK 3/4) is
+non-fatal-if-absent (no reference cases found → OK) but fatal-if-regressed
+(a golden case scoring below its own threshold → exit 1).
+
+Structural doc freshness (`knowledge-map.yaml` / `verified-at-sha` / freshness.py)
+was RETIRED per ADR 0008: code *structure* now lives in the code graph
+(fresh-by-construction), and the thinned `knowledge/map/` docs hold only
+*invariants*, whose freshness is enforced by the always-on guardrails
+(`enforced-by:`) at Build/verify — not by a stale-flag here.
 
 Usage:
     python -m flow_aidlc.checks.gate               # uses repo root
     python -m flow_aidlc.checks.gate <repo_root>
-    python -m flow_aidlc.checks.gate --strict      # freshness is also blocking
+    python -m flow_aidlc.checks.gate --strict      # accepted for compatibility (no-op)
 """
 from __future__ import annotations
 
@@ -20,13 +24,16 @@ from pathlib import Path
 from flow_aidlc.checks._root import find_repo_root
 from flow_aidlc.checks.guardrail_lint import lint as guardrail_lint
 from flow_aidlc.checks.structure_check import check as structure_check
-from flow_aidlc.checks.freshness import check as freshness_check
 from flow_aidlc.checks.reference_check import check as reference_check
 from flow_aidlc.checks.config_consistency import check as config_consistency_check
 
 
 def run(repo_root: Path | str, strict_freshness: bool = False) -> int:
-    """Run all checks; return 0 if all pass, 1 if any fail."""
+    """Run all checks; return 0 if all pass, 1 if any fail.
+
+    ``strict_freshness`` is retained for signature/CLI compatibility (structural
+    freshness is retired — see the module docstring) and is ignored.
+    """
     repo_root = Path(repo_root)
     flow_dir = repo_root / ".flow"
     guardrails_dir = flow_dir / "guardrails"
@@ -34,7 +41,7 @@ def run(repo_root: Path | str, strict_freshness: bool = False) -> int:
 
     # ---- 1. Guardrail lint ----
     print("=" * 60)
-    print("CHECK 1/5  guardrail-lint")
+    print("CHECK 1/4  guardrail-lint")
     print("=" * 60)
     lint_errors = guardrail_lint(guardrails_dir)
     if lint_errors:
@@ -48,7 +55,7 @@ def run(repo_root: Path | str, strict_freshness: bool = False) -> int:
     # ---- 2. Structure check ----
     print()
     print("=" * 60)
-    print("CHECK 2/5  structure-check")
+    print("CHECK 2/4  structure-check")
     print("=" * 60)
     struct_errors = structure_check(flow_dir)
     if struct_errors:
@@ -59,35 +66,19 @@ def run(repo_root: Path | str, strict_freshness: bool = False) -> int:
     else:
         print("OK")
 
-    # ---- 3. Freshness ----
+    # ---- 3. Reference self-consistency smoke ----
     print()
     print("=" * 60)
-    print("CHECK 3/5  freshness")
-    print("=" * 60)
-    stale = freshness_check(repo_root)
-    if stale:
-        label = "FAILED" if strict_freshness else "WARNING (non-blocking)"
-        print(f"{label}: stale docs:")
-        for doc in stale:
-            print(f"  STALE: {doc}")
-        if strict_freshness:
-            exit_code = 1
-    else:
-        print("OK: all docs are up to date")
-
-    # ---- 4. Reference self-consistency smoke ----
-    print()
-    print("=" * 60)
-    print("CHECK 4/5  reference-selfcheck")
+    print("CHECK 3/4  reference-selfcheck")
     print("=" * 60)
     selfcheck_failed = _run_reference_selfcheck(repo_root)
     if selfcheck_failed:
         exit_code = 1
 
-    # ---- 5. Config consistency ----
+    # ---- 4. Config consistency ----
     print()
     print("=" * 60)
-    print("CHECK 5/5  config-consistency")
+    print("CHECK 4/4  config-consistency")
     print("=" * 60)
     cfg_errors = config_consistency_check(repo_root)
     if cfg_errors:

@@ -22,6 +22,11 @@ Checks:
      the adapter ``.flow/steps/shared/tracker.md`` (no NOT IMPLEMENTED).
   C5 (review echo): every ``review.branch_hardening`` agent must be mentioned in
      ``.flow/steps/ship/branch-hardening.md``.
+  C6 (graph backend): ``graph.backend`` must have a non-stub mapping in the graph
+     adapter ``.flow/steps/shared/graph.md`` (no NOT IMPLEMENTED).
+  C7 (graph paths): ``graph.root`` and every ``graph.focus`` entry must be an
+     existing directory, and ``graph.ignore_file`` (if set) must exist — so the
+     single-extract scope the config documents actually resolves on disk.
 
 Note: the reference instance also carries a C4 "guardrail echo" check that
 requires each ``always_on`` name to be repeated in the prose files that hardcode
@@ -93,6 +98,27 @@ def check(repo_root: Path | str) -> list[str]:
             )
             return None
 
+    def adapter_implements(value, adapter_rel: str, key: str, code: str) -> None:
+        """Assert a config choice has a non-stub '### <value>' mapping in an adapter file."""
+        if not value:
+            return
+        adapter = repo_root / adapter_rel
+        if not adapter.exists():
+            errors.append(f"{code} {key}: config sets {key}='{value}' but the adapter {adapter_rel} is missing")
+            return
+        text = read_text(adapter)
+        if text is None:
+            return
+        # End the value on whitespace or end-of-line, not \b — otherwise a value like
+        # 'github' would match a '### github-issues' heading (the hyphen is a \b).
+        section = re.search(
+            r"^###\s+" + re.escape(value) + r"(?=\s|$)(.*?)(?=^###\s|\Z)", text, re.S | re.M | re.I
+        )
+        if not section:
+            errors.append(f"{code} {key}: no '### {value}' mapping in {adapter_rel} — the adapter does not implement '{value}'")
+        elif "NOT IMPLEMENTED" in section.group(1).upper():
+            errors.append(f"{code} {key}: '{value}' is a NOT IMPLEMENTED stub in {adapter_rel} — implement its mapping before setting {key}='{value}'")
+
     cfg, load_error = _load_config(repo_root)
     if load_error:
         return [load_error]        # unparseable / no pyyaml → BLOCK, never fail-open
@@ -145,35 +171,11 @@ def check(repo_root: Path | str) -> list[str]:
                         f"instead (or add a '{_ALLOW_REPO_LITERAL}' marker if intentional)"
                     )
 
-    # ---- C3: configured tracker.platform must be implemented in the adapter ----
-    platform = (cfg.get("tracker", {}) or {}).get("platform")
-    if platform:
-        adapter = repo_root / ".flow" / "steps" / "shared" / "tracker.md"
-        if not adapter.exists():
-            errors.append(
-                f"C3 tracker platform: config sets tracker.platform='{platform}' but the "
-                f"adapter .flow/steps/shared/tracker.md is missing"
-            )
-        else:
-            text = read_text(adapter)
-            if text is not None:
-                section = re.search(
-                    r"^###\s+" + re.escape(platform) + r"\b(.*?)(?=^###\s|\Z)",
-                    text,
-                    re.S | re.M | re.I,
-                )
-                if not section:
-                    errors.append(
-                        f"C3 tracker platform: no '### {platform}' mapping in "
-                        f".flow/steps/shared/tracker.md — the adapter does not implement "
-                        f"platform '{platform}'"
-                    )
-                elif "NOT IMPLEMENTED" in section.group(1).upper():
-                    errors.append(
-                        f"C3 tracker platform: '{platform}' is a NOT IMPLEMENTED stub in "
-                        f".flow/steps/shared/tracker.md — implement its mapping before setting "
-                        f"tracker.platform='{platform}'"
-                    )
+    # ---- C3: configured tracker.platform must be implemented in the tracker adapter ----
+    adapter_implements(
+        (cfg.get("tracker", {}) or {}).get("platform"),
+        ".flow/steps/shared/tracker.md", "tracker.platform", "C3",
+    )
 
     # ---- C5: branch-hardening review set must be echoed in the step guide ----
     review = cfg.get("review", {}) or {}
@@ -189,6 +191,30 @@ def check(repo_root: Path | str) -> list[str]:
                             f"C5 review echo: '{agent}' is in config review.branch_hardening "
                             f"but not mentioned in .flow/steps/ship/branch-hardening.md"
                         )
+
+    # ---- C6: configured graph.backend must be implemented in the graph adapter ----
+    adapter_implements(
+        (cfg.get("graph", {}) or {}).get("backend"),
+        ".flow/steps/shared/graph.md", "graph.backend", "C6",
+    )
+
+    # ---- C7: graph.root + graph.focus dirs must exist; graph.ignore_file must exist ----
+    graph = cfg.get("graph", {}) or {}
+    root = graph.get("root")
+    if root and not (repo_root / root).is_dir():
+        errors.append(
+            f"C7 graph.root: config sets graph.root '{root}' but that directory does not exist"
+        )
+    for path in (graph.get("focus") or []):
+        if not (repo_root / path).is_dir():
+            errors.append(
+                f"C7 graph.focus: config lists graph.focus '{path}' but that directory does not exist"
+            )
+    ignore_file = graph.get("ignore_file")
+    if ignore_file and not (repo_root / ignore_file).exists():
+        errors.append(
+            f"C7 graph.ignore_file: config sets graph.ignore_file '{ignore_file}' but it does not exist"
+        )
 
     return errors
 

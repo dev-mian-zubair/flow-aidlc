@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -34,7 +35,6 @@ _EXPECTED_HOOKS = (
     "session-start.sh",
     "prompt-journal.sh",
     "scope-guard.sh",
-    "freshness-flag.sh",
     "checkpoint-stop.sh",
     "backprop-guard.sh",
     "precompact-save.sh",
@@ -83,7 +83,7 @@ def run(argv: list[str]) -> int:
     _check_config(rep, flow_dir)
     _check_guardrails(rep, flow_dir)
     _check_hooks(rep, root)
-    _check_knowledge(rep, root, flow_dir)
+    _check_graph(rep, root, flow_dir)
     _check_git(rep, root)
     _check_mcp(rep, root)
 
@@ -170,50 +170,62 @@ def _check_hooks(rep: _Report, root: Path) -> None:
         rep.line("hooks", PASS, f"{len(_EXPECTED_HOOKS)} hooks present, executable, wired in settings.json")
 
 
-def _check_knowledge(rep: _Report, root: Path, flow_dir: Path) -> None:
-    map_file = flow_dir / "knowledge-map.yaml"
-    if not map_file.exists():
-        rep.line("knowledge", WARN, "no .flow/knowledge-map.yaml")
+def _check_graph(rep: _Report, root: Path, flow_dir: Path) -> None:
+    """Structure freshness is graph-based (ADR 0008/0009): verify the graph is wired.
+
+    Never hard-FAILs on a fresh init — the graph is a WARN until it's built. What
+    it verifies: ``graph.backend`` is configured, the graph adapter
+    ``.flow/steps/shared/graph.md`` is present, the backend build binary is on PATH,
+    and ``graph.output`` exists on disk (both reported as WARN, not FAIL).
+    """
+    backend, build_cmd, output = _graph_config(flow_dir)
+
+    if not backend:
+        rep.line("graph", WARN, "no graph.backend in config.yaml — structure freshness not wired yet")
         return
-    if yaml is None:
-        rep.line("knowledge", WARN, "pyyaml not installed — cannot parse knowledge-map.yaml")
+
+    adapter = flow_dir / "steps" / "shared" / "graph.md"
+    if not adapter.exists():
+        rep.line("graph", FAIL, f"graph.backend='{backend}' but adapter .flow/steps/shared/graph.md is missing")
         return
+
+    notes: list[str] = [f"backend={backend}", "adapter present"]
+
+    binary = build_cmd.split()[0] if build_cmd else ""
+    if binary:
+        notes.append(f"'{binary}' on PATH" if shutil.which(binary) else f"'{binary}' NOT on PATH (build to rebuild the graph)")
+
+    if output:
+        notes.append(f"{output} present" if (root / output).exists() else f"{output} not built yet — `flow refresh`")
+
+    # All graph gaps are advisory here: PASS if adapter+backend are wired,
+    # WARN only if the binary or the built graph is absent (fresh init is fine).
+    graph_missing = (binary and not shutil.which(binary)) or (output and not (root / output).exists())
+    rep.line("graph", WARN if graph_missing else PASS, "; ".join(notes))
+
+
+def _graph_config(flow_dir: Path) -> tuple[str, str, str]:
+    """Return (graph.backend, graph.build, graph.output) from config.yaml, blanks if absent."""
+    config_path = flow_dir / "config.yaml"
+    if yaml is None or not config_path.exists():
+        return "", "", ""
     try:
-        data = yaml.safe_load(map_file.read_text(encoding="utf-8")) or {}
-    except yaml.YAMLError as exc:
-        rep.line("knowledge", FAIL, f"knowledge-map.yaml parse error — {exc}")
-        return
-
-    maps = data.get("maps", []) or []
-    missing_docs = [
-        entry.get("doc", "")
-        for entry in maps
-        if entry.get("doc") and not (root / entry["doc"]).exists()
-    ]
-    if missing_docs:
-        rep.line("knowledge", FAIL, f"map docs not found: {', '.join(missing_docs)}")
-        return
-
-    # Freshness is advisory (WARN), never a hard fail here.
-    try:
-        from flow_aidlc.checks.freshness import check as freshness_check
-
-        stale = freshness_check(root)
-    except Exception as exc:  # pragma: no cover - defensive
-        rep.line("knowledge", WARN, f"{len(maps)} maps; freshness check errored — {exc}")
-        return
-
-    if stale:
-        rep.line("knowledge", WARN, f"{len(maps)} maps; {len(stale)} stale — `flow refresh`")
-    else:
-        rep.line("knowledge", PASS, f"{len(maps)} maps, all docs present and fresh")
+        data = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError:
+        return "", "", ""
+    graph = data.get("graph", {}) or {}
+    return (
+        str(graph.get("backend") or ""),
+        str(graph.get("build") or ""),
+        str(graph.get("output") or ""),
+    )
 
 
 def _check_git(rep: _Report, root: Path) -> None:
     if (root / ".git").exists():
         rep.line("git", PASS, ".git present")
     else:
-        rep.line("git", WARN, "no .git — Flow's hooks and freshness checks need git")
+        rep.line("git", WARN, "no .git — Flow's hooks and the code graph need git")
 
 
 def _check_mcp(rep: _Report, root: Path) -> None:

@@ -1,23 +1,39 @@
 # Flow — a governed AI-DLC methodology you can drop into any repo
 
 **Flow** turns "vibe coding with an AI agent" into a governed, auditable development
-loop: **Scope → Shape → Build → Ship**, with mechanical guardrails, self-updating
-knowledge, and quality gates that run in CI. It is **project-agnostic** — the engine
-ships generic; a one-command `flow init` scaffolds a per-project instance, and each
-project authors its own invariants (guardrails), subsystem maps, and tracker config.
+loop: **Scope → Shape → Build → Ship**, with mechanical guardrails, a committed
+**code graph** as the source of truth for code structure, and quality gates that run
+in CI. It is **project-agnostic** — the engine ships generic; a one-command
+`flow init` scaffolds a per-project instance, and each project authors its own
+invariants (guardrails), subsystem maps, and tracker config.
 
 > Flow was extracted from a production instance (the Perpetual Intelligence Platform).
 > This repo is the reusable, de-specialized engine + a CLI to install it anywhere.
 
 ---
 
+## Prerequisites
+
+- **[superpowers](https://github.com/obra/superpowers) skills** — Flow delegates
+  brainstorming, plan-writing, TDD, and code review to the `superpowers` skill
+  ecosystem; install it in Claude Code.
+- **[Graphify](https://pypi.org/project/graphifyy/)** — Flow's source of truth for
+  code *structure*. Structure is not maintained as prose; it is extracted into a
+  committed **code graph** that agents query over MCP. Install with
+  `uv tool install "graphifyy[mcp]"` (the `[mcp]` extra powers the agent-facing
+  `graphify` MCP server; the base package alone builds the graph for CI). Without it,
+  the structural steps degrade to a read-only `Explore`/grep fallback — nothing breaks,
+  but caller/dependent resolution is no longer deterministic.
+
 ## Quickstart
 
 ```bash
 pipx install flow-aidlc          # or: pip install flow-aidlc
+uv tool install "graphifyy[mcp]" # the code-graph backend (structure source of truth)
 cd your-repo
 flow init                        # scaffold .flow/, .claude/, knowledge/, git hooks
-flow doctor                      # verify the install + integrations
+flow doctor                      # verify the install + integrations (graph WARN until built)
+flow refresh                     # build the code graph (runs the configured graph.build)
 flow check                       # run the quality gate
 ```
 
@@ -33,10 +49,10 @@ Then, in Claude Code:
 ## What you get
 
 - **The state machine** (`.flow/playbook.md`) — Scope → Shape → Build → Ship, gated at each checkpoint.
-- **Mechanical enforcement** — Claude Code hooks that journal prompts, guard scope, hold checkpoints, and flag stale knowledge.
+- **Mechanical enforcement** — Claude Code hooks that journal prompts, guard scope, and hold checkpoints.
 - **Guardrails** — always-on, blocking invariant checks you author for *your* codebase (the engine ships the mechanism + templates; `flow guardrail add` scaffolds one).
-- **Self-updating knowledge** — `knowledge/map/` docs with provenance; a freshness loop flags them stale when the code they describe changes.
-- **Quality gate** — `flow check` (guardrail-lint, structure-check, freshness, traceability, reproducibility) — runnable locally and in CI.
+- **Code graph as structure source of truth** — a committed [Graphify](https://pypi.org/project/graphifyy/) graph, queried over MCP, answers "who calls this / what depends on it / what's the contract" deterministically (ADR 0008/0009). Curated `knowledge/map/` docs hold only the **invariants** a graph can't know; each is enforced by a guardrail, so structure can't go stale.
+- **Quality gate** — `flow check` (guardrail-lint, structure-check, reference-selfcheck, config-consistency incl. graph-backend + graph-paths) — runnable locally and in CI.
 - **Superpowers-powered** — delegates brainstorming, plan-writing, TDD, and code review to the `superpowers` skill ecosystem.
 
 ## The two layers
@@ -45,8 +61,8 @@ Then, in Claude Code:
 |---|---|
 | playbook, step guides, templates | `config.yaml` (tracker, id-scheme) |
 | commands, agents, hooks | `guardrails/always-on/*` — your invariants |
-| the `flow` CLI + check modules | `knowledge/map/*` — your subsystems |
-| guardrail/config/map **templates** | `knowledge-map.yaml` — code→doc wiring |
+| the `flow` CLI + check modules | `knowledge/map/*` — your subsystem invariants |
+| guardrail/config/map **templates** | `config.yaml → graph:` + the committed code graph |
 
 See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the full model and [`docs/build-plan.md`](docs/build-plan.md) for the implementation roadmap.
 

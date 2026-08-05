@@ -1,5 +1,5 @@
 ---
-description: Dispatch the curator subagent to re-derive stale knowledge/map/ docs from current code.
+description: Dispatch the curator subagent to verify knowledge/map/ invariants against current code (structure lives in the code graph).
 ---
 
-Read `.flow/playbook.md`, then dispatch the `curator` subagent to scan `knowledge/map/` for documents whose content is stale relative to the current codebase; the curator will re-derive each stale doc from current code using Read, Grep, Glob, Write, and Edit as needed; upon completion print a summary of which docs were refreshed and which were already current. Do not modify worklog or progress files.
+Read `.flow/playbook.md`, then dispatch the `curator` subagent to review `knowledge/map/`: verify each map's **invariants** still hold against the current code — reading source and, for structure, the code graph via `mcp__graphify` (per ADR 0008 structure lives in the graph, not in prose) — correcting any invariant that has drifted and confirming each doc's `enforced-by:` guardrail resolves. Upon completion print a summary of which docs were updated and which were already accurate. Do not modify worklog or progress files.

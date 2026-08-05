@@ -40,12 +40,35 @@ flow-aidlc (this package)                 target-repo/ (after `flow init`)
 
 Flow was designed so the engine reads project facts as data:
 
-- `config.yaml` drives which guardrails are active and the tracker/id-scheme.
-- `knowledge-map.yaml` drives the freshness loop (code globs → owning doc).
+- `config.yaml` drives which guardrails are active, the tracker/id-scheme, and the
+  `graph:` block (backend, MCP, build command, focus dirs).
+- `knowledge-map.yaml` indexes subsystem → owning invariant doc; **code structure**
+  itself lives in the committed code graph, not in prose.
 - The templates drive every worklog artifact (`cp` template → fill).
 
 Nothing project-specific is hardcoded in logic, so packaging is "move the
 project data out, ship the engine, let `init` regenerate the data."
+
+## Structure comes from the code graph (not prose)
+
+Flow does not maintain code *structure* — callers, dependents, contracts, the
+subsystem surface — as hand-written docs that drift. Structure is extracted into a
+committed **code graph** ([Graphify](https://pypi.org/project/graphifyy/), ADR
+0008/0009) and queried by agents over MCP through a backend-neutral adapter
+(`.flow/steps/shared/graph.md`, universal ops `WHO_CALLS` / `NEIGHBORS` / `HUBS` /
+`IMPACT_OF_DIFF`). Consequences:
+
+- **Graphify is a prerequisite** (alongside superpowers). Install
+  `uv tool install "graphifyy[mcp]"`; the graph is built by the configured
+  `config.yaml → graph.build` and committed (`graphify-out/graph.json`). If it is
+  absent, structural steps fall back to a read-only `Explore`/grep survey.
+- **The curated `knowledge/map/` docs hold only invariants** — the load-bearing rules
+  a graph can't know — each stamped `enforced-by: <guardrail>`. There is **no
+  doc-freshness loop**: structure can't go stale (it's re-derived from the graph), and
+  invariants are held by their guardrail at Build/verify, not by a stale flag.
+- **`flow check` config-consistency** enforces the graph is wired: `graph.backend` must
+  be implemented in the adapter (C6) and `graph.root` / `graph.focus` / `graph.ignore_file`
+  must resolve on disk (C7).
 
 ## Distribution
 
@@ -63,10 +86,10 @@ Two complementary channels, same engine:
 | `flow init` | Scaffold the instance into the current repo (interactive) |
 | `flow guardrail add <name>` | Scaffold a new always-on guardrail from the template + register it |
 | `flow map add <glob> <doc>` | Scaffold a knowledge/map doc + wire knowledge-map.yaml |
-| `flow doctor` | Health check — hooks installed, MCP reachable, structure valid |
-| `flow check` | Run the quality gate (guardrail-lint, structure, freshness, traceability) |
+| `flow doctor` | Health check — hooks installed, MCP reachable, structure valid, code graph wired |
+| `flow check` | Run the quality gate (guardrail-lint, structure, reference-selfcheck, config-consistency) |
 | `flow selftest` | Mechanical offline self-test of the wiring |
-| `flow refresh` | Run the curator / freshness re-derivation |
+| `flow refresh` | Rebuild the code graph (structure freshness); `/flow-refresh` curates map invariants |
 | `flow upgrade` | Update the engine assets without clobbering the instance |
 | `flow version` | Print the engine version |
 

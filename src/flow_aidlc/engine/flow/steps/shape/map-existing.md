@@ -12,26 +12,44 @@ assumptions. This step maps what *already exists*; it does **not** decide what t
 change (that is `shape-design`'s job). You are surveying the neighbourhood the
 ticket points at, not the exact files the eventual fix will edit.
 
-## Seed from the ticket, then explore
+## Seed from the ticket, then resolve structure from the graph
 
-Do not explore blind. Start from what Scope already established, then drill in:
+Do not explore blind, and do not grep for structure the code graph already knows.
+Start from what Scope established, read the invariants, then let the graph give you
+callers/dependents/contracts **deterministically**:
 
 1. **Seed from the ticket.** Take the `Area` label and the **Affected
    file(s)/module(s)** from the ticket body as your starting coordinates.
-2. **Seed from the Knowledge Map.** For each area the ticket touches, read the
-   matching `knowledge/map/<subsystem>.md` (index: `knowledge/map/README.md`) for
-   the curated subsystem picture — contracts and boundaries are already summarised
-   there. Note its freshness (`status:` / `verified-at-sha`); if stale, treat it
-   as a hint and verify against code.
-3. **Explore outward.** Delegate to the `Explore` agent (read-only, scoped) to
-   confirm and extend the seed with concrete, current detail:
+2. **Seed from the Knowledge Map (invariants).** For each area the ticket touches,
+   read the matching `knowledge/map/<subsystem>.md` (index:
+   `knowledge/map/README.md`). Per [ADR 0008](../../../knowledge/decisions/0008-code-graph-owns-structure.md)
+   these docs hold the **invariants and rationale** a graph can't know (e.g. "X is
+   the single source of truth", "this toggle fails closed"); the *structure* lives in
+   the graph (step 3).
+3. **Resolve structure from the code graph (primary).** For each seed symbol/file,
+   use the **universal ops** in [`steps/shared/graph.md`](../shared/graph.md) — query
+   the graph MCP (`config.graph.mcp`, default `graphify`) or the CLI it maps to:
+   - **`WHO_CALLS(symbol)`** → callers/dependents with `file:line`. This *is* the
+     **don't-change list**, and it is deterministic — it catches indirect and
+     method-resolved calls that grep silently misses.
+   - **`NEIGHBORS(symbol)`** → the symbol's contract + immediate structure.
+   - **`HUBS()`** (optional) → the subsystem's architectural surface, to spot
+     load-bearing nodes the ticket didn't name.
+
+   Cite results by their graph `file:line`. Do **not** hand-grep for callers when the
+   graph can answer.
+4. **Fallback to `Explore`/grep — only where the graph can't answer.** Delegate to the
+   read-only `Explore` agent for: code **not yet in the committed graph** (new or
+   uncommitted work), an **HTTP boundary between services** (an HTTP call is not an
+   AST edge, so the regions don't connect — see the adapter), non-code config, or a
+   **graph outage / staleness** (rebuild with the configured `graph.build`). State in
+   the map when a fact came from the fallback rather than the graph.
 
    ```
    Agent: Explore
-   Scope: the relevant existing surface the ticket concerns — seeded from the
-          ticket's Area + Affected file(s)/module(s) and the Knowledge Map
-          subsystem doc(s); expand only as contracts/callers require.
-   Depth: medium (adjust to deep if the relevant surface is large)
+   Scope: only the surface the graph could not resolve (above) — seeded from the
+          ticket's Area + Affected file(s)/module(s).
+   Depth: medium (adjust to deep if that surface is large)
    ```
 
    The `Explore` agent must **read only** — no edits, no writes.
@@ -40,15 +58,16 @@ Do not explore blind. Start from what Scope already established, then drill in:
 
 For each file or module in scope, record:
 
-| Item | What to capture |
-|---|---|
-| **File path** | Absolute path from repo root |
-| **Public contracts** | Exported functions, API routes, event schemas, DB models |
-| **Callers / dependents** | Other files that import or call this file |
-| **Don't-change list** | Interfaces that must stay stable (other callers depend on them) |
+| Item | What to capture | Source |
+|---|---|---|
+| **File path** | Absolute path from repo root | seed / graph |
+| **Public contracts** | Exported functions, API routes, event schemas, DB models | `NEIGHBORS` (graph) |
+| **Callers / dependents** | Other symbols that import or call this one, with `file:line` | `WHO_CALLS` (graph) |
+| **Don't-change list** | Interfaces that must stay stable (callers depend on them) | `WHO_CALLS` + Knowledge-Map invariants |
 
 Limit the map to the **relevant existing surface** the ticket concerns (seeded
-above). Do not map the full codebase.
+above). Do not map the full codebase — bound traversal to what the ticket touches
+and its immediate callers, not the whole `WHO_CALLS` transitive closure.
 
 ## Output
 

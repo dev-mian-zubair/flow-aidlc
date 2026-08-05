@@ -1,9 +1,12 @@
 # Consulting the Knowledge Map
 
-`knowledge/map/` is the project's curated **Knowledge Map** — descriptive,
-≤1-screen subsystem docs, re-derived from code by the `curator` agent. Reading
-the map is **not** reading source: a Scope agent stays source-less and write-less
-while using the map for grounding.
+`knowledge/map/` is the project's curated **Knowledge Map** — short, ≤1-screen
+subsystem docs. Per [ADR 0008](../../../knowledge/decisions/0008-code-graph-owns-structure.md)
+each doc holds a subsystem's **invariants and rationale** (the "why" and the
+load-bearing rules); the *structure* it once described — files, symbols, callers —
+now lives in the **code graph** (query it via `steps/shared/graph.md`). Reading the
+map is **not** reading source: a Scope agent stays source-less and write-less while
+using it for grounding.
 
 ## When
 
@@ -14,12 +17,13 @@ Consult on **every** Scope run — begin `clarify` by reading the index.
 1. **Index** — read `knowledge/map/README.md`; its table names each subsystem,
    what it covers, and its `derives-from` code globs. Pick the subsystem(s) the
    idea touches.
-2. **Subsystem** — open the relevant `knowledge/map/<subsystem>.md` for structure
-   and real naming.
-3. **Affected modules** — use `.flow/knowledge-map.yaml` `derives-from` globs to
-   name **Affected file(s)/module(s)** at module / service granularity. Exact
-   `file:line` is **not** required at Scope — leave it optional; Shape/map-existing
-   confirms precise files.
+2. **Subsystem** — open the relevant `knowledge/map/<subsystem>.md` for its
+   **invariants** and real vocabulary. For *structure* (which symbols, who calls
+   what), query the code graph (`steps/shared/graph.md`).
+3. **Affected modules** — use `.flow/knowledge-map.yaml`'s subsystem→path index to
+   name **Affected file(s)/module(s)** at module / service granularity (or
+   `QUERY`/`HUBS` on the graph). Exact `file:line` is **not** required at Scope —
+   leave it optional; Shape/map-existing confirms precise files.
 
 ## What it grounds
 
@@ -29,26 +33,22 @@ Consult on **every** Scope run — begin `clarify` by reading the index.
 - **Area labels + Affected files:** taken from the map, not guessed.
 - **Dedup:** search the tracker with the subsystem's real vocabulary.
 
-## Freshness — the authoritative signal
+## Freshness
 
-The map's `status:` frontmatter line is only a **hint**. It is updated by the
-curator or the worklog-scoped freshness hook, so a change made outside a Flow
-worklog (a teammate's commit, a merge) can leave `status: FRESH` on a doc that is
-actually stale.
+**Structural freshness was retired** ([ADR 0008](../../../knowledge/decisions/0008-code-graph-owns-structure.md)).
+There is no more `verified-at-sha` / `freshness.py` / `STALE`-flag loop — a map's
+structure can't go stale because structure now lives in the graph
+(fresh-by-construction; rebuild it with the configured `graph.build` if the *graph*
+itself is stale). A map's **invariants** stay honest a stronger way: each carries an
+`enforced-by: <guardrail>` and the always-on guardrail **blocks** a change that
+violates it at Build/verify — a hard gate, not a stale flag.
 
-The **authoritative** freshness signal is git history vs the doc's
-`verified-at-sha`: a map doc is stale when the code its `derives-from` globs match
-has changed since its recorded `verified-at-sha`. The Scope **orchestrator** (the
-main loop that runs `/flow-scope`, which has shell access) computes the stale list
-at the start of a run and passes it into `clarify`; a least-privilege scope
-subagent that cannot run it falls back to the `status:` line as a weaker hint.
-
-- **stale** → use the doc with a caveat, tell the user, and suggest
-  `/flow-refresh` before relying on details.
+- **invariant vs code** → trust the map; if you suspect an invariant no longer
+  holds, that's a guardrail concern (raise it), not a doc-drift flag.
 - **not mapped** → if a needed area has no map, record it as an open question;
-  never invent subsystem facts.
+  never invent subsystem facts. For structural questions, ask the graph.
 
-Use the map for **structure and naming**, not exact line numbers (those drift).
+Use the map for **invariants and vocabulary**; use the graph for **structure**.
 
 ## Boundary
 

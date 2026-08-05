@@ -109,8 +109,8 @@ def run(argv: list[str]) -> int:
 
     if not (target / ".git").exists():
         sys.stderr.write(
-            f"WARNING: {target} is not a git repo — Flow's hooks and freshness "
-            "checks work best inside one. Continuing anyway.\n"
+            f"WARNING: {target} is not a git repo — Flow's hooks and the code "
+            "graph work best inside one. Continuing anyway.\n"
         )
 
     interactive = sys.stdin.isatty() and not args.yes

@@ -35,3 +35,15 @@ review:
     - pr-review-toolkit:pr-test-analyzer
     - pr-review-toolkit:type-design-analyzer
     - pr-review-toolkit:comment-analyzer
+
+graph:
+  backend: graphify              # code-graph backend — see steps/shared/graph.md (ADR 0008/0009). Requires Graphify.
+  mcp: graphify                  # MCP server agents query for structure (universal ops -> its tools via the adapter)
+  output: graphify-out/graph.json
+  build: "graphify extract . --code-only --no-cluster --force"   # canonical, deterministic, offline (dev == CI)
+  code_only: true
+  root: "."                      # single directed extract at repo root
+  focus: []                      # your product-code dirs (e.g. src, app, lib) — set these after adding code; C7 checks they exist
+  committed: true
+  # A project with vendored/generated trees to exclude may add a `.graphifyignore`
+  # file and set `ignore_file: .graphifyignore` here (C7 requires it to exist if set).

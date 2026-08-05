@@ -31,17 +31,6 @@
         ]
       }
     ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/freshness-flag.sh"
-          }
-        ]
-      }
-    ],
     "Stop": [
       {
         "hooks": [

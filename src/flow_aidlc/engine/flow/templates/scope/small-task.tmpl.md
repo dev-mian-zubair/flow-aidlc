@@ -23,8 +23,8 @@ Mirrors the canonical "Scope Ticket Templates" reference (Small Task tab).
 
 ### Flags
 - [ ] A fix will likely require a database migration
-- [ ] Do this automatically (proposed flag — automation-eligible; see the open
-      question in the Flow playbook on whether this shortens or skips Shape's gates)
+- [ ] Do this automatically (proposed flag — automation-eligible; whether this
+      shortens or skips Shape's gates is still undecided)
 <!-- ===== ISSUE BODY ↑ ===== -->
 
 <!-- ===== NATIVE FIELDS (set at scope/publish in the tracker sidebar — not body) =====

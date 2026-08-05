@@ -30,15 +30,18 @@ Per `steps/shared/content-validation.md`, keep every template section — mark o
 ## Cross-check the design against the knowledge map
 
 For each subsystem the design touches, compare the design against its
-`knowledge/map/*.md` doc:
+`knowledge/map/*.md` doc — which now holds the subsystem's **invariants** (structure
+is in the code graph; per ADR 0008):
 
-1. If the design is consistent with the map, note "consistent" and move on.
-2. **If the code contradicts the map, the code wins.** Record the discrepancy
-   in the design's `## Knowledge-map cross-check` section and flag the relevant
-   `knowledge/map/*.md` doc stale.
-3. Stale map docs are re-derived automatically by `/flow-refresh` (the `curator`
-   agent, `flow_aidlc.checks.freshness`) — this cross-check feeds that loop. You do
-   not need to fix the map doc manually; just flag it.
+1. If the design honors the map's invariants, note "consistent" and move on.
+2. **If the design would violate a stated invariant** (e.g. "X is the single source
+   of truth", "this toggle fails closed"), stop — that is a load-bearing rule,
+   enforced by a guardrail at Build/verify. Record it in the design's
+   `## Knowledge-map cross-check` section and either redesign to honor it or, if the
+   invariant itself is genuinely being changed, graduate that as a decision (below)
+   and flag the doc + its `enforced-by:` guardrail for the `curator` (`/flow-refresh`).
+3. For pure *structure* questions ("does this symbol still exist / who calls it"),
+   ask the code graph, not the map.
 
 ## Graduate cross-cutting decisions
 

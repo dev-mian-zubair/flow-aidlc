@@ -19,6 +19,8 @@ def _make_repo(tmp_path: Path) -> Path:
     (flow / "steps" / "ship").mkdir(parents=True)
     (flow / "steps" / "build").mkdir(parents=True)
     (root / ".claude" / "agents" / "review").mkdir(parents=True)
+    (root / "src").mkdir()  # a graph.focus dir that exists (C7)
+    (root / ".graphifyignore").write_text("node_modules/\n")  # graph.ignore_file exists (C7)
 
     # one always-on guardrail with a valid rule file (also satisfies guardrail_lint)
     (flow / "guardrails" / "always-on" / "g1.md").write_text(
@@ -27,6 +29,10 @@ def _make_repo(tmp_path: Path) -> Path:
     # tracker adapter: github mapped, jira a stub
     (flow / "steps" / "shared" / "tracker.md").write_text(
         "# Tracker\n### github\ngithub mapping\n### jira — NOT IMPLEMENTED\nstub\n"
+    )
+    # graph adapter: graphify mapped, neo4j a stub
+    (flow / "steps" / "shared" / "graph.md").write_text(
+        "# Graph\n### graphify\ngraphify mapping\n### neo4j — NOT IMPLEMENTED\nstub\n"
     )
     # branch-hardening guide mentions the review agent
     (flow / "steps" / "ship" / "branch-hardening.md").write_text(
@@ -48,6 +54,12 @@ def _make_repo(tmp_path: Path) -> Path:
         review:
           branch_hardening:
             - pr-review-toolkit:code-reviewer
+        graph:
+          backend: graphify
+          root: "."
+          ignore_file: .graphifyignore
+          focus:
+            - src
         """))
     return root
 
@@ -143,6 +155,41 @@ def test_c5_missing_review_echo_blocks(tmp_path):
     (root / ".flow" / "steps" / "ship" / "branch-hardening.md").write_text("no agents here\n")
     errs = check(root)
     assert any("C5" in e and "code-reviewer" in e for e in errs), errs
+
+
+# ---------------------------------------------------------------------------
+# C6 — graph backend implemented
+# ---------------------------------------------------------------------------
+
+def test_c6_stub_backend_blocks(tmp_path):
+    root = _make_repo(tmp_path)
+    cfg = (root / ".flow" / "config.yaml").read_text().replace("backend: graphify", "backend: neo4j")
+    (root / ".flow" / "config.yaml").write_text(cfg)
+    errs = check(root)
+    assert any("C6" in e and "neo4j" in e for e in errs), errs
+
+
+def test_c7_missing_focus_dir_blocks(tmp_path):
+    root = _make_repo(tmp_path)
+    cfg = (root / ".flow" / "config.yaml").read_text().replace("- src", "- nonexistent-dir")
+    (root / ".flow" / "config.yaml").write_text(cfg)
+    errs = check(root)
+    assert any("C7" in e and "graph.focus" in e and "nonexistent-dir" in e for e in errs), errs
+
+
+def test_c7_missing_root_blocks(tmp_path):
+    root = _make_repo(tmp_path)
+    cfg = (root / ".flow" / "config.yaml").read_text().replace('root: "."', 'root: no-such-root')
+    (root / ".flow" / "config.yaml").write_text(cfg)
+    errs = check(root)
+    assert any("C7" in e and "graph.root" in e and "no-such-root" in e for e in errs), errs
+
+
+def test_c7_missing_ignore_file_blocks(tmp_path):
+    root = _make_repo(tmp_path)
+    (root / ".graphifyignore").unlink()
+    errs = check(root)
+    assert any("C7" in e and "graph.ignore_file" in e for e in errs), errs
 
 
 # ---------------------------------------------------------------------------

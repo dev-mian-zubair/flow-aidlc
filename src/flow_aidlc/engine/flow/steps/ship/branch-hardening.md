@@ -25,10 +25,28 @@ git fetch origin && git diff origin/main...HEAD --stat
 
 The review target is the full set of changes on this branch vs `origin/main`.
 
+### 1b — Compute the blast radius (IMPACT_OF_DIFF)
+
+Per-file review sees the diff; it does **not** see who *outside* the diff depends on
+what the diff changed. Compute the **out-of-diff dependents** of the changed symbols —
+the callers a changed contract could break that no reviewer would otherwise open — with
+`IMPACT_OF_DIFF` (`steps/shared/graph.md`). This is a **local, pre-PR** diff, so use
+`graphify affected "<sym>"` per changed symbol (CLI), or `get_neighbors` over the graph
+MCP reading the incoming `<--` edges. (Do **not** use the MCP `get_pr_impact` here — it
+needs an existing GitHub PR number; branch-hardening runs before the PR exists.)
+
+Record the impact set (out-of-diff symbols + `file:line`) and **pass it to the review
+agents in step 2** as focus context: *"these symbols outside the diff depend on changed
+contracts — confirm the change doesn't break them."* This turns whole-branch review
+into blast-radius-aware review.
+
+If the graph is unavailable or stale (rebuild with the configured `graph.build`), note
+it and proceed with the diff-only review — this enrichment is additive, never a blocker.
+
 ### 2 — Dispatch the review agents (in parallel) on the diff
 
 Dispatch each agent listed in `config.yaml → review.branch_hardening` on the branch
-diff. Default set:
+diff, **plus the blast-radius context from step 1b**. Default set:
 
 - `pr-review-toolkit:code-reviewer` — bugs, guideline / style adherence
 - `pr-review-toolkit:silent-failure-hunter` — swallowed errors, bad fallbacks
