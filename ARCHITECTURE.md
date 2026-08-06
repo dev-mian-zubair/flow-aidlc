@@ -40,8 +40,10 @@ flow-aidlc (this package)                 target-repo/ (after `flow init`)
 
 Flow was designed so the engine reads project facts as data:
 
-- `config.yaml` drives which guardrails are active, the tracker/id-scheme, and the
-  `graph:` block (backend, MCP, build command, focus dirs).
+- `config.yaml` drives which guardrails are active, the tracker/id-scheme, the
+  `graph:` block (backend, MCP, build command, focus dirs), and `vcs.base` — the
+  default base branch for feature branches and PR targets (per-task override: the
+  `Base branch:` line in a worklog's `progress.md`).
 - `knowledge-map.yaml` indexes subsystem → owning invariant doc; **code structure**
   itself lives in the committed code graph, not in prose.
 - The templates drive every worklog artifact (`cp` template → fill).
@@ -70,6 +72,13 @@ committed **code graph** ([Graphify](https://pypi.org/project/graphifyy/), ADR
   be implemented in the adapter (C6) and `graph.root` / `graph.focus` / `graph.ignore_file`
   must resolve on disk (C7).
 
+## Ship ends at the open PR
+
+The Ship phase is **terminal at the open PR** (branch-hardening → learnings → open-pr,
+ADR 0010): Flow produces a reviewed, PR-ready branch and stops. Merge, required checks,
+approvals, ticket close, and any serialization-lock release are owned by the team on the
+host — branch protection on `vcs.base` is authoritative.
+
 ## Distribution
 
 Two complementary channels, same engine:
@@ -83,7 +92,8 @@ Two complementary channels, same engine:
 
 | Command | Purpose |
 |---|---|
-| `flow init` | Scaffold the instance into the current repo (interactive) |
+| `flow init` | Scaffold the instance into the current repo (interactive; `--base` sets `vcs.base`) |
+| `flow setup` | One-command onboarding — detect `uv` + install the graph tool, run `graph.build`, then `flow doctor` (detect-and-guide; never fails hard on a missing tool) |
 | `flow guardrail add <name>` | Scaffold a new always-on guardrail from the template + register it |
 | `flow map add <glob> <doc>` | Scaffold a knowledge/map doc + wire knowledge-map.yaml |
 | `flow doctor` | Health check — hooks installed, MCP reachable, structure valid, code graph wired |

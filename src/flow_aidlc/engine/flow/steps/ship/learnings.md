@@ -8,7 +8,9 @@ and append kept practices to `knowledge/practices.md`.
 
 ## When to run
 
-After `release-checklist.md` is complete, before `handoff.md`.
+After `branch-hardening.md` is approved, before `open-pr.md`. This is the **pre-PR
+wrap-up** — it mines the completed task journal, so it runs while finishing the branch,
+before the PR is opened. (The Flow ends at `open-pr`; there is no post-merge stage.)
 
 ## Steps
 
@@ -34,7 +36,7 @@ Show the candidate list as-is. For each candidate:
 - The agent proposes context but never auto-appends a judgment call.
 - A discarded candidate is simply not appended; no record of it is kept.
 
-If there are no candidates, note that and proceed to handoff — the retro is
+If there are no candidates, note that and proceed to `open-pr` — the retro is
 still complete.
 
 ### 3 — Append kept practices

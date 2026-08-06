@@ -31,11 +31,16 @@ invariants (guardrails), subsystem maps, and tracker config.
 pipx install flow-aidlc          # or: pip install flow-aidlc
 uv tool install "graphifyy[mcp]" # the code-graph backend (structure source of truth)
 cd your-repo
-flow init                        # scaffold .flow/, .claude/, knowledge/, git hooks
-flow doctor                      # verify the install + integrations (graph WARN until built)
-flow refresh                     # build the code graph (runs the configured graph.build)
+flow init                        # scaffold .flow/, .claude/, knowledge/, git hooks (--base sets vcs.base)
+flow setup                       # one-command onboarding: graph tool + graph build + flow doctor
 flow check                       # run the quality gate
 ```
+
+`flow init --base <branch>` sets `config.yaml → vcs.base` — the default base branch
+for feature branches and PR targets (per-task override: the `Base branch:` line in a
+worklog's `progress.md`). `flow setup` is the portable onboarding chain: it detects
+`uv` and installs the graph tool, runs the configured `graph.build`, and finishes with
+`flow doctor` — never failing hard on a missing external tool.
 
 Then, in Claude Code:
 
@@ -43,7 +48,7 @@ Then, in Claude Code:
 /flow-scope "add a read-only endpoint listing departments over budget"
 /flow-shape        # requirements → design → slices (gated)
 /flow-build        # per-slice: plan → generate (TDD) → verify (guardrails)
-/flow-ship         # release checklist → learnings retro → handoff
+/flow-ship         # branch-hardening → learnings retro → open-pr (terminal; the team owns the merge)
 ```
 
 ## What you get

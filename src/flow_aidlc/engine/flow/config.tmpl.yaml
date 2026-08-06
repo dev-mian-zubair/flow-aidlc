@@ -13,6 +13,8 @@ commands:                      # your project's shell commands; flow init fills 
   build: "{{BUILD_CMD}}"       # e.g. make build | npm run build
   lint: "{{LINT_CMD}}"         # e.g. make lint | ruff check
   typecheck: "{{TYPECHECK_CMD}}"  # e.g. mypy | tsc --noEmit  (optional)
+vcs:
+  base: "{{BASE_BRANCH}}"   # default base branch for feature branches + PR target (per-task override: "Base branch:" in progress.md)
 tracker:
   platform: "{{TRACKER_PLATFORM}}"   # github | jira | linear   (default: github)
   mcp: "{{TRACKER_MCP}}"

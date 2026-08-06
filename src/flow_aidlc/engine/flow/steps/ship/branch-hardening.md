@@ -3,7 +3,7 @@
 Harden the **assembled branch** before it becomes a PR. Build/verify reviewed each
 slice in isolation; this reviews the whole stack — cross-slice integration, whole-diff
 patterns, and coverage gaps that only appear once every slice is stacked. This step
-runs **first in Ship**, before `release-checklist`, and is a **checkpoint**.
+runs **first in Ship**, before `learnings` and `open-pr`, and is a **checkpoint**.
 
 ## Goal
 
@@ -19,11 +19,13 @@ resolve high-severity findings, and gate the branch before the PR is opened.
 
 ### 1 — Compute the branch diff
 
-```bash
-git fetch origin && git diff origin/main...HEAD --stat
-```
+The review target is this branch vs its **base** — the `Base branch:` recorded in
+`worklog/<PI-NNN>/progress.md` (default the configured `vcs.base`; a sibling branch for a
+stacked epic child, per [ADR 0011](../../../knowledge/decisions/0011-branch-creation-and-base.md)):
 
-The review target is the full set of changes on this branch vs `origin/main`.
+```bash
+git fetch origin && git diff <base>...HEAD --stat        # <base> = the recorded Base branch
+```
 
 ### 1b — Compute the blast radius (IMPACT_OF_DIFF)
 
@@ -61,7 +63,7 @@ findings; fixes are applied separately (step 4).
 ### 3 — Collect + record findings
 
 Dedupe findings across agents and record them to
-`worklog/<ID>-NNN/ship/branch-hardening.md`, each with: agent, `file:line`, severity
+`worklog/<PI-NNN>/ship/branch-hardening.md`, each with: agent, `file:line`, severity
 (`high` | `medium` | `low`), and a one-line description.
 
 ### 4 — Resolve high-severity findings
@@ -77,11 +79,11 @@ Before presenting for `/flow-approve`, dispatch the read-only `checkpoint-review
 subagent to confirm every high-severity finding is resolved and the record is complete.
 
 **Stop here.** Present the findings summary (resolved + deferred) to the user. Wait
-for `/flow-approve` before advancing to `release-checklist`.
+for `/flow-approve` before advancing to `learnings`.
 
 ## Output
 
-`worklog/<ID>-NNN/ship/branch-hardening.md` — findings, resolutions, and any explicit
+`worklog/<PI-NNN>/ship/branch-hardening.md` — findings, resolutions, and any explicit
 deferrals; all high-severity resolved.
 
 ## Notes
@@ -89,6 +91,8 @@ deferrals; all high-severity resolved.
 - Complements Build/verify (per-slice) — catches whole-branch and cross-slice issues
   that per-slice review cannot see.
 - Runs on the **local branch diff** — no tracker/PR required, so it gates *before* the
-  PR is opened in `release-checklist`.
+  PR is opened in `open-pr`. It is a **pre-PR self-review**: it front-loads cleanup so the
+  branch is clean before humans review it on the actual PR (human review + the PR's
+  required CI checks are the team's gate — see [ADR 0010](../../../knowledge/decisions/0010-ship-ends-at-open-pr.md)).
 - If hardening surfaces a design-level problem, don't paper over it — raise it and
   consider whether a slice needs rework before merge.

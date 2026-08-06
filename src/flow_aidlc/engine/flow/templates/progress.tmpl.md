@@ -1,5 +1,10 @@
 # Progress — [Task ID]
 
+> **Base branch:** origin/main
+> <!-- The branch this workstream targets — branch-hardening + open-pr read this.
+>      Default is your config.yaml → vcs.base; set to a sibling branch only for a
+>      stacked epic child (ADR 0011). -->
+
 Track each Flow stage for this task. Check off each stage as it completes.
 Append one journal line to `journal.md` for every stage that closes.
 
@@ -30,9 +35,8 @@ Append one journal line to `journal.md` for every stage that closes.
 ## Ship
 
 - [ ] branch-hardening
-- [ ] release-checklist
 - [ ] learnings
-- [ ] handoff
+- [ ] open-pr
 
 ---
 
@@ -46,18 +50,15 @@ for this task only).
 
 ```yaml
 guardrails:
-  always_on:
-    - migration-safety      # enabled: always
-    - budget-integrity      # enabled: always
-    - authz-completeness    # enabled: always
-    - router-safety         # enabled: always
-    - license-sku-gating    # enabled: always
+  always_on: []             # mirrors config.yaml → guardrails.always_on (the always_on set from config)
   optional:
     - name: security-baseline
       enabled: false
     - name: resiliency-baseline
       enabled: false
     - name: test-coverage
+      enabled: false
+    - name: dependency-provenance
       enabled: false
 ```
 

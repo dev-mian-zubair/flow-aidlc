@@ -15,6 +15,7 @@ from flow_aidlc import __version__
 # subcommand -> (module under flow_aidlc.commands, help text)
 _COMMANDS: dict[str, tuple[str, str]] = {
     "init": ("init", "Scaffold the Flow instance into the current repo"),
+    "setup": ("setup", "One-command onboarding: graph tool + graph build + doctor"),
     "guardrail": ("guardrail", "Author guardrails (e.g. `flow guardrail add <name>`)"),
     "map": ("map", "Manage knowledge maps (e.g. `flow map add <glob> <doc>`)"),
     "doctor": ("doctor", "Health-check the install and integrations"),

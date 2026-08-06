@@ -34,6 +34,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--tracker", default="github", help="Tracker platform (default: github).")
     p.add_argument("--repo", default=None, help="Tracker repo as owner/name.")
     p.add_argument("--id-prefix", default="PI", help="Ticket ID prefix (default: PI).")
+    p.add_argument("--base", default="origin/main", help="Default base branch for feature branches + PR target (default: origin/main).")
     p.add_argument("--test-cmd", default=None, help="Project test command.")
     p.add_argument("--build-cmd", default=None, help="Project build command.")
     p.add_argument("--lint-cmd", default=None, help="Project lint command.")
@@ -51,6 +52,7 @@ _TOKEN_FLAG_LABEL = {
     "TRACKER_PLATFORM": "Tracker platform",
     "TRACKER_REPO": "Tracker repo (owner/name)",
     "ID_PREFIX": "Ticket ID prefix",
+    "BASE_BRANCH": "Default base branch",
     "TEST_CMD": "Test command",
     "BUILD_CMD": "Build command",
     "LINT_CMD": "Lint command",
@@ -71,6 +73,8 @@ def _gather_values(args: argparse.Namespace, interactive: bool) -> dict[str, str
         values["TRACKER_REPO"] = args.repo
     if args.id_prefix:
         values["ID_PREFIX"] = args.id_prefix
+    if args.base:
+        values["BASE_BRANCH"] = args.base
     if args.test_cmd is not None:
         values["TEST_CMD"] = args.test_cmd
     if args.build_cmd is not None:

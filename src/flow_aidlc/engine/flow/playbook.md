@@ -35,9 +35,8 @@ Scope (front door) → Shape → Build (per slice) → Ship
 | Build | generate | ALWAYS | `steps/build/generate.md` | `superpowers:test-driven-development` | no |
 | Build | verify | ALWAYS | `steps/build/verify.md` | `superpowers:requesting-code-review` + `superpowers:verification-before-completion` | yes |
 | Ship | branch-hardening | ALWAYS | `steps/ship/branch-hardening.md` | `pr-review-toolkit` agents | yes (whole-branch review) |
-| Ship | release-checklist | ALWAYS | `steps/ship/release-checklist.md` | `superpowers:finishing-a-development-branch` | yes |
-| Ship  | learnings | ALWAYS | `steps/ship/learnings.md` | — | no |
-| Ship | handoff | ALWAYS | `steps/ship/handoff.md` | — | no |
+| Ship | learnings | ALWAYS | `steps/ship/learnings.md` | — | no |
+| Ship | open-pr | ALWAYS | `steps/ship/open-pr.md` | `superpowers:finishing-a-development-branch` | yes (open-PR approval — terminal; the team owns the merge, see ADR 0010) |
 
 > **Scope classification.** `clarify` also classifies the idea as `bug | task |
 > feat | epic` (confirmed with the user) and, for an epic, decomposes it into
@@ -60,7 +59,7 @@ At the **Build/verify** stage:
 Current guardrails (from `config.yaml`):
 
 - **always_on:** whatever your `config.yaml` lists — empty until you author guardrails for your project's invariants (see `guardrails/always-on/README.md`).
-- **optional:** `security-baseline`, `resiliency-baseline`, `test-coverage`
+- **optional:** `security-baseline`, `resiliency-baseline`, `test-coverage`, `dependency-provenance`
 
 ## State Tracking
 
