@@ -40,6 +40,12 @@ _EXPECTED_HOOKS = (
     "precompact-save.sh",
 )
 
+# Claude Code skill packs Flow's playbook invokes at runtime. They are user-level
+# plugins (not repo-local), so `flow init` cannot install them — doctor only
+# reminds. superpowers = the per-phase process skills; pr-review-toolkit = the
+# Ship/branch-hardening review agents.
+_REQUIRED_SKILL_PACKS = ("superpowers", "pr-review-toolkit")
+
 
 def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
@@ -86,6 +92,7 @@ def run(argv: list[str]) -> int:
     _check_graph(rep, root, flow_dir)
     _check_git(rep, root)
     _check_mcp(rep, root)
+    _check_skills(rep, root)
 
     print()
     if rep.any_fail:
@@ -245,9 +252,79 @@ def _check_mcp(rep: _Report, root: Path) -> None:
         rep.line("mcp", WARN, ".mcp.json has no configured servers")
 
 
+def _check_skills(rep: _Report, root: Path) -> None:
+    """Verify the Claude Code skill packs Flow depends on are installed.
+
+    ``superpowers`` (the process spine, invoked at every stage) and
+    ``pr-review-toolkit`` (the Ship review gate) are Claude Code plugins living
+    in the user's environment, not the repo — so `flow init` cannot provision
+    them. This surfaces a missing pack here rather than letting a `/flow-*` run
+    fail mid-stage when it tries to invoke an absent skill.
+
+    Never FAILs: doctor also runs in CI, where no Claude Code plugin manifest
+    exists by design. A missing pack — or an unverifiable manifest — is a WARN.
+    """
+    installed = _installed_plugin_names(root)
+    if installed is None:
+        rep.line(
+            "skills",
+            WARN,
+            "no Claude Code plugin manifest — verify "
+            + " + ".join(_REQUIRED_SKILL_PACKS)
+            + " are installed (`/plugin install <name>`)",
+        )
+        return
+    missing = [pack for pack in _REQUIRED_SKILL_PACKS if pack not in installed]
+    if missing:
+        rep.line(
+            "skills",
+            WARN,
+            "not installed here: "
+            + ", ".join(missing)
+            + " — run `/plugin install <name>` in Claude Code",
+        )
+    else:
+        rep.line("skills", PASS, " + ".join(_REQUIRED_SKILL_PACKS) + " installed")
+
+
 # ---------------------------------------------------------------------------
 # helpers
 # ---------------------------------------------------------------------------
+
+def _installed_plugin_names(root: Path) -> set[str] | None:
+    """Names of Claude Code plugins available to ``root``, or ``None`` if unknown.
+
+    Reads ``$CLAUDE_CONFIG_DIR/plugins/installed_plugins.json`` (default
+    ``~/.claude``). A plugin counts as available when installed at ``user`` scope
+    (global) or at ``project`` scope for this repo. Plugin keys carry a
+    marketplace suffix (``superpowers@claude-plugins-official``); we match on the
+    name before ``@`` so the check is marketplace-agnostic. Returns ``None`` when
+    the manifest is absent or unreadable — the caller treats that as "can't verify".
+    """
+    config_dir = os.environ.get("CLAUDE_CONFIG_DIR") or str(Path.home() / ".claude")
+    manifest = Path(config_dir) / "plugins" / "installed_plugins.json"
+    if not manifest.exists():
+        return None
+    try:
+        data = json.loads(manifest.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+
+    root = root.resolve()
+    names: set[str] = set()
+    for key, records in (data.get("plugins", {}) or {}).items():
+        name = key.split("@", 1)[0]
+        for rec in records or []:
+            scope = rec.get("scope")
+            if scope == "user":
+                names.add(name)
+                break
+            if scope == "project":
+                project_path = rec.get("projectPath")
+                if project_path and Path(project_path).resolve() == root:
+                    names.add(name)
+                    break
+    return names
 
 def _guardrail_lists(flow_dir: Path) -> tuple[list[str], list[str]]:
     config_path = flow_dir / "config.yaml"

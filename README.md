@@ -11,14 +11,22 @@ invariants (guardrails), subsystem maps, and tracker config.
 
 ---
 
-## Prerequisites
+These are installed in your **Claude Code environment** (or, for Graphify, your
+machine), not by `flow init` — the scaffolder is repo-local, while these are
+shared across projects. `flow doctor` verifies all three are present and warns if
+one is missing, so a `/flow-*` run never fails mid-stage on an absent dependency.
 
-- **[superpowers](https://github.com/obra/superpowers) skills** — Flow delegates
-  brainstorming, plan-writing, TDD, and code review to the `superpowers` skill
-  ecosystem; install it in Claude Code.
-- **[Graphify](https://pypi.org/project/graphifyy/)** — Flow's source of truth for
-  code *structure*. Structure is not maintained as prose; it is extracted into a
-  committed **code graph** that agents query over MCP. Install with
+- **[superpowers](https://github.com/obra/superpowers) skills** *(required)* — Flow
+  delegates brainstorming, plan-writing, TDD, and code review to the `superpowers`
+  skill ecosystem; it is invoked at nearly every stage of the playbook. Install in
+  Claude Code: `/plugin install superpowers`.
+- **`pr-review-toolkit` agents** *(required)* — the Ship/branch-hardening gate runs
+  a whole-branch review through these specialized agents (code review, silent-failure
+  hunting, test analysis, type-design, comments) before opening a PR. Install in
+  Claude Code: `/plugin install pr-review-toolkit`.
+- **[Graphify](https://pypi.org/project/graphifyy/)** *(recommended)* — Flow's source
+  of truth for code *structure*. Structure is not maintained as prose; it is extracted
+  into a committed **code graph** that agents query over MCP. Install with
   `uv tool install "graphifyy[mcp]"` (the `[mcp]` extra powers the agent-facing
   `graphify` MCP server; the base package alone builds the graph for CI). Without it,
   the structural steps degrade to a read-only `Explore`/grep fallback — nothing breaks,
