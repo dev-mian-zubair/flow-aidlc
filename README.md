@@ -66,6 +66,17 @@ Then, in Claude Code:
 - **Code graph as structure source of truth** — a committed [Graphify](https://pypi.org/project/graphifyy/) graph, queried over MCP, answers "who calls this / what depends on it / what's the contract" deterministically (ADR 0008/0009). Curated `knowledge/map/` docs hold only the **invariants** a graph can't know; each is enforced by a guardrail, so structure can't go stale.
 - **Quality gate** — `flow check` (guardrail-lint, structure-check, reference-selfcheck, config-consistency incl. graph-backend + graph-paths) — runnable locally and in CI.
 - **Superpowers-powered** — delegates brainstorming, plan-writing, TDD, and code review to the `superpowers` skill ecosystem.
+- **Pluggable issue tracker** — Scope publishes tickets and Ship opens the PR through a tracker adapter (`steps/shared/tracker.md`) that maps Flow's universal operations (`CREATE_TICKET`, `ADD_SUB_ISSUE`, `OPEN_PR`, …) to a platform. No step or agent names a platform-specific tool, and the `config-consistency` gate (C3) refuses an unimplemented platform.
+
+## Supported trackers
+
+| Platform | Status | MCP server | Notes |
+|---|---|---|---|
+| **GitHub Issues** | ✅ Implemented (default) | `@modelcontextprotocol/server-github` | `tracker.repo` = `owner/name`; `OPEN_PR` native |
+| **Jira** | ✅ Implemented | `mcp-atlassian` (sooperset) | `tracker.repo` = the **project key**; site URL via `JIRA_URL`; `OPEN_PR` runs on your VCS with the Jira key in the PR |
+| **Linear** | ⏳ Stub | — | Fill its adapter section to enable (C3 blocks it until then) |
+
+Switch trackers via `flow init --tracker <platform>` (or edit `config.yaml`) — see [`INTEGRATIONS.md`](src/flow_aidlc/engine/flow/INTEGRATIONS.md).
 
 ## The two layers
 

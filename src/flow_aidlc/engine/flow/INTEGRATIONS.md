@@ -93,8 +93,11 @@ Code** so the plugins load (like MCP servers, plugins are read at session start)
 
 The only required var is your **tracker token** (for the tracker MCP server —
 `graphify` and `context7` need none). With the default GitHub tracker that is
-`GITHUB_TOKEN`. The server is a **local, headless** stdio process, so it can't run an
-interactive login itself — it reads an already-minted token from the environment.
+`GITHUB_TOKEN`; with the Jira tracker it is `JIRA_URL` + `JIRA_USERNAME` +
+`JIRA_API_TOKEN` (Cloud) or `JIRA_URL` + `JIRA_PERSONAL_TOKEN` (Server/DC) — see
+"Switching the issue tracker". The server is a **local, headless** stdio process, so
+it can't run an interactive login itself — it reads an already-minted token from the
+environment.
 
 **Recommended — source it from the `gh` CLI's OAuth login** (no hand-minted PAT):
 
@@ -133,15 +136,57 @@ Each ✗ line names the fix (an install command or a config value).
 
 ## Switching the issue tracker
 
-Flow defaults to GitHub Issues. To swap to Jira or Linear:
+Flow defaults to GitHub Issues. `github` and `jira` are implemented in the tracker
+adapter (`.flow/steps/shared/tracker.md`); `linear` is a stub (adding it = fill in
+its adapter section, then follow the same three steps).
 
-1. Edit `.flow/config.yaml`:
+### To Jira (implemented — `mcp-atlassian`)
+
+Jira is mapped to the `mcp-atlassian` (sooperset) toolset. Jira does not use
+`owner/repo` — `config.tracker.repo` holds the **project key** and the site URL is an
+env var. Because Jira keys are already `<project-key>-<number>`, the id-scheme prefix
+is the project key.
+
+1. Scaffold (or edit `.flow/config.yaml`) for Jira — substitute your real key for
+   `<project-key>`:
+   ```bash
+   flow init --tracker jira --repo <project-key> --id-prefix <project-key>
+   ```
    ```yaml
    tracker:
-     platform: linear        # github | jira | linear
-     mcp: linear             # must match a key in .mcp.json
+     platform: jira
+     mcp: jira                       # must match the key in .mcp.json
+     repo: <project-key>             # the Jira project key (not owner/repo)
+     id_scheme: <project-key>-{n}    # Jira keys are already <project-key>-<n>
    ```
-2. Add the corresponding MCP server entry to `.mcp.json` (e.g. `@linear/mcp`) with its env vars,
-   and implement its mapping in the tracker adapter `.flow/steps/shared/tracker.md`
-   (the `config-consistency` gate check C3 blocks an unimplemented platform).
+2. Add the `jira` server to `.mcp.json` (headless stdio, matches Flow's model):
+   ```json
+   "jira": {
+     "command": "uvx",
+     "args": ["mcp-atlassian"],
+     "env": {
+       "JIRA_URL": "${JIRA_URL}",
+       "JIRA_USERNAME": "${JIRA_USERNAME}",
+       "JIRA_API_TOKEN": "${JIRA_API_TOKEN}"
+     }
+   }
+   ```
+   Cloud auth: `JIRA_URL` (e.g. `https://your-site.atlassian.net`), `JIRA_USERNAME`
+   (your email), `JIRA_API_TOKEN` (from id.atlassian.com). Server/DC: use
+   `JIRA_PERSONAL_TOKEN` instead of username + api-token.
+3. `flow doctor` to confirm the `jira` server resolves and its env vars are set;
+   `flow check` — C3 passes because the adapter implements `jira`.
+
+> **Code still lives on your VCS.** Jira tracks issues; it does not host PRs. With
+> `platform: jira` the Ship phase still opens the PR on your VCS (the `github`
+> mapping's `pull_request_write`) with the Jira key in the PR title/body — keep the
+> `github` MCP server declared for the PR write path.
+
+### To Linear (stub)
+
+1. Edit `.flow/config.yaml` (`platform: linear`, `mcp: linear`).
+2. Add the Linear MCP server entry to `.mcp.json` (e.g. `@linear/mcp`) with its env
+   vars, and implement its mapping in the tracker adapter (fill the `linear` section,
+   remove its NOT IMPLEMENTED marker — the `config-consistency` gate check C3 blocks
+   an unimplemented platform).
 3. Re-run `flow doctor` to confirm the new server's command resolves and its env var is set.

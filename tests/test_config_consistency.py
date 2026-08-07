@@ -222,3 +222,38 @@ def test_gate_fails_on_config_consistency_violation(tmp_path):
     root = _make_repo(tmp_path)
     (root / ".flow" / "runbook.md").write_text("clone acme/pip\n")  # C2 violation
     assert gate_run(root) == 1
+
+
+# ---------------------------------------------------------------------------
+# jira is implemented end-to-end — a jira-configured real instance passes C3
+# ---------------------------------------------------------------------------
+
+def test_shipped_adapter_implements_jira_not_linear():
+    """The shipped tracker adapter maps jira (no NOT IMPLEMENTED) but stubs linear."""
+    from flow_aidlc.engine_assets import engine_dir
+
+    adapter = (engine_dir() / "flow" / "steps" / "shared" / "tracker.md").read_text()
+    # The jira section heading must not carry a NOT IMPLEMENTED marker...
+    assert "### jira — NOT IMPLEMENTED" not in adapter
+    assert "### jira\n" in adapter
+    # ...while linear is still an explicit stub.
+    assert "### linear — NOT IMPLEMENTED" in adapter
+
+
+def test_c3_jira_passes_end_to_end(tmp_path):
+    """`flow init --tracker jira` produces an instance C3 accepts (jira is mapped)."""
+    import subprocess
+
+    from flow_aidlc.commands import init
+
+    subprocess.run(["git", "init", str(tmp_path)], check=True, capture_output=True)
+    rc = init.run([
+        "--yes", "--tracker", "jira", "--repo", "PROJ", "--id-prefix", "PROJ",
+        "--path", str(tmp_path),
+    ])
+    assert rc == 0
+
+    errs = check(tmp_path)
+    # No C3 (unimplemented-platform) error for jira, and the gate check is clean.
+    assert not any("C3" in e for e in errs), errs
+    assert errs == [], errs

@@ -13,7 +13,7 @@ mapping section for that platform. **If the configured platform has no mapping h
 it yet; do not improvise platform calls. (The `config-consistency` check enforces
 that `tracker.platform` is an implemented platform.)
 
-**Implemented:** `github`.  **Stubs:** `jira`, `linear`.
+**Implemented:** `github`, `jira`.  **Stubs:** `linear`.
 
 ## Universal operations (the contract callers use)
 
@@ -55,13 +55,31 @@ Tool names are the current `github-mcp-server` toolset; older servers may split
 Types require the org to have them enabled (else `SET_TYPE` → label fallback);
 `SET_FIELDS` requires your delivery Project v2 to exist.
 
-### jira — NOT IMPLEMENTED
+### jira
 
-Stub. When adopted, map each universal operation to the Jira MCP/REST equivalent
-(`CREATE_TICKET` → create issue; `ADD_SUB_ISSUE` → parent/epic link; `SET_TYPE` →
-issue type; `SET_FIELDS` → custom fields; `OPEN_PR` → the linked VCS). Until this
-section is filled in, `config.tracker.platform: jira` is refused by
-`config-consistency`.
+Tool names are the `mcp-atlassian` (sooperset) Jira toolset. **`config.tracker.repo`
+holds the Jira project key** (the `<project-key>` in a `<project-key>-<number>`
+issue key), not `owner/repo`; the site base URL is the `JIRA_URL` env var (see
+`INTEGRATIONS.md`). Because Jira keys are already `<project-key>-<number>`, set
+`config.tracker.id_scheme` to `<project-key>-{n}` (i.e. `flow init --tracker jira
+--repo <project-key> --id-prefix <project-key>`, using your real key).
+
+| Operation | jira tool call |
+|---|---|
+| `DEDUP_SEARCH` | `jira_search` with a JQL query scoped to `project = <config.tracker.repo>` (e.g. `project = <project-key> AND text ~ "<terms>"`) |
+| `CREATE_TICKET` | `jira_create_issue(project_key: <config.tracker.repo>, summary: title, description: body, issue_type, labels)` |
+| `VERIFY_EXISTS` / `GET_TICKET` | `jira_get_issue(issue_key)` |
+| `SET_TYPE` | set `issue_type` at create; change later via `jira_update_issue(fields: {issuetype})`. Jira issue types (Bug/Story/Task/Epic) are native — no label fallback needed |
+| `ADD_SUB_ISSUE` | **team-managed:** `jira_update_issue(child, fields: {parent: {key: <parent>}})`; **company-managed classic epics:** `jira_link_to_epic(issue_key: <child>, epic_key: <parent>)`. (`jira_create_issue_link` is for *relates/blocks* links, not parent — do not use it for epic children.) |
+| `SET_FIELDS` | `jira_update_issue` — priority → `fields.priority`; effort → the story-points custom field (`customfield_XXXXX`); milestone → `fields.fixVersions`; status is a **transition**, not a field — use `CLOSE`/`jira_transition_issue` |
+| `COMMENT` | `jira_add_comment(issue_key, comment)` |
+| `CLOSE` | `jira_transition_issue(issue_key, transition: "Done"|"Closed")` — Jira advances state via **workflow transitions**, not a boolean; the target transition name depends on the project's workflow |
+| `OPEN_PR` | **Jira does not host code.** Open the PR on the VCS (the `github` mapping's `pull_request_write`), and put the Jira key (e.g. `<project-key>-123`) in the PR title/body so Jira's development panel / Smart Commits link it back. Ship terminates at the open PR; it does not transition the Jira ticket. |
+
+**Preconditions (jira):** the `jira` MCP (`mcp-atlassian`) is connected + authed —
+Cloud: `JIRA_URL` + `JIRA_USERNAME` + `JIRA_API_TOKEN`; Server/DC: `JIRA_URL` +
+`JIRA_PERSONAL_TOKEN`. The story-points/effort custom-field id is instance-specific;
+resolve it once and record it in `knowledge/map/` if `SET_FIELDS` sets effort.
 
 ### linear — NOT IMPLEMENTED
 
