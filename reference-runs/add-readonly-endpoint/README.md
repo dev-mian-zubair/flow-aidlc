@@ -76,7 +76,7 @@ mean_overall: 1.0000  (threshold: 0.75)  PASS
 ## What makes this golden "good"
 
 The three artifact files (`requirements.md`, `design.md`, `slices.md`) were
-hand-authored to reflect two hard guardrails from the PIP codebase:
+hand-authored to reflect two illustrative hard guardrails:
 
 1. **authz-completeness** — the endpoint gates on both an RBAC permission
    (`require_permissions(["read_budget"])`) and a ReBAC SpiceDB resource check

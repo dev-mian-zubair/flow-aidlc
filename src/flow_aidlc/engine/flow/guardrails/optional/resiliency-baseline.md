@@ -4,7 +4,7 @@
 
 ## Rule
 
-New network, database, and queue interactions are resilient. Every external call has an explicit timeout; retried operations are idempotent; failures degrade gracefully without crashing the service on a dependency outage; background/queue tasks are safe to re-run. (Directional, per the AWS Well-Architected reliability pillar.)
+New network, database, and queue interactions are resilient. Every external call has an explicit timeout; retried operations are idempotent; failures degrade gracefully without crashing the service on a dependency outage; background/queue tasks are safe to re-run. (Directional reliability guidance.)
 
 ## Verification
 

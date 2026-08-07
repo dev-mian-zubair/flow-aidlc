@@ -3,8 +3,8 @@
 Scores how close a candidate set of Flow artifacts is to a hand-authored
 golden reference WITHOUT any LLM or network call — safe to run in CI.
 
-Adopted from AWS AI-DLC's HeuristicScorer approach: three heuristic dimensions
-(intent, design, completeness) weighted into a single overall score.
+Uses three heuristic dimensions (intent, design, completeness) weighted into a
+single overall score.
 
 Usage:
     python -m flow_aidlc.checks.scorer <ref_dir> <cand_dir>

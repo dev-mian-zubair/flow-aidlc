@@ -1,7 +1,7 @@
 """Deterministic artifact sensors for Flow stage markdown files.
 
 Checks that a stage artifact has its required sections and cites its upstream
-inputs — offline, no LLM, no network. Adopted from AWS AI-DLC v2 "sensors".
+inputs — offline, no LLM, no network. A deterministic artifact "sensor".
 
 Usage:
     python -m flow_aidlc.checks.artifact_sensor <file> \\

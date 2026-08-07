@@ -146,8 +146,8 @@ def test_c3_stub_detection_is_case_insensitive(tmp_path):
 #
 # NOTE: this package intentionally de-hardcodes the always_on guardrail list in
 # its prose files (guardrail-verifier / playbook / build-verify treat config.yaml
-# as the sole source of truth), so the reference instance's C4 "guardrail echo"
-# check does not apply here and is not vendored.
+# as the sole source of truth), so the skipped C4 "guardrail echo"
+# check does not apply here.
 # ---------------------------------------------------------------------------
 
 def test_c5_missing_review_echo_blocks(tmp_path):

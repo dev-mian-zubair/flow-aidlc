@@ -28,12 +28,12 @@ Checks:
      existing directory, and ``graph.ignore_file`` (if set) must exist — so the
      single-extract scope the config documents actually resolves on disk.
 
-Note: the reference instance also carries a C4 "guardrail echo" check that
-requires each ``always_on`` name to be repeated in the prose files that hardcode
-the list. This package intentionally **de-hardcodes** those files (the
-guardrail-verifier, playbook, and build/verify treat ``config.yaml`` as the sole
-source of truth and never name guardrails), so there is no prose echo to keep in
-sync and C4 does not apply here.
+Note: the numbering skips C4 — a "guardrail echo" check that would require each
+``always_on`` name to be repeated in the prose files that hardcode the list. The
+engine intentionally **de-hardcodes** those files (the guardrail-verifier,
+playbook, and build/verify treat ``config.yaml`` as the sole source of truth and
+never name guardrails), so there is no prose echo to keep in sync and C4 does not
+apply here.
 
 Usage:
     python -m flow_aidlc.checks.config_consistency            # uses repo root

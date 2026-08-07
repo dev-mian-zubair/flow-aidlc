@@ -1,19 +1,17 @@
 # Decision Records
 
-This directory holds the founding Architecture Decision Records (ADRs) for the
-Perpetual Intelligence Platform and its Flow operating methodology.
+This directory holds your project's Architecture Decision Records (ADRs) — the
+durable reasoning trail behind the choices that shape this codebase and its Flow
+operating methodology.
 
 ## Index
 
+_No decision records yet._ Add one as `NNNN-short-title.md` (zero-padded,
+sequential) and list it in the table below.
+
 | # | Title | Status | Date |
 |---|-------|--------|------|
-| [0001](0001-adopt-flow.md) | Adopt Flow | accepted | 2026-08-03 |
-| [0002](0002-self-updating-knowledge.md) | Self-Updating Knowledge | accepted | 2026-08-03 |
-| [0003](0003-worklog-committed.md) | Worklog Committed | accepted | 2026-08-03 |
-| [0004](0004-coordination-absorbed-into-flow.md) | Coordination Absorbed into the Flow | accepted | 2026-08-04 |
-| [0005](0005-adopt-aidlc-eval-and-guidance.md) | Adopt AWS AI-DLC eval + guidance mechanisms | accepted | 2026-08-04 |
-| [0006](0006-adopt-learnings-and-traceability.md) | Adopt learnings loop + traceability verification | accepted | 2026-08-04 |
-| [0007](0007-blend-aidlc-scoping.md) | Blend aidlc-scoping into the Flow | accepted | 2026-08-04 |
+| _(none)_ | | | |
 
 ## Immutability Rule
 

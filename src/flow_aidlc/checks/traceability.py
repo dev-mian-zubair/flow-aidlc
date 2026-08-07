@@ -6,7 +6,7 @@ each slice's requirement refs from slices.md, then reports:
 - orphan requirements  — no slice covers them  → exit 1
 - orphan slices        — cite no known requirement → warning only, exit 0
 
-Adopted from AWS AI-DLC cross-phase traceability.  Offline / deterministic:
+Cross-phase traceability verification.  Offline / deterministic:
 no LLM, no network, no eval, no random, no time.
 
 Usage:

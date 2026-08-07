@@ -2,29 +2,27 @@
 
 ## Migration (source of truth)
 
-M0–M6 are complete. **This package is now the canonical source of truth for the Flow
-engine** — the reference instance (PIP) is frozen as historical reference only. The
-milestones below are retained as the extraction record; ongoing work is polish, not
-extraction.
+M0–M6 are complete. **This package is the canonical source of truth for the Flow
+engine.** The milestones below are retained as the build record; ongoing work is
+polish, not new construction.
 
-Extract the Flow engine from the reference instance and ship it as a portable
-package + CLI. Milestones are ordered so each ends with something runnable.
+The goal was to ship the Flow engine as a portable package + CLI. Milestones are
+ordered so each ends with something runnable.
 
 ## M0 — Foundation (this commit)
 - [x] Repo + package skeleton (`src/flow_aidlc/`), pyproject, README, ARCHITECTURE.
 - [x] CLI dispatch (`flow <cmd>`) with subcommands wired (stubs where not yet built).
 
-## M1 — Engine extraction (de-PIP-ify) ✅ DONE (82 files, coupling sweep clean)
+## M1 — Engine assets (genericized) ✅ DONE (82 files, coupling sweep clean)
 Bundle the generic engine assets under `src/flow_aidlc/engine/`, stripped of any
-project-specific reference. Source: the reference instance's `.flow/`, `.claude/`,
-`scripts/flow-checks/`.
+project-specific reference.
 - [ ] `engine/claude/{commands,agents,hooks}` + `settings.json` — copy as-is (already 0 project coupling), except:
-      - `agents/review/guardrail-verifier.md` — replace the hardcoded 5 PIP guardrails with "load the always_on set from config.yaml".
+      - `agents/review/guardrail-verifier.md` — replace any hardcoded guardrail list with "load the always_on set from config.yaml".
       - `agents/scope/scope-publish.md` + `steps/scope/publish.md` — replace the hardcoded repo with `config.yaml tracker.repo`.
 - [ ] `engine/flow/{playbook.md,steps,templates}` — copy generic guides; genericize:
       - `templates/requirements.tmpl.md` — the gotcha-checklist rows become generated from the active guardrail set (placeholder + `flow init` fills, or `flow guardrail add` regenerates).
-      - `steps/shared/{gotcha-checklist,content-validation}.md` — strip PIP guardrail names; reference "the always_on set".
-- [ ] `engine/flow/guardrails/optional/*` — genericize the 3 starters (security/resiliency/test-coverage) to be CI-agnostic (they currently cite PIP CI paths).
+      - `steps/shared/{gotcha-checklist,content-validation}.md` — strip any hardcoded guardrail names; reference "the always_on set".
+- [ ] `engine/flow/guardrails/optional/*` — genericize the 3 starters (security/resiliency/test-coverage) to be CI-agnostic.
 - [ ] `engine/flow/guardrails/always-on/` — ship EMPTY + a `TEMPLATE.md` + a `README.md` ("author your invariants here").
 - [ ] `engine/flow/config.tmpl.yaml`, `engine/flow/knowledge-map.tmpl.yaml` — `init`-filled templates.
 - [ ] `engine/knowledge/{map/README.md,decisions/README.md,practices.md}` — scaffolds.
@@ -55,5 +53,4 @@ project-specific reference. Source: the reference instance's `.flow/`, `.claude/
 - [ ] Wrap `.claude/*` as a plugin (marketplace manifest); the plugin's `/flow-init` shells to the CLI.
 
 ## Notes
-- The reference instance lives at `/home/codingcops/projects/Merge-20260603` (read-only source for extraction).
 - Keep the engine's `superpowers:*` skill references — Flow is powered by superpowers; document it as a prerequisite.

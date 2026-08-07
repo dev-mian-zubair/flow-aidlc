@@ -4,7 +4,7 @@ Scans a task's journal.md for correction/redirection signals and surfaces
 candidate learnings for human curation.  Also provides an idempotent helper
 to append approved learnings to knowledge/practices.md.
 
-Offline, no LLM, no network.  Adopted from AWS AI-DLC's learnings ritual.
+Offline, no LLM, no network.  Part of Flow's learnings ritual.
 
 Usage:
     python -m flow_aidlc.checks.learnings <task_dir> [--practices <path>]

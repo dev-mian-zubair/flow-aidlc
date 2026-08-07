@@ -7,8 +7,7 @@ in CI. It is **project-agnostic** — the engine ships generic; a one-command
 `flow init` scaffolds a per-project instance, and each project authors its own
 invariants (guardrails), subsystem maps, and tracker config.
 
-> Flow was extracted from a production instance (the Perpetual Intelligence Platform).
-> This repo is the reusable, de-specialized engine + a CLI to install it anywhere.
+> Flow is a reusable, project-agnostic engine + a CLI to install it into any repo.
 
 ---
 
@@ -88,9 +87,8 @@ by `flow plugin build` (single source of truth: `src/flow_aidlc/engine/claude/`)
 
 ## Status
 
-**Source of truth for the Flow engine.** Extraction from the reference instance is
-complete — this package is now canonical, and the reference instance is frozen as
-historical reference. We are in the polish phase. See `docs/build-plan.md`.
+**Canonical source of truth for the Flow engine.** The engine and CLI are
+feature-complete (M0–M6); we are in the polish phase. See `docs/build-plan.md`.
 
 ## License
 
