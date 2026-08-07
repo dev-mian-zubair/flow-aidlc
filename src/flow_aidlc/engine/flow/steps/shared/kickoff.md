@@ -14,7 +14,8 @@ Load this guide at the start of every Flow task, before any stage begins.
 > **Scope skips this.** The steps in this section and the next run **only** when
 > entering Shape via `/flow-start` (a confirmed ticket, about to do repo work). The
 > Scope front door (`/flow-scope`) is **repo-less** — it does not sync, branch, or
-> scaffold; it outputs only the ticket. See [ADR 0011](../../../knowledge/decisions/0011-branch-creation-and-base.md).
+> scaffold; it outputs only the ticket. The branch is created at Shape entry (via
+> `/flow-start`), off the configured base, before the worklog is scaffolded.
 
 ### 1 — Sync
 
@@ -41,14 +42,14 @@ git switch -c feat/<area>-<PI-NNN>-<slug> origin/main    # base = config.yaml �
   `branch-hardening` and `open-pr` target it. Default is the configured `vcs.base`.
 
 **Epic children default to independent branches off the base** — each child is its own
-workstream with its own branch and PR (ADR 0010/0011). If this child has a **hard dependency
+workstream with its own branch and PR. If this child has a **hard dependency
 on a sibling that has not merged yet**, decide the base (recommend A):
 
 - **(A, recommended)** wait for the sibling to merge, then branch off the base — keeps
   the PR simple (targets the trunk) and avoids rebase cascades.
 - **(B) stack** — branch off the sibling's branch and set `Base branch:` to it; the PR will
   target that branch. Full stacked-PR support (retarget-on-merge, enforced order) is deferred
-  (ADR 0011) — you manage the rebase/retarget by hand.
+  — you manage the rebase/retarget by hand.
 
 Create the branch **before** scaffolding the worklog (next) so every commit — worklog and
 code — lands on the feature branch, never on the trunk.

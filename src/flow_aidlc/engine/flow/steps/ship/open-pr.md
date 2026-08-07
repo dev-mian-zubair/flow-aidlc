@@ -5,8 +5,8 @@ Powered by superpowers — invokes `superpowers:finishing-a-development-branch`.
 The **terminal stage** of the Flow. It finalizes the branch (including the worklog
 audit trail), opens the PR, and stops. The Flow does **not** merge: merge, required
 checks + approvals, ticket close, and any migration-lock release are owned by the team
-on the host (branch protection on the base branch is authoritative). See
-[ADR 0010](../../../knowledge/decisions/0010-ship-ends-at-open-pr.md).
+on the host (branch protection on the base branch is authoritative) — the Ship phase
+ends at opening the PR.
 
 ## Goal
 
@@ -20,7 +20,7 @@ record the PR on the ticket. The Flow's work ends here.
 
 ## Ordering principle (why the worklog is committed *before* the PR)
 
-The worklog is a committed part of the branch (ADR 0003), so it must be in the PR's
+The worklog is a committed part of the branch — the task's audit trail — so it must be in the PR's
 **initial** diff — which means the wrap-up is committed **before** `OPEN_PR`, not after.
 A trailing worklog commit pushed *after* the PR opens re-runs the PR's un-path-filtered
 CI workflows on a docs-only change and makes reviewers wait for CI twice. The only fact
@@ -44,13 +44,13 @@ required approvals. Confirm before opening (use your project's commands from
 - [ ] `commands.build` green.
 - [ ] `commands.typecheck` green (if configured).
 - [ ] Any project-specific migration/schema invariant holds (e.g. a single migration head).
-- [ ] `git fetch origin && git rebase <base>` clean — no conflicts (`<base>` = the `Base branch:` in `progress.md`; default the configured `vcs.base`, per [ADR 0011](../../../knowledge/decisions/0011-branch-creation-and-base.md)).
+- [ ] `git fetch origin && git rebase <base>` clean — no conflicts (`<base>` = the `Base branch:` in `progress.md`; default the configured `vcs.base`).
 - [ ] All `always_on` guardrails passed in the final `verify.md` (the always_on set from `config.yaml`).
 
 > **Any serialization lock stays held.** If this task holds a project lock (e.g. a
 > migration lock in `worklog/MIGRATION-LOCK.md`), do **not** release it here — the lock
 > is held until the change lands on the base branch. Releasing it is a post-merge,
-> team-owned step (see ADR 0010).
+> team-owned step — the Flow ends at the open PR.
 
 ### 3 — Draft the PR
 
@@ -87,7 +87,7 @@ step 7:
 Push the branch (now carrying the full worklog), then perform `OPEN_PR` via the **tracker
 adapter** (`steps/shared/tracker.md`). The PR's **base** is the `Base branch:` recorded in
 `progress.md` — normally the configured `vcs.base`; a sibling branch for a stacked epic
-child (ADR 0011):
+child (epic children are independent branches):
 
 ```
 OPEN_PR(

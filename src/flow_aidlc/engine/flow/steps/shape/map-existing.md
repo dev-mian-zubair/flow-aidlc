@@ -22,8 +22,7 @@ callers/dependents/contracts **deterministically**:
    file(s)/module(s)** from the ticket body as your starting coordinates.
 2. **Seed from the Knowledge Map (invariants).** For each area the ticket touches,
    read the matching `knowledge/map/<subsystem>.md` (index:
-   `knowledge/map/README.md`). Per [ADR 0008](../../../knowledge/decisions/0008-code-graph-owns-structure.md)
-   these docs hold the **invariants and rationale** a graph can't know (e.g. "X is
+   `knowledge/map/README.md`). These docs hold the **invariants and rationale** a graph can't know (e.g. "X is
    the single source of truth", "this toggle fails closed"); the *structure* lives in
    the graph (step 3).
 3. **Resolve structure from the code graph (primary).** For each seed symbol/file,

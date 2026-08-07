@@ -1,8 +1,7 @@
 # Consulting the Knowledge Map
 
 `knowledge/map/` is the project's curated **Knowledge Map** — short, ≤1-screen
-subsystem docs. Per [ADR 0008](../../../knowledge/decisions/0008-code-graph-owns-structure.md)
-each doc holds a subsystem's **invariants and rationale** (the "why" and the
+subsystem docs. Each doc holds a subsystem's **invariants and rationale** (the "why" and the
 load-bearing rules); the *structure* it once described — files, symbols, callers —
 now lives in the **code graph** (query it via `steps/shared/graph.md`). Reading the
 map is **not** reading source: a Scope agent stays source-less and write-less while
@@ -35,7 +34,7 @@ Consult on **every** Scope run — begin `clarify` by reading the index.
 
 ## Freshness
 
-**Structural freshness was retired** ([ADR 0008](../../../knowledge/decisions/0008-code-graph-owns-structure.md)).
+**Structural freshness was retired** — structure lives in the code graph, not in prose.
 There is no more `verified-at-sha` / `freshness.py` / `STALE`-flag loop — a map's
 structure can't go stale because structure now lives in the graph
 (fresh-by-construction; rebuild it with the configured `graph.build` if the *graph*

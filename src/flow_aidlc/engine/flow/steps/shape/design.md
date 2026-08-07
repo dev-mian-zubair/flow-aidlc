@@ -31,7 +31,7 @@ Per `steps/shared/content-validation.md`, keep every template section — mark o
 
 For each subsystem the design touches, compare the design against its
 `knowledge/map/*.md` doc — which now holds the subsystem's **invariants** (structure
-is in the code graph; per ADR 0008):
+is in the code graph):
 
 1. If the design honors the map's invariants, note "consistent" and move on.
 2. **If the design would violate a stated invariant** (e.g. "X is the single source

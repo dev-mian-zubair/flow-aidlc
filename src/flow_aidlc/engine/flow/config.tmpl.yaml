@@ -39,7 +39,7 @@ review:
     - pr-review-toolkit:comment-analyzer
 
 graph:
-  backend: graphify              # code-graph backend — see steps/shared/graph.md (ADR 0008/0009). Requires Graphify.
+  backend: graphify              # code-graph backend — see steps/shared/graph.md. Swappable via the graph adapter; Graphify by default.
   mcp: graphify                  # MCP server agents query for structure (universal ops -> its tools via the adapter)
   output: graphify-out/graph.json
   build: "graphify extract . --code-only --no-cluster --force"   # canonical, deterministic, offline (dev == CI)

@@ -65,7 +65,7 @@ Scope ──────► Shape ──────────────► 
 ```
 
 `[✓]` = checkpoint — stop here and wait for `/flow-approve`.  
-Ship is **terminal at the open PR** — the team owns the merge (ADR 0010).  
+Ship is **terminal at the open PR** — the team owns the merge, required checks, and ticket close.  
 `*` = conditional on brownfield work (existing code being modified).
 
 - **Scope** (`.flow/steps/scope/`) — turn an idea into a tracker ticket.

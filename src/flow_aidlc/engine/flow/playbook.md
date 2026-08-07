@@ -36,7 +36,7 @@ Scope (front door) → Shape → Build (per slice) → Ship
 | Build | verify | ALWAYS | `steps/build/verify.md` | `superpowers:requesting-code-review` + `superpowers:verification-before-completion` | yes |
 | Ship | branch-hardening | ALWAYS | `steps/ship/branch-hardening.md` | `pr-review-toolkit` agents | yes (whole-branch review) |
 | Ship | learnings | ALWAYS | `steps/ship/learnings.md` | — | no |
-| Ship | open-pr | ALWAYS | `steps/ship/open-pr.md` | `superpowers:finishing-a-development-branch` | yes (open-PR approval — terminal; the team owns the merge, see ADR 0010) |
+| Ship | open-pr | ALWAYS | `steps/ship/open-pr.md` | `superpowers:finishing-a-development-branch` | yes (open-PR approval — terminal; the team owns the merge, checks, and ticket close) |
 
 > **Scope classification.** `clarify` also classifies the idea as `bug | task |
 > feat | epic` (confirmed with the user) and, for an epic, decomposes it into

@@ -1,5 +1,12 @@
 # Build plan
 
+## Migration (source of truth)
+
+M0–M6 are complete. **This package is now the canonical source of truth for the Flow
+engine** — the reference instance (PIP) is frozen as historical reference only. The
+milestones below are retained as the extraction record; ongoing work is polish, not
+extraction.
+
 Extract the Flow engine from the reference instance and ship it as a portable
 package + CLI. Milestones are ordered so each ends with something runnable.
 

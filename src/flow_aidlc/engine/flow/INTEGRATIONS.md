@@ -53,8 +53,9 @@ What each declared server does, what it needs, and whether Flow needs it:
 ## Code graph (Graphify)
 
 The code graph is Flow's source of truth for code *structure* (callers, dependents,
-contracts) — see ADR [0008](../../knowledge/decisions/0008-code-graph-owns-structure.md) /
-[0009](../../knowledge/decisions/0009-adopt-graphify-code-graph.md) and `steps/shared/graph.md`.
+contracts); the curated `knowledge/map/` docs hold only the invariants a graph can't
+know. Flow reaches the graph only through the graph adapter — the backend is swappable
+(Graphify by default). See `steps/shared/graph.md`.
 
 - **Install** — `uv tool install "graphifyy[mcp]==0.9.33" --force`. The **base** package
   (`graphifyy==0.9.33`) is CLI-only and enough for the graph build and CI; the **`[mcp]`

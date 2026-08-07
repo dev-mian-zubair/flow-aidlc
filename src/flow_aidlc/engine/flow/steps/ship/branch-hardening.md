@@ -21,7 +21,7 @@ resolve high-severity findings, and gate the branch before the PR is opened.
 
 The review target is this branch vs its **base** — the `Base branch:` recorded in
 `worklog/<PI-NNN>/progress.md` (default the configured `vcs.base`; a sibling branch for a
-stacked epic child, per [ADR 0011](../../../knowledge/decisions/0011-branch-creation-and-base.md)):
+stacked epic child, since epic children are independent branches):
 
 ```bash
 git fetch origin && git diff <base>...HEAD --stat        # <base> = the recorded Base branch
@@ -93,6 +93,6 @@ deferrals; all high-severity resolved.
 - Runs on the **local branch diff** — no tracker/PR required, so it gates *before* the
   PR is opened in `open-pr`. It is a **pre-PR self-review**: it front-loads cleanup so the
   branch is clean before humans review it on the actual PR (human review + the PR's
-  required CI checks are the team's gate — see [ADR 0010](../../../knowledge/decisions/0010-ship-ends-at-open-pr.md)).
+  required CI checks are the team's gate — the Ship phase ends at opening the PR).
 - If hardening surfaces a design-level problem, don't paper over it — raise it and
   consider whether a slice needs rework before merge.

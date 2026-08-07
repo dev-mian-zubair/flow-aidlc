@@ -3,7 +3,7 @@
 > **Base branch:** origin/main
 > <!-- The branch this workstream targets — branch-hardening + open-pr read this.
 >      Default is your config.yaml → vcs.base; set to a sibling branch only for a
->      stacked epic child (ADR 0011). -->
+>      stacked epic child (epic children are independent branches). -->
 
 Track each Flow stage for this task. Check off each stage as it completes.
 Append one journal line to `journal.md` for every stage that closes.

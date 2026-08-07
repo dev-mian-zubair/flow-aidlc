@@ -88,7 +88,9 @@ by `flow plugin build` (single source of truth: `src/flow_aidlc/engine/claude/`)
 
 ## Status
 
-Early — under active extraction from the reference instance. See `docs/build-plan.md`.
+**Source of truth for the Flow engine.** Extraction from the reference instance is
+complete — this package is now canonical, and the reference instance is frozen as
+historical reference. We are in the polish phase. See `docs/build-plan.md`.
 
 ## License
 
