@@ -74,7 +74,7 @@ Then, in Claude Code:
 |---|---|---|---|
 | **GitHub Issues** | ✅ Implemented (default) | `@modelcontextprotocol/server-github` | `tracker.repo` = `owner/name`; `OPEN_PR` native |
 | **Jira** | ✅ Implemented | `mcp-atlassian` (sooperset) | `tracker.repo` = the **project key**; site URL via `JIRA_URL`; `OPEN_PR` runs on your VCS with the Jira key in the PR |
-| **Linear** | ⏳ Stub | — | Fill its adapter section to enable (C3 blocks it until then) |
+| **Linear** | ✅ Implemented | Linear MCP (`LINEAR_API_KEY`) | `tracker.repo` = the **team key**; type via labels (no native issue type); `OPEN_PR` runs on your VCS with the Linear id in the branch/PR |
 
 Switch trackers via `flow init --tracker <platform>` (or edit `config.yaml`) — see [`INTEGRATIONS.md`](src/flow_aidlc/engine/flow/INTEGRATIONS.md).
 

@@ -225,35 +225,46 @@ def test_gate_fails_on_config_consistency_violation(tmp_path):
 
 
 # ---------------------------------------------------------------------------
-# jira is implemented end-to-end — a jira-configured real instance passes C3
+# every shipped tracker is implemented end-to-end — each passes C3
 # ---------------------------------------------------------------------------
 
-def test_shipped_adapter_implements_jira_not_linear():
-    """The shipped tracker adapter maps jira (no NOT IMPLEMENTED) but stubs linear."""
+def test_shipped_adapter_implements_all_trackers():
+    """The shipped tracker adapter maps github/jira/linear — no NOT IMPLEMENTED heading."""
+    import re
+
     from flow_aidlc.engine_assets import engine_dir
 
     adapter = (engine_dir() / "flow" / "steps" / "shared" / "tracker.md").read_text()
-    # The jira section heading must not carry a NOT IMPLEMENTED marker...
-    assert "### jira — NOT IMPLEMENTED" not in adapter
-    assert "### jira\n" in adapter
-    # ...while linear is still an explicit stub.
-    assert "### linear — NOT IMPLEMENTED" in adapter
+    # Every platform has a real section heading...
+    for platform in ("github", "jira", "linear"):
+        assert f"### {platform}\n" in adapter, platform
+    # ...and no platform heading is marked as a NOT IMPLEMENTED stub.
+    assert not re.search(r"^### \w+ — NOT IMPLEMENTED", adapter, re.MULTILINE), adapter
 
 
-def test_c3_jira_passes_end_to_end(tmp_path):
-    """`flow init --tracker jira` produces an instance C3 accepts (jira is mapped)."""
+def _init_and_check(tmp_path, platform: str, key: str):
     import subprocess
 
     from flow_aidlc.commands import init
 
     subprocess.run(["git", "init", str(tmp_path)], check=True, capture_output=True)
     rc = init.run([
-        "--yes", "--tracker", "jira", "--repo", "PROJ", "--id-prefix", "PROJ",
+        "--yes", "--tracker", platform, "--repo", key, "--id-prefix", key,
         "--path", str(tmp_path),
     ])
     assert rc == 0
+    return check(tmp_path)
 
-    errs = check(tmp_path)
-    # No C3 (unimplemented-platform) error for jira, and the gate check is clean.
+
+def test_c3_jira_passes_end_to_end(tmp_path):
+    """`flow init --tracker jira` produces an instance the gate accepts."""
+    errs = _init_and_check(tmp_path, "jira", "PROJ")
+    assert not any("C3" in e for e in errs), errs
+    assert errs == [], errs
+
+
+def test_c3_linear_passes_end_to_end(tmp_path):
+    """`flow init --tracker linear` produces an instance the gate accepts."""
+    errs = _init_and_check(tmp_path, "linear", "ENG")
     assert not any("C3" in e for e in errs), errs
     assert errs == [], errs

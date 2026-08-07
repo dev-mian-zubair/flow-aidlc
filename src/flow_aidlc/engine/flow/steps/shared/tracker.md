@@ -13,7 +13,7 @@ mapping section for that platform. **If the configured platform has no mapping h
 it yet; do not improvise platform calls. (The `config-consistency` check enforces
 that `tracker.platform` is an implemented platform.)
 
-**Implemented:** `github`, `jira`.  **Stubs:** `linear`.
+**Implemented:** `github`, `jira`, `linear`.
 
 ## Universal operations (the contract callers use)
 
@@ -81,10 +81,31 @@ Cloud: `JIRA_URL` + `JIRA_USERNAME` + `JIRA_API_TOKEN`; Server/DC: `JIRA_URL` +
 `JIRA_PERSONAL_TOKEN`. The story-points/effort custom-field id is instance-specific;
 resolve it once and record it in `knowledge/map/` if `SET_FIELDS` sets effort.
 
-### linear — NOT IMPLEMENTED
+### linear
 
-Stub. Map to Linear's API (issues, sub-issues via `parent`, projects/labels,
-states) when adopted.
+Tool names are the Linear MCP toolset (Linear's API operations). **`config.tracker.repo`
+holds the Linear team key** (the `<team-key>` in a `<team-key>-<number>` issue id),
+not `owner/repo`; auth is the `LINEAR_API_KEY` env var (see `INTEGRATIONS.md`). Because
+Linear ids are already `<team-key>-<number>`, set `config.tracker.id_scheme` to
+`<team-key>-{n}` (i.e. `flow init --tracker linear --repo <team-key> --id-prefix
+<team-key>`, using your real key).
+
+| Operation | linear tool call |
+|---|---|
+| `DEDUP_SEARCH` | `list_issues` filtered by team (`config.tracker.repo`) + a text query over title/description |
+| `CREATE_TICKET` | `create_issue(team: <config.tracker.repo>, title, description, labelIds)` — Linear requires a **team**, not a project |
+| `VERIFY_EXISTS` / `GET_TICKET` | `get_issue(id)` |
+| `SET_TYPE` | Linear has **no native issue type** — apply a `type:<bug\|feat\|task\|epic>` **label** (like GitHub's label fallback). There is no Epic issue type; an epic is a parent issue (see `ADD_SUB_ISSUE`) or a Linear **Project** |
+| `ADD_SUB_ISSUE` | `update_issue(child, parentId: <parent>)` — Linear sub-issues are the `parent` relation. (For a Project-style epic, set the children's `projectId` instead.) |
+| `SET_FIELDS` | `update_issue` — priority → `priority` (0–4); effort → `estimate` (points); milestone → `cycleId` or `projectId`; status is a **workflow state**, not a field — use `CLOSE`/set `stateId` |
+| `COMMENT` | `create_comment(issueId, body)` |
+| `CLOSE` | `update_issue(id, stateId: <a Done/Canceled workflow state>)` — Linear advances state via **workflow states**, not a boolean; the target state id is team-specific (resolve via `list_issue_statuses`) |
+| `OPEN_PR` | **Linear does not host code.** Open the PR on the VCS (the `github` mapping's `pull_request_write`), and put the Linear id (e.g. `<team-key>-123`) in the branch name / PR title so Linear's GitHub integration auto-links and can auto-close it. Ship terminates at the open PR; it does not move the Linear issue. |
+
+**Preconditions (linear):** the `linear` MCP is connected + authed via `LINEAR_API_KEY`
+(a personal API key from Linear → Settings → Security & access → API). Workflow-state
+and label ids are workspace-specific; resolve them once (`list_issue_statuses`,
+`list_issue_labels`) and record them in `knowledge/map/` if `SET_TYPE`/`CLOSE` need them.
 
 ## Rule
 

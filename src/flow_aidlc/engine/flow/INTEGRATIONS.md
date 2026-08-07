@@ -94,8 +94,9 @@ Code** so the plugins load (like MCP servers, plugins are read at session start)
 The only required var is your **tracker token** (for the tracker MCP server —
 `graphify` and `context7` need none). With the default GitHub tracker that is
 `GITHUB_TOKEN`; with the Jira tracker it is `JIRA_URL` + `JIRA_USERNAME` +
-`JIRA_API_TOKEN` (Cloud) or `JIRA_URL` + `JIRA_PERSONAL_TOKEN` (Server/DC) — see
-"Switching the issue tracker". The server is a **local, headless** stdio process, so
+`JIRA_API_TOKEN` (Cloud) or `JIRA_URL` + `JIRA_PERSONAL_TOKEN` (Server/DC); with the
+Linear tracker it is `LINEAR_API_KEY` — see "Switching the issue tracker". The server
+is a **local, headless** stdio process, so
 it can't run an interactive login itself — it reads an already-minted token from the
 environment.
 
@@ -136,9 +137,9 @@ Each ✗ line names the fix (an install command or a config value).
 
 ## Switching the issue tracker
 
-Flow defaults to GitHub Issues. `github` and `jira` are implemented in the tracker
-adapter (`.flow/steps/shared/tracker.md`); `linear` is a stub (adding it = fill in
-its adapter section, then follow the same three steps).
+Flow defaults to GitHub Issues. `github`, `jira`, and `linear` are all implemented in
+the tracker adapter (`.flow/steps/shared/tracker.md`) — switching is a config +
+`.mcp.json` change, no adapter work.
 
 ### To Jira (implemented — `mcp-atlassian`)
 
@@ -182,11 +183,41 @@ is the project key.
 > mapping's `pull_request_write`) with the Jira key in the PR title/body — keep the
 > `github` MCP server declared for the PR write path.
 
-### To Linear (stub)
+### To Linear (implemented — Linear MCP)
 
-1. Edit `.flow/config.yaml` (`platform: linear`, `mcp: linear`).
-2. Add the Linear MCP server entry to `.mcp.json` (e.g. `@linear/mcp`) with its env
-   vars, and implement its mapping in the tracker adapter (fill the `linear` section,
-   remove its NOT IMPLEMENTED marker — the `config-consistency` gate check C3 blocks
-   an unimplemented platform).
-3. Re-run `flow doctor` to confirm the new server's command resolves and its env var is set.
+Linear is mapped to the Linear MCP toolset. Linear does not use `owner/repo` —
+`config.tracker.repo` holds the **team key** (issues are `<team-key>-<number>`), and
+auth is a personal API key. Because Linear ids are already `<team-key>-<number>`, the
+id-scheme prefix is the team key.
+
+1. Scaffold (or edit `.flow/config.yaml`) for Linear — substitute your real key for
+   `<team-key>`:
+   ```bash
+   flow init --tracker linear --repo <team-key> --id-prefix <team-key>
+   ```
+   ```yaml
+   tracker:
+     platform: linear
+     mcp: linear                  # must match the key in .mcp.json
+     repo: <team-key>             # the Linear team key (not owner/repo)
+     id_scheme: <team-key>-{n}    # Linear ids are already <team-key>-<n>
+   ```
+2. Add the `linear` server to `.mcp.json` (headless stdio, matches Flow's model):
+   ```json
+   "linear": {
+     "command": "npx",
+     "args": ["-y", "linear-mcp-server"],
+     "env": { "LINEAR_API_KEY": "${LINEAR_API_KEY}" }
+   }
+   ```
+   Auth: `LINEAR_API_KEY` — a personal API key from Linear → Settings → Security &
+   access → API. (Prefer the stdio server above; Linear also offers a remote OAuth MCP
+   at `https://mcp.linear.app/sse` if you'd rather not mint a key.)
+3. `flow doctor` to confirm the `linear` server resolves and its env var is set;
+   `flow check` — C3 passes because the adapter implements `linear`.
+
+> **Code still lives on your VCS.** Linear tracks issues; it does not host PRs. With
+> `platform: linear` the Ship phase still opens the PR on your VCS (the `github`
+> mapping's `pull_request_write`) with the Linear id in the branch/PR title — keep the
+> `github` MCP server declared for the PR write path (Linear's GitHub integration then
+> auto-links and can auto-close the issue on merge).

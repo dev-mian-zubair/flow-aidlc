@@ -111,8 +111,12 @@ def check(repo_root: Path | str) -> list[str]:
             return
         # End the value on whitespace or end-of-line, not \b — otherwise a value like
         # 'github' would match a '### github-issues' heading (the hyphen is a \b).
+        # Bound the section at the next heading of the SAME-OR-SHALLOWER depth (## or
+        # ###) — not just the next ###. Otherwise the last ### section bleeds into a
+        # following ## section (e.g. '## Rule'), whose prose may mention "NOT
+        # IMPLEMENTED" and trip a false positive.
         section = re.search(
-            r"^###\s+" + re.escape(value) + r"(?=\s|$)(.*?)(?=^###\s|\Z)", text, re.S | re.M | re.I
+            r"^###\s+" + re.escape(value) + r"(?=\s|$)(.*?)(?=^\#{2,3}\s|\Z)", text, re.S | re.M | re.I
         )
         if not section:
             errors.append(f"{code} {key}: no '### {value}' mapping in {adapter_rel} — the adapter does not implement '{value}'")
