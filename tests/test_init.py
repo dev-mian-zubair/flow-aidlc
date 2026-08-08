@@ -78,3 +78,15 @@ def test_init_does_not_create_real_dot_env(tmp_path):
     _git_init(tmp_path)
     init.run(["--yes", "--repo", "o/n", "--path", str(tmp_path)])
     assert not (tmp_path / ".env").exists()
+
+
+def test_init_renders_execution_block(tmp_path):
+    import yaml
+    _git_init(tmp_path)
+    assert init.run(["--yes", "--repo", "o/n", "--path", str(tmp_path)]) == 0
+    cfg = yaml.safe_load((tmp_path / ".flow" / "config.yaml").read_text())
+    ex = cfg["execution"]
+    assert ex["merge"]["gate"] == "green-ci"
+    assert ex["max_tasks"] == 5
+    assert ex["review"]["max_rounds"] == 5
+    assert ex["require_ci"] is True

@@ -49,3 +49,17 @@ graph:
   committed: true
   # A project with vendored/generated trees to exclude may add a `.graphifyignore`
   # file and set `ignore_file: .graphifyignore` here (C7 requires it to exist if set).
+
+execution:
+  # Defaults for `/flow-auto` (auto mode). Presence here does NOT enable auto —
+  # auto runs only when you explicitly invoke `/flow-auto`. controlled is default.
+  label: flow-auto            # tracker label that queues a ticket for auto
+  max_tasks: 5                # hard cap on tasks per `/flow-auto` run
+  budget: null                # optional token/time budget (null = capped only by max_tasks)
+  review:
+    panel_size: 3             # adversarial reviewers per prose-gate panel
+    max_rounds: 5             # fix-loop rounds before a task is parked
+  merge:
+    gate: green-ci            # only 'green-ci' is supported (the safety model)
+    target: ""                # integration branch; empty = vcs.base
+  require_ci: true            # `/flow-auto` refuses without a CI workflow
