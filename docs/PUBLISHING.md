@@ -14,10 +14,10 @@ and the sdist (they are — see below).
 
 ```bash
 # From the repo root, on a clean tree at the version you intend to release.
-python -m pytest -q                       # all tests green
-grep '^version' pyproject.toml            # confirm the release version
-cat src/flow_aidlc/__init__.py | grep __version__   # must match pyproject
-cat src/flow_aidlc/engine/flow/VERSION    # the engine VERSION seed — bump in lock-step
+python -m pytest -q                            # all tests green
+grep '^version' pyproject.toml                 # confirm the release version
+grep __version__ src/flow_aidlc/__init__.py    # must match pyproject
+cat src/flow_aidlc/engine/flow/VERSION         # the engine VERSION seed — bump in lock-step
 ```
 
 Bump the version in **three** places together (they are asserted equal by the

@@ -55,12 +55,12 @@ project data out, ship the engine, let `init` regenerate the data."
 
 Flow does not maintain code *structure* — callers, dependents, contracts, the
 subsystem surface — as hand-written docs that drift. Structure is extracted into a
-committed **code graph** ([Graphify](https://pypi.org/project/graphifyy/), ADR
-0008/0009) and queried by agents over MCP through a backend-neutral adapter
+committed **code graph** ([Graphify](https://pypi.org/project/graphifyy/)) and
+queried by agents over MCP through a backend-neutral adapter
 (`.flow/steps/shared/graph.md`, universal ops `WHO_CALLS` / `NEIGHBORS` / `HUBS` /
 `IMPACT_OF_DIFF`). Consequences:
 
-- **Graphify is a prerequisite** (alongside superpowers). Install
+- **Graphify is the recommended code-graph backend.** Install
   `uv tool install "graphifyy[mcp]"`; the graph is built by the configured
   `config.yaml → graph.build` and committed (`graphify-out/graph.json`). If it is
   absent, structural steps fall back to a read-only `Explore`/grep survey.
@@ -97,7 +97,7 @@ global mode toggle — `auto` happens only via `/flow-auto`. Config defaults liv
 ## Ship ends at the open PR (controlled) / merges on green CI (auto)
 
 In **`controlled`** mode the Ship phase is **terminal at the open PR** (branch-hardening →
-learnings → open-pr, ADR 0010): Flow produces a reviewed, PR-ready branch and stops.
+learnings → open-pr): Flow produces a reviewed, PR-ready branch and stops.
 Merge, required checks, approvals, ticket close, and any serialization-lock release are
 owned by the team on the host — branch protection on `vcs.base` is authoritative.
 
@@ -123,10 +123,16 @@ Two complementary channels, same engine:
 | `flow setup` | One-command onboarding — detect `uv` + install the graph tool, run `graph.build`, then `flow doctor` (detect-and-guide; never fails hard on a missing tool) |
 | `flow guardrail add <name>` | Scaffold a new always-on guardrail from the template + register it |
 | `flow map add <glob> <doc>` | Scaffold a knowledge/map doc + wire knowledge-map.yaml |
-| `flow doctor` | Health check — hooks installed, MCP reachable, structure valid, code graph wired |
+| `flow guardrail add --from <pack>` | Install a curated starter-pack of guardrails (`flow guardrail packs` lists them) |
+| `flow secrets use <provider>` | Route MCP credentials through a secrets manager (Infisical/Doppler); `off` / `status` |
+| `flow doctor` | Health check — hooks installed, MCP reachable, structure valid, code graph wired, credentials + auto-mode readiness |
 | `flow check` | Run the quality gate (guardrail-lint, structure, reference-selfcheck, config-consistency) |
+| `flow ci init` | Scaffold a CI workflow that runs the gate (`--gates semgrep,conftest,impeccable` adds deterministic gates) |
+| `flow status` | Show where each ticket sits in the Scope→Shape→Build→Ship pipeline (from `worklog/`) |
+| `flow learnings` | Surface correction/redirection signals from task journals; `--promote` records them |
 | `flow selftest` | Mechanical offline self-test of the wiring |
 | `flow refresh` | Rebuild the code graph (structure freshness); `/flow-refresh` curates map invariants |
+| `flow plugin build` | Regenerate the Claude Code plugin from the engine (`src/flow_aidlc/engine/claude/`) |
 | `flow upgrade` | Update the engine assets without clobbering the instance |
 | `flow version` | Print the engine version |
 

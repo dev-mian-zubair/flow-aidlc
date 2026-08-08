@@ -18,6 +18,8 @@ deterministic CI. See [Execution modes](#execution-modes).
 
 ---
 
+## Prerequisites
+
 These are installed in your **Claude Code environment** (or, for Graphify, your
 machine), not by `flow init` — the scaffolder is repo-local, while these are
 shared across projects. `flow doctor` verifies all three are present and warns if
@@ -70,7 +72,7 @@ Then, in Claude Code:
 - **The state machine** (`.flow/playbook.md`) — Scope → Shape → Build → Ship, gated at each checkpoint.
 - **Mechanical enforcement** — Claude Code hooks that journal prompts, guard scope, and hold checkpoints.
 - **Guardrails** — always-on, blocking invariant checks you author for *your* codebase (the engine ships the mechanism + templates; `flow guardrail add` scaffolds one, or `flow guardrail add --from <pack>` installs a curated starter pack — see `flow guardrail packs`).
-- **Code graph as structure source of truth** — a committed [Graphify](https://pypi.org/project/graphifyy/) graph, queried over MCP, answers "who calls this / what depends on it / what's the contract" deterministically (ADR 0008/0009). Curated `knowledge/map/` docs hold only the **invariants** a graph can't know; each is enforced by a guardrail, so structure can't go stale.
+- **Code graph as structure source of truth** — a committed [Graphify](https://pypi.org/project/graphifyy/) graph, queried over MCP, answers "who calls this / what depends on it / what's the contract" deterministically. Curated `knowledge/map/` docs hold only the **invariants** a graph can't know; each is enforced by a guardrail, so structure can't go stale.
 - **Quality gate** — `flow check` (guardrail-lint, structure-check, reference-selfcheck, config-consistency incl. graph-backend + graph-paths) — runnable locally and in CI.
 - **Superpowers-powered** — delegates brainstorming, plan-writing, TDD, and code review to the `superpowers` skill ecosystem.
 - **Pluggable issue tracker** — Scope publishes tickets and Ship opens the PR through a tracker adapter (`steps/shared/tracker.md`) that maps Flow's universal operations (`CREATE_TICKET`, `ADD_SUB_ISSUE`, `OPEN_PR`, …) to a platform. No step or agent names a platform-specific tool, and the `config-consistency` gate (C3) refuses an unimplemented platform.
