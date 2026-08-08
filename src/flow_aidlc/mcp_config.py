@@ -63,7 +63,6 @@ def wrap_server(server: dict, cli: str, run_args: list[str]) -> dict:
     if is_wrapped(server):
         return server
     original = {
-        "provider": cli,
         "command": server.get("command"),
         "args": list(server.get("args") or []),
         "env": dict(server.get("env") or {}),
