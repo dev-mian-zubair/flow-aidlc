@@ -23,6 +23,7 @@ _COMMANDS: dict[str, tuple[str, str]] = {
     "selftest": ("selftest", "Run the mechanical offline self-test"),
     "refresh": ("refresh", "Rebuild the code graph (structure freshness); /flow-refresh curates invariants"),
     "plugin": ("plugin", "Build the Claude Code plugin (e.g. `flow plugin build`)"),
+    "secrets": ("secrets", "Route MCP secrets through a secrets manager (e.g. `flow secrets use infisical`)"),
     "upgrade": ("upgrade", "Update engine assets without touching your instance"),
     "version": ("version", "Print the engine version"),
 }
