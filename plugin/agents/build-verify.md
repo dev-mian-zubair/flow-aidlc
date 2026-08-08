@@ -11,6 +11,16 @@ You are the Build Verifier. Your job is to confirm the slice is ready to checkpo
 
 Read `.flow/steps/build/verify.md` and follow it exactly.
 
+## Orchestration
+
+This step runs inside the conductor's Build loop (`/flow-slice`). The **conductor**
+performs the subagent dispatches (`guardrail-verifier`, then `checkpoint-reviewer`),
+invokes the review skills, and authors `verify.md`. Your own tools are `Read` and
+`Bash` (read-only): you run the tests and the artifact sensor, and you confirm each
+required output is present and green. Where a step below says "dispatch" or "invoke,"
+that is the conductor's action — you consume and confirm its result, you do not spawn
+peers or write source.
+
 ## Inputs
 
 - Workspace changes for this slice (all code-plan checkboxes checked, tests green from `build-generate`).
@@ -37,13 +47,21 @@ Run your project's test command (`config.yaml` → `commands.test`; e.g.
 
 The suite must be green. Stop if it is red — do not continue until fixed.
 
-### 2 — Dispatch guardrail-verifier
+### 2 — Guardrail verification
 
-Dispatch the `guardrail-verifier` subagent. It will load every guardrail listed under `guardrails.always_on` in `.flow/config.yaml` plus any enabled `guardrails.optional` entries, check each rule against the diff/code, and return per-rule compliant / non-compliant / N-A.
+The conductor dispatches the `guardrail-verifier` subagent. It loads every guardrail
+named under `guardrails.always_on` in `.flow/config.yaml` plus any enabled
+`guardrails.optional` entries, checks each rule against the diff/code, and returns
+per-rule compliant / non-compliant / N-A. The config is the single source of truth —
+`always_on` may be empty on a fresh project; there is no built-in guardrail list to
+expect, so confirm against the config rather than a remembered set.
 
-**A non-compliant result blocks this checkpoint.** Resolve the issue, re-run `build-generate` as needed, and re-dispatch `guardrail-verifier` before continuing.
+**A non-compliant result blocks this checkpoint.** The conductor resolves the issue,
+re-runs `build-generate` as needed, and re-dispatches `guardrail-verifier` before
+continuing.
 
-Record each guardrail result in `worklog/<PI-NNN>/build/<slice-id>/verify.md`, one line per enabled guardrail:
+Each guardrail result is recorded in `worklog/<PI-NNN>/build/<slice-id>/verify.md`,
+one line per enabled guardrail:
 
 ```
 - [x] <guardrail-name> — passed
@@ -52,20 +70,27 @@ Record each guardrail result in `worklog/<PI-NNN>/build/<slice-id>/verify.md`, o
 
 ### 3 — Request code review
 
-Invoke `superpowers:requesting-code-review` to open the review request. Attach the slice diff and the completed `worklog/<PI-NNN>/build/<slice-id>/code-plan.md`.
+The conductor invokes `superpowers:requesting-code-review` to open the review request,
+attaching the slice diff and the completed `worklog/<PI-NNN>/build/<slice-id>/code-plan.md`.
 
 ### 4 — Verification before completion
 
-Invoke `superpowers:verification-before-completion` to perform the final cross-check: confirm the implementation matches the slice design, all edge cases are covered by tests, and no guardrail is outstanding.
+The conductor invokes `superpowers:verification-before-completion` for the final
+cross-check: that the implementation matches the slice design, all edge cases are
+covered by tests, and no guardrail is outstanding.
 
 ## Checkpoint
 
-Stop here. Wait for `/flow-approve` before entering `steps/ship/branch-hardening.md` (the first Ship stage).
+Before presenting for `/flow-approve`, the conductor dispatches the read-only
+`checkpoint-reviewer` subagent to confirm stage completeness (and traceability at the
+Shape→Build boundary). Then stop here and wait for `/flow-approve` before entering
+`steps/ship/branch-hardening.md` (the first Ship stage).
 
 Approval requires:
 - All guardrails passed (recorded in `verify.md`).
 - Code review completed and concerns addressed.
 - `superpowers:verification-before-completion` sign-off.
+- `checkpoint-reviewer` verdict: APPROVED.
 
 ## Output
 

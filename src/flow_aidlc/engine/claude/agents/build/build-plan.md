@@ -22,11 +22,12 @@ Invoke `superpowers:writing-plans` **before drafting any checkbox items**. Follo
 
 ## Output
 
-Write `worklog/<PI-NNN>/build/<slice-id>/code-plan.md` with:
-- One section per file to be created or modified.
-- Each section: a brief intent line + `- [ ]` checkbox per discrete change.
-- Migrations listed first; tests listed last in each file section.
-- Any item touching an `always_on` guardrail domain annotated with `<!-- guardrail: <name> -->`.
+Write `worklog/<PI-NNN>/build/<slice-id>/code-plan.md` with the section structure
+its guide prescribes (the downstream verify sensor requires these exact headings):
+- A `## Steps` section — one `- [ ]` checkbox per file to create or modify, migrations first.
+- A `## Tests` section — the test checkboxes, listed last.
+- The Scope Guard slice-id set per the guide.
+- Any checkbox touching an `always_on` guardrail domain annotated with `<!-- guardrail: <name> -->`.
 
 **Stop at the checkpoint.** Do not write any code. Wait for `/flow-approve` before `build-generate` is dispatched.
 

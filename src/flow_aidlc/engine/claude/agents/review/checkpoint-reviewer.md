@@ -22,10 +22,13 @@ Read `worklog/<PI-NNN>/progress.md` and the stage's output files. Confirm:
 
 For the **Shape/requirements** checkpoint specifically:
 - `worklog/<PI-NNN>/shape/requirements.md` contains a `## Guardrail impact checklist` section.
-- Every invariant row in that section is filled with an impact statement or the
-  explicit word `none` — a row left as `[Answer]:` or blank is **incomplete**.
-- The five always-on rows that must be present: Budget integrity, Router safety,
-  License/SKU gating, Authz completeness, Migration safety.
+- The checklist must carry **one row per always-on guardrail** named in
+  `.flow/config.yaml → guardrails.always_on` — the config is the single source of
+  truth. Do **not** expect any hardcoded set of invariants: `always_on` may be empty
+  on a fresh project, in which case no invariant rows are required. Read the config
+  to learn which rows to expect; never carry a remembered list.
+- Every row that is present must be filled with an impact statement or the explicit
+  word `none` — a row left as `[Answer]:` or blank is **incomplete**.
 - The conductor may run the deterministic pre-check:
   `python -m flow_aidlc.checks.artifact_sensor worklog/<PI-NNN>/shape/requirements.md --require "## Guardrail impact checklist"`
   before dispatching this reviewer; review any findings it reports as part of
