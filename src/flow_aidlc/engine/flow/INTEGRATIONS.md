@@ -117,6 +117,31 @@ export GITHUB_TOKEN=ghp_...          # 'repo' scope (or 'public_repo' for public
 
 ---
 
+## Credentials & secrets
+
+Flow reads MCP credentials from the environment via `${VAR}` references in
+`.mcp.json` (committed — it holds no secrets). You supply the values one of
+three ways, best DX first:
+
+1. **Secrets manager (recommended, zero plaintext)** — `flow secrets use infisical`
+   rewrites every secret-bearing MCP server to `infisical run -- …`, so the
+   token is injected at launch and never touches the repo, `.env`, or your
+   shell. One-time: `infisical login` (stores a token in your OS keyring) +
+   `infisical init` (links the project). `flow secrets off` reverts; `flow
+   secrets status` verifies resolution. (`op`/`doppler` follow the same wrapper
+   pattern — `flow secrets use <name>` prints it.)
+2. **Provider CLI credential store** — e.g. `export GITHUB_TOKEN=$(gh auth token)`
+   keeps the secret in `gh`'s store, not a file.
+3. **`.env` file (fallback)** — copy the generated `.env.example` to `.env`
+   (gitignored), fill it in, and load it (`direnv`, or `set -a; source .env;
+   set +a`) before launching Claude Code. `flow doctor` warns if `.env` exists
+   but isn't loaded.
+
+`flow doctor` reports a `secrets` line covering every secret-bearing server;
+`flow secrets status` adds a live resolve probe.
+
+---
+
 ## Verifying your setup
 
 ```bash
