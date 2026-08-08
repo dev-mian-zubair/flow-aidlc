@@ -41,3 +41,11 @@ modifying any file:
 - Test suite green.
 
 Proceed to `steps/build/verify.md`.
+
+## Design quality (UI slices — optional, Impeccable)
+
+If the slice produces UI and the Impeccable skill is installed (`flow setup
+--with-impeccable`), generate/refine it **against `DESIGN.md`** using the
+generation commands (`/impeccable craft|polish|distill|typeset|layout|colorize`)
+so the output reflects the product's design language rather than generic defaults.
+Non-UI slices ignore this.

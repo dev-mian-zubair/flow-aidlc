@@ -5,3 +5,9 @@
 # appends a maps[] entry pairing a knowledge/map/<name>.md doc with the
 # code globs it summarizes.
 maps: []
+
+# Design standards (optional, Impeccable): if present, Scope/Shape read these for
+# grounding so intent + design reflect the product's design language.
+design_standards:
+  - PRODUCT.md   # audience, brand, voice, anti-references
+  - DESIGN.md    # the design system / standards

@@ -71,3 +71,10 @@ Approval requires:
 In auto mode (`/flow-auto`) this checkpoint is gated by the stage-typed panel in
 `steps/auto/panel-review.md` (guardrail-verifier + the pr-review-toolkit subset on
 the slice diff) instead of `/flow-approve`. Same gate, no human stop.
+
+## Design quality (UI slices — optional, Impeccable)
+
+For a UI slice with Impeccable installed, validate the design against the
+standards: `/impeccable audit` (a11y/perf/responsive) + `/impeccable critique`
+(UX vs `PRODUCT.md`/`DESIGN.md`), or the deterministic `npx impeccable detect
+--json .`. Treat a high-severity design finding like any other verify finding.

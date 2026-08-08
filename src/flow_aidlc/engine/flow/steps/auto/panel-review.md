@@ -27,3 +27,8 @@ panel re-reviews the change only. Repeat up to `config.execution.review.max_roun
 
 The code-gate panels ARE `config.review.branch_hardening` (a subset per slice at
 Build/verify) — no new review agents.
+
+**UI slices:** for a diff that changes UI, add **Impeccable** to the Build/verify
+and branch-hardening panels as the design-quality lens (`/impeccable audit` +
+`critique`, checked against `PRODUCT.md`/`DESIGN.md`) — only when the skill is
+installed. It complements the pr-review-toolkit code lenses; it does not replace them.

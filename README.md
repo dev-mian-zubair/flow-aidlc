@@ -69,6 +69,7 @@ Then, in Claude Code:
 - **Pluggable issue tracker** — Scope publishes tickets and Ship opens the PR through a tracker adapter (`steps/shared/tracker.md`) that maps Flow's universal operations (`CREATE_TICKET`, `ADD_SUB_ISSUE`, `OPEN_PR`, …) to a platform. No step or agent names a platform-specific tool, and the `config-consistency` gate (C3) refuses an unimplemented platform.
 - **Secrets, not in the repo** — `.mcp.json` holds only `${VAR}` references; supply values via a secrets manager (`flow secrets use infisical`/`doppler` — zero plaintext), a provider CLI (`gh auth token`), or a gitignored `.env`. `flow doctor` verifies they resolve.
 - **Observability** — `flow status` shows where each ticket sits in Scope→Shape→Build→Ship (read from `worklog/`); `flow learnings` surfaces correction/redirection signals from task journals and `--promote`s them into `knowledge/practices.md`. `flow ci init` scaffolds a workflow that runs the gate in CI (`--gates semgrep,conftest` adds deterministic SAST + policy-as-code gates beside the LLM guardrails).
+- **Design quality (optional, UI)** — `flow setup --with-impeccable` installs [Impeccable](https://impeccable.style/) (Apache-2.0); Flow reads its `PRODUCT.md`/`DESIGN.md` for grounding, generates/validates UI against them, and `flow ci init --gates impeccable` gates design quality in CI.
 
 ## Supported trackers
 

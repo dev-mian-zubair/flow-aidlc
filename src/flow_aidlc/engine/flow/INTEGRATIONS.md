@@ -310,3 +310,16 @@ Guardrails are LLM-judged; pair them with deterministic gates in CI:
 `flow ci init --gates semgrep,conftest` emits Semgrep (SAST) and OPA/conftest
 (policy-as-code over `.flow/config.yaml` + `.mcp.json`, needs a `policy/` dir) steps
 beside `flow check`.
+
+### Design quality — Impeccable
+
+[Impeccable](https://impeccable.style/) (Apache-2.0) is a Claude Code skill pack
+for UI design quality. Unlike the other skill packs it installs project-local via
+a non-interactive CLI, so `flow setup --with-impeccable` installs it
+(`npx impeccable install --providers=claude --scope=project`) and gitignores its
+ephemera. Author `PRODUCT.md` (audience/voice/anti-references) + `DESIGN.md` (design
+system) once via `/impeccable init` in Claude Code — they are committed, and Flow
+reads them for grounding at Scope/Shape. Then Build/generate produces UI against
+`DESIGN.md`, Build/verify validates via `/impeccable audit` + `critique`, and
+`flow ci init --gates impeccable` adds a deterministic `npx impeccable detect
+--json .` CI gate. `flow doctor` reports an `impeccable` line once you've adopted it.
