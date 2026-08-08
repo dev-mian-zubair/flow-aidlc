@@ -99,6 +99,19 @@ def test_gates_in_gitlab(tmp_path):
     assert "semgrep scan" in (tmp_path / ".gitlab-ci.yml").read_text()
 
 
+def test_gates_impeccable_step(tmp_path):
+    _flow_repo(tmp_path)
+    ci.run(["init", "--gates", "impeccable", "--path", str(tmp_path)])
+    text = (tmp_path / ".github" / "workflows" / "flow-check.yml").read_text()
+    assert "impeccable detect" in text
+
+
+def test_gates_impeccable_gitlab(tmp_path):
+    _flow_repo(tmp_path)
+    ci.run(["init", "--provider", "gitlab", "--gates", "impeccable", "--path", str(tmp_path)])
+    assert "impeccable detect" in (tmp_path / ".gitlab-ci.yml").read_text()
+
+
 def test_registered_in_cli():
     from flow_aidlc.cli import _COMMANDS
     assert "ci" in _COMMANDS

@@ -24,7 +24,7 @@ except ImportError:  # pragma: no cover - pyyaml is a runtime dependency
     yaml = None  # type: ignore[assignment]
 
 _PROVIDERS = ("github", "gitlab")
-_GATES = ("semgrep", "conftest")
+_GATES = ("semgrep", "conftest", "impeccable")
 
 # Extra deterministic gate steps that run alongside `flow check` (opt-in via --gates).
 # Guardrails are LLM-judged; these are deterministic SAST / policy-as-code checks.
@@ -37,10 +37,15 @@ _GH_GATE_STEPS = {
         "      - name: Policy check (conftest)\n"
         '        run: docker run --rm -v "$PWD:/project" -w /project openpolicyagent/conftest test .flow/config.yaml .mcp.json -p policy\n'
     ),
+    "impeccable": (
+        "      - name: Impeccable design quality\n"
+        "        run: npx --yes impeccable detect --json .\n"
+    ),
 }
 _GL_GATE_STEPS = {
     "semgrep": "    - pip install semgrep && semgrep scan --config auto --error --quiet\n",
     "conftest": '    - docker run --rm -v "$PWD:/project" -w /project openpolicyagent/conftest test .flow/config.yaml .mcp.json -p policy\n',
+    "impeccable": "    - npx --yes impeccable detect --json .\n",
 }
 
 
