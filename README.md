@@ -62,7 +62,7 @@ Then, in Claude Code:
 
 - **The state machine** (`.flow/playbook.md`) — Scope → Shape → Build → Ship, gated at each checkpoint.
 - **Mechanical enforcement** — Claude Code hooks that journal prompts, guard scope, and hold checkpoints.
-- **Guardrails** — always-on, blocking invariant checks you author for *your* codebase (the engine ships the mechanism + templates; `flow guardrail add` scaffolds one).
+- **Guardrails** — always-on, blocking invariant checks you author for *your* codebase (the engine ships the mechanism + templates; `flow guardrail add` scaffolds one, or `flow guardrail add --from <pack>` installs a curated starter pack — see `flow guardrail packs`).
 - **Code graph as structure source of truth** — a committed [Graphify](https://pypi.org/project/graphifyy/) graph, queried over MCP, answers "who calls this / what depends on it / what's the contract" deterministically (ADR 0008/0009). Curated `knowledge/map/` docs hold only the **invariants** a graph can't know; each is enforced by a guardrail, so structure can't go stale.
 - **Quality gate** — `flow check` (guardrail-lint, structure-check, reference-selfcheck, config-consistency incl. graph-backend + graph-paths) — runnable locally and in CI.
 - **Superpowers-powered** — delegates brainstorming, plan-writing, TDD, and code review to the `superpowers` skill ecosystem.

@@ -21,6 +21,7 @@ import sys
 from pathlib import Path
 
 from flow_aidlc.checks._root import find_repo_root
+from flow_aidlc.engine_assets import engine_dir
 
 try:
     import yaml
@@ -33,14 +34,32 @@ _NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="flow guardrail",
-        description="Author guardrails (e.g. `flow guardrail add <name>`).",
+        description="Author guardrails (`flow guardrail add <name>` / `--from <pack>` / `packs`).",
     )
-    p.add_argument("action", help="The action to perform (only `add` is supported).")
-    p.add_argument("name", nargs="?", help="Guardrail name (kebab-case).")
+    p.add_argument("action", help="`add` (author/install) or `packs` (list starter packs).")
+    p.add_argument("name", nargs="?", help="Guardrail name (kebab-case) for a single `add`.")
+    p.add_argument("--from", dest="from_pack", default=None, help="Install a whole starter pack by name.")
     p.add_argument("--prefix", default=None, help="Rule-id prefix (default: derived from name).")
     p.add_argument("--optional", action="store_true", help="Register under guardrails.optional.")
     p.add_argument("--path", default=None, help="Directory to search upward from for a .flow/ (default: cwd).")
     return p
+
+
+def _packs_dir() -> Path:
+    """The shipped starter-pack library (lives in the package, not per-instance)."""
+    return engine_dir() / "guardrail-packs"
+
+
+def _available_packs() -> dict[str, list[Path]]:
+    """Map pack name -> its guardrail files (sorted). Empty if none ship."""
+    base = _packs_dir()
+    if not base.is_dir():
+        return {}
+    return {
+        pack.name: sorted(p for p in pack.glob("*.md") if not p.name.endswith(".ask.md"))
+        for pack in sorted(base.iterdir())
+        if pack.is_dir()
+    }
 
 
 def _derive_prefix(name: str) -> str:
@@ -63,12 +82,27 @@ def run(argv: list[str]) -> int:
     except SystemExit:
         return 2
 
+    if args.action == "packs":
+        return _list_packs()
+
     if args.action != "add":
-        sys.stderr.write("usage: flow guardrail add <name> [--prefix PREFIX] [--optional]\n")
+        sys.stderr.write("usage: flow guardrail add <name> | add --from <pack> | packs\n")
         return 2
 
+    # `add --from <pack>` installs a curated bundle instead of one scaffold.
+    if args.from_pack:
+        root = find_repo_root(args.path)
+        flow_dir = root / ".flow"
+        if not flow_dir.is_dir():
+            print("not a Flow repo — run `flow init` first")
+            return 2
+        if yaml is None:
+            sys.stderr.write("flow guardrail: pyyaml is required (pip install pyyaml).\n")
+            return 2
+        return _install_pack(root, flow_dir, args.from_pack, args.optional)
+
     if not args.name:
-        sys.stderr.write("usage: flow guardrail add <name> [--prefix PREFIX] [--optional]\n")
+        sys.stderr.write("usage: flow guardrail add <name> | add --from <pack> | packs\n")
         return 2
 
     name = args.name
@@ -128,6 +162,65 @@ def run(argv: list[str]) -> int:
         f"  Edit `{rel}` — replace the [FILL] placeholders and cite real code "
         "in your repo. Then `flow check`."
     )
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# starter packs
+# ---------------------------------------------------------------------------
+
+def _list_packs() -> int:
+    packs = _available_packs()
+    if not packs:
+        print("No guardrail starter packs are shipped with this build.")
+        return 0
+    print("Guardrail starter packs (install with `flow guardrail add --from <pack>`):\n")
+    for pack, files in packs.items():
+        print(f"  {pack}")
+        for f in files:
+            print(f"    - {f.stem}")
+    return 0
+
+
+def _install_pack(root: Path, flow_dir: Path, pack: str, optional: bool) -> int:
+    """Copy every guardrail in a shipped pack into the instance and register it."""
+    packs = _available_packs()
+    if pack not in packs:
+        available = ", ".join(packs) or "(none shipped)"
+        sys.stderr.write(f"flow guardrail: unknown pack '{pack}'. Available: {available}\n")
+        return 2
+
+    subdir = "optional" if optional else "always-on"
+    list_key = "optional" if optional else "always_on"
+    dest_dir = flow_dir / "guardrails" / subdir
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    config_path = flow_dir / "config.yaml"
+
+    installed: list[str] = []
+    skipped: list[str] = []
+    for src in packs[pack]:
+        name = src.stem
+        dest = dest_dir / f"{name}.md"
+        if dest.exists():
+            skipped.append(name)
+            continue
+        dest.write_text(src.read_text(encoding="utf-8"), encoding="utf-8")
+        _register_in_config(config_path, list_key, name)
+        installed.append(name)
+
+    if installed and not optional:
+        tmpl = flow_dir / "templates" / "requirements.tmpl.md"
+        if tmpl.exists():
+            _regenerate_checklist(tmpl, _read_list(config_path, "always_on"))
+
+    if installed:
+        print(f"Installed pack '{pack}' into guardrails.{list_key}: " + ", ".join(installed))
+    if skipped:
+        print("Skipped (already present): " + ", ".join(skipped))
+    if not installed and not skipped:
+        print(f"Pack '{pack}' is empty.")
+        return 0
+    print("Run `flow check` to lint them; edit any rule to fit your codebase.")
     return 0
 
 
