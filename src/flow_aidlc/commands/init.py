@@ -168,10 +168,15 @@ def run(argv: list[str]) -> int:
     if not dry:
         merge_settings(eng / "claude" / "settings.json", claude_dir / "settings.json")
 
-    # ---- .gitignore -------------------------------------------------------
-    action("ensure .gitignore contains worklog/.active and .superpowers/")
+    # ---- .env.example (secret inventory scanned from the rendered .mcp.json) --
+    action(f"write {target / '.env.example'} (required credential vars)")
     if not dry:
-        _ensure_gitignore(target / ".gitignore", ["worklog/.active", ".superpowers/"])
+        _write_env_example(target)
+
+    # ---- .gitignore -------------------------------------------------------
+    action("ensure .gitignore contains worklog/.active, .superpowers/, .env")
+    if not dry:
+        _ensure_gitignore(target / ".gitignore", ["worklog/.active", ".superpowers/", ".env"])
 
     # ---- CLAUDE.md pointer ------------------------------------------------
     action(f"ensure {target / 'CLAUDE.md'} points at .flow/playbook.md")
@@ -221,6 +226,27 @@ def _render_file(src: Path, dst: Path, values: dict[str, str]) -> None:
     """Token-render ``src`` and write the result to ``dst``."""
     dst.parent.mkdir(parents=True, exist_ok=True)
     dst.write_text(render(src.read_text(encoding="utf-8"), values), encoding="utf-8")
+
+
+def _write_env_example(target: Path) -> None:
+    """Write .env.example listing every ${VAR} referenced in the rendered .mcp.json.
+
+    This is the fallback path for users not using a secrets manager (`flow
+    secrets use`). Real .env is gitignored; .env.example is committed.
+    """
+    from flow_aidlc import mcp_config
+
+    mcp_path = target / ".mcp.json"
+    if not mcp_path.exists():
+        return
+    variables = mcp_config.all_secret_vars(mcp_config.load_mcp(mcp_path))
+    header = (
+        "# Flow tracker/MCP credentials — copy to .env and fill in.\n"
+        "# .env is gitignored. Load it (direnv, or `set -a; source .env; set +a`)\n"
+        "# before launching Claude Code — or use `flow secrets use <provider>`.\n\n"
+    )
+    body = "".join(f"{var}=\n" for var in variables) or "# (no credential vars required)\n"
+    (target / ".env.example").write_text(header + body, encoding="utf-8")
 
 
 def _ensure_gitignore(path: Path, entries: list[str]) -> None:

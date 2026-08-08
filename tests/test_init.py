@@ -57,3 +57,22 @@ def test_init_dry_run_writes_nothing(tmp_path):
 
     assert init.run(["--yes", "--dry-run", "--path", str(tmp_path)]) == 0
     assert not (tmp_path / ".flow").exists()
+
+
+def test_init_scaffolds_env_example_with_tracker_vars(tmp_path):
+    _git_init(tmp_path)
+    assert init.run(["--yes", "--repo", "o/n", "--path", str(tmp_path)]) == 0
+    example = (tmp_path / ".env.example").read_text()
+    assert "GITHUB_TOKEN=" in example
+
+
+def test_init_gitignores_dot_env(tmp_path):
+    _git_init(tmp_path)
+    init.run(["--yes", "--repo", "o/n", "--path", str(tmp_path)])
+    assert ".env" in (tmp_path / ".gitignore").read_text().splitlines()
+
+
+def test_init_does_not_create_real_dot_env(tmp_path):
+    _git_init(tmp_path)
+    init.run(["--yes", "--repo", "o/n", "--path", str(tmp_path)])
+    assert not (tmp_path / ".env").exists()
