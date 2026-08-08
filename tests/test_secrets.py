@@ -4,7 +4,7 @@ from pathlib import Path
 
 from flow_aidlc.commands import secrets
 
-def _write_mcp(root: Path, wrapped_github=False):
+def _write_mcp(root: Path):
     root.mkdir(parents=True, exist_ok=True)
     mcp = {"mcpServers": {
         "github": {"command": "npx", "args": ["-y", "srv-github"],

@@ -63,7 +63,6 @@ _GUIDED_ONLY = {"op", "1password", "doppler"}
 def _parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="flow secrets",
                                 description="Route MCP secrets through a secrets manager.")
-    p.add_argument("--path", default=None, help="Repo dir (default: search up from cwd).")
     sub = p.add_subparsers(dest="action", required=True)
     u = sub.add_parser("use", help="Wrap secret-bearing servers with a provider.")
     u.add_argument("provider")
@@ -118,12 +117,13 @@ def _use(root: Path, provider_name: str, env: str | None, dry: bool) -> int:
     targets = list(mc.secret_vars(mcp).keys())
     to_wrap = [n for n in targets if not mc.is_wrapped(servers[n])]
 
-    for note in provider.preconditions(root):
-        print(f"  [note] {note}")
-
     if not targets:
         print("No secret-bearing servers in .mcp.json — nothing to wrap.")
         return 0
+
+    for note in provider.preconditions(root):
+        print(f"  [note] {note}")
+
     if not to_wrap:
         print("All secret-bearing servers already wrapped.")
         return 0
