@@ -92,6 +92,7 @@ def run(argv: list[str]) -> int:
     _check_graph(rep, root, flow_dir)
     _check_git(rep, root)
     _check_mcp(rep, root)
+    _check_secrets(rep, root)
     _check_skills(rep, root)
 
     print()
@@ -250,6 +251,19 @@ def _check_mcp(rep: _Report, root: Path) -> None:
         rep.line("mcp", PASS, f"servers: {', '.join(sorted(servers))}")
     else:
         rep.line("mcp", WARN, ".mcp.json has no configured servers")
+
+
+def _check_secrets(rep: _Report, root: Path) -> None:
+    """Report whether each secret-bearing MCP server's credentials are wired.
+
+    Delegates to the shared check in the secrets command (mode-aware:
+    secrets-manager-wrapped vs plain ${VAR} vs .env-not-loaded). WARN, never
+    FAIL — doctor runs in CI where no secret exists.
+    """
+    from flow_aidlc.commands.secrets import secrets_summary
+
+    status, detail = secrets_summary(root)
+    rep.line("secrets", status, detail)
 
 
 def _check_skills(rep: _Report, root: Path) -> None:

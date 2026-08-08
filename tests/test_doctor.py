@@ -100,3 +100,33 @@ def test_check_skills_warns_on_partial_install(tmp_path, monkeypatch, capsys):
     out = capsys.readouterr().out
     assert "[WARN]" in out and "pr-review-toolkit" in out
     assert rep.any_fail is False
+
+
+# ---------------------------------------------------------------------------
+# _check_secrets — the reported line
+# ---------------------------------------------------------------------------
+
+def _mcp_repo(tmp_path):
+    (tmp_path / ".mcp.json").write_text(json.dumps({"mcpServers": {
+        "github": {"command": "npx", "args": ["-y", "srv"],
+                    "env": {"GITHUB_TOKEN": "${GITHUB_TOKEN}"}}}}, indent=2))
+    return tmp_path
+
+
+def test_check_secrets_warns_when_unset(tmp_path, monkeypatch, capsys):
+    _mcp_repo(tmp_path)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    rep = doctor._Report()
+    doctor._check_secrets(rep, tmp_path)
+    out = capsys.readouterr().out
+    assert "[WARN]" in out and "secrets" in out
+    assert rep.any_fail is False  # never FAIL
+
+
+def test_check_secrets_pass_when_set(tmp_path, monkeypatch, capsys):
+    _mcp_repo(tmp_path)
+    monkeypatch.setenv("GITHUB_TOKEN", "x")
+    rep = doctor._Report()
+    doctor._check_secrets(rep, tmp_path)
+    assert "[PASS]" in capsys.readouterr().out
+    assert rep.any_fail is False
