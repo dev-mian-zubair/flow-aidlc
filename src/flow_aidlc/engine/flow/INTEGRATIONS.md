@@ -128,14 +128,15 @@ three ways, best DX first:
    token is injected at launch and never touches the repo, `.env`, or your
    shell. One-time: `infisical login` (stores a token in your OS keyring) +
    `infisical init` (links the project). `flow secrets off` reverts; `flow
-   secrets status` verifies resolution. (`op`/`doppler` follow the same wrapper
-   pattern — `flow secrets use <name>` prints it.)
+   secrets status` verifies resolution. (`op`/`doppler` aren't wired
+   first-class yet — `flow secrets use <name>` prints the manual `<tool> run --
+   …` wrapper to apply by hand, and exits non-zero.)
 2. **Provider CLI credential store** — e.g. `export GITHUB_TOKEN=$(gh auth token)`
    keeps the secret in `gh`'s store, not a file.
 3. **`.env` file (fallback)** — copy the generated `.env.example` to `.env`
    (gitignored), fill it in, and load it (`direnv`, or `set -a; source .env;
-   set +a`) before launching Claude Code. `flow doctor` warns if `.env` exists
-   but isn't loaded.
+   set +a`) before launching Claude Code. `flow doctor` warns when a required
+   var is unset in the environment but present in an unsourced `.env`.
 
 `flow doctor` reports a `secrets` line covering every secret-bearing server;
 `flow secrets status` adds a live resolve probe.
