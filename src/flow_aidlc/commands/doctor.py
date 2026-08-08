@@ -305,7 +305,7 @@ def _check_auto(rep: _Report, root: Path) -> None:
     mode (the default) needs none of this; auto needs a green-CI backstop.
     """
     ci_dir = root / ".github" / "workflows"
-    ci_present = (ci_dir.is_dir() and any(ci_dir.glob("*.yml"))) or (root / ".gitlab-ci.yml").exists()
+    ci_present = (ci_dir.is_dir() and (any(ci_dir.glob("*.yml")) or any(ci_dir.glob("*.yaml")))) or (root / ".gitlab-ci.yml").exists()
     if ci_present:
         rep.line("auto", PASS, "CI workflow present — `/flow-auto` can merge on green CI")
     else:

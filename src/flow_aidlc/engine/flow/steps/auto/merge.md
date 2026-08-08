@@ -4,8 +4,8 @@ Runs after `steps/ship/open-pr.md` opens the PR (auto mode only). TWO independen
 gates must both be green to merge: (a) every in-session adversarial panel cleared,
 and (b) the PR's required CI checks green.
 
-1. **Open** the PR via the tracker/VCS adapter `OPEN_PR` (base = `execution.merge.target`
-   or `config.vcs.base`), body includes `Fixes <id>`.
+1. **Confirm** the PR opened by `steps/ship/open-pr.md` (base = `execution.merge.target`
+   or `config.vcs.base`; body includes `Fixes <id>`) — do not open a second PR.
 2. **Poll** the PR's required checks via the tracker/VCS MCP until they settle.
 3. **Green →** merge (respect branch protection; never override it). The ticket
    auto-closes via `Fixes <id>`. Return success to the loop.

@@ -19,11 +19,12 @@ checkpoints. Load per `/flow-auto`.
 4. **Ship + merge:** follow `steps/ship/open-pr.md` then `steps/auto/merge.md`
    (open the PR, poll checks, merge only on green CI).
 5. **On success:** the ticket auto-closes via `Fixes #`; increment the merged
-   count; go to 1.
+   count and the attempted count; go to 1.
 6. **On a task that cannot settle** (panel non-converge at `review.max_rounds`,
    or CI red after fixes): PARK it — leave a draft PR, add the `flow-blocked`
-   label + a comment on why, and continue to the next task (do not halt the run).
-7. **Stop conditions:** queue empty | merged count == `max_tasks` | budget
+   label + a comment on why, increment the attempted count, and continue to the
+   next task (do not halt the run).
+7. **Stop conditions:** queue empty | attempted count (merged + parked) == `max_tasks` | budget
    exhausted | `.flow/STOP` present. Then emit `steps/auto/report.md`.
 
 ## Guarantees
