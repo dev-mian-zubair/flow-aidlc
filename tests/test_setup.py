@@ -33,3 +33,29 @@ def test_setup_without_flow_dir_fails(tmp_path):
     """`flow setup` needs an initialised .flow/ — it errors clearly without one."""
     _git_init(tmp_path)
     assert setup.run(["--path", str(tmp_path), "--dry-run"]) == 1
+
+
+def test_with_impeccable_dry_run_prints_install(tmp_path, capsys):
+    _git_init(tmp_path)
+    from flow_aidlc.commands import init, setup
+    init.run(["--yes", "--repo", "o/n", "--path", str(tmp_path)])
+    rc = setup.run(["--with-impeccable", "--dry-run", "--path", str(tmp_path)])
+    assert rc == 0
+    out = capsys.readouterr().out
+    assert "impeccable install" in out
+    assert "/impeccable init" in out   # guidance for the standards (slash command)
+
+def test_without_flag_no_impeccable(tmp_path, capsys):
+    _git_init(tmp_path)
+    from flow_aidlc.commands import init, setup
+    init.run(["--yes", "--repo", "o/n", "--path", str(tmp_path)])
+    setup.run(["--dry-run", "--path", str(tmp_path)])
+    assert "impeccable" not in capsys.readouterr().out.lower()
+
+def test_with_impeccable_gitignores_ephemera(tmp_path):
+    _git_init(tmp_path)
+    from flow_aidlc.commands import init, setup
+    init.run(["--yes", "--repo", "o/n", "--path", str(tmp_path)])
+    setup.run(["--with-impeccable", "--path", str(tmp_path)])   # not dry-run: writes gitignore
+    gi = (tmp_path / ".gitignore").read_text()
+    assert ".impeccable/cache/" in gi

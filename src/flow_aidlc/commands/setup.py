@@ -37,6 +37,11 @@ except ImportError:  # pragma: no cover - pyyaml is a runtime dependency
 # The pinned Graphify build the code-graph adapter targets (see steps/shared/graph.md).
 _GRAPHIFY_SPEC = "graphifyy[mcp]==0.9.33"
 
+_IMPECCABLE_EPHEMERA = (
+    ".impeccable/*.png", ".impeccable/sessions/", ".impeccable/previews/",
+    ".impeccable/cache/", ".impeccable/config.local.json",
+)
+
 
 def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
@@ -45,6 +50,8 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--path", default=None, help="Directory to search upward from for a .flow/ (default: cwd).")
     p.add_argument("--dry-run", action="store_true", help="Print the planned chain; run nothing external.")
+    p.add_argument("--with-impeccable", action="store_true",
+                   help="Also install the Impeccable design-quality skill (opt-in; UI projects).")
     return p
 
 
@@ -67,6 +74,21 @@ def _run(cmd: list[str], cwd: Path) -> int:
         return subprocess.run(cmd, cwd=str(cwd)).returncode
     except FileNotFoundError:
         return 127
+
+
+def _ensure_impeccable_gitignore(root: Path) -> None:
+    """Append Impeccable ephemera to .gitignore (PRODUCT.md/DESIGN.md stay tracked)."""
+    path = root / ".gitignore"
+    existing = set()
+    text = ""
+    if path.exists():
+        text = path.read_text(encoding="utf-8")
+        existing = {ln.strip() for ln in text.splitlines()}
+    missing = [e for e in _IMPECCABLE_EPHEMERA if e not in existing]
+    if not missing:
+        return
+    prefix = "" if (not text or text.endswith("\n")) else "\n"
+    path.write_text(text + prefix + "\n".join(missing) + "\n", encoding="utf-8")
 
 
 def run(argv: list[str]) -> int:
@@ -123,6 +145,21 @@ def run(argv: list[str]) -> int:
             doctor.run(["--path", str(root)])
         except SystemExit:  # pragma: no cover - defensive
             pass
+
+    # ---- 4. Impeccable (opt-in) ------------------------------------------
+    if args.with_impeccable:
+        step("install Impeccable (design quality): npx impeccable install --providers=claude --scope=project")
+        if not dry:
+            if shutil.which("npx"):
+                rc = _run(["npx", "--yes", "impeccable", "install", "--providers=claude", "--scope=project"], root)
+                if rc != 0:
+                    print(f"  [WARN] impeccable install exited {rc} — continuing.")
+            else:
+                print("  [WARN] `npx` not found — skipping Impeccable install.")
+                print("         Install Node, then: npx impeccable install --providers=claude --scope=project")
+            _ensure_impeccable_gitignore(root)
+        print("  Author the standards in Claude Code: run `/impeccable init` to create PRODUCT.md + DESIGN.md")
+        print("  (they are committed; Flow reads them for grounding — see INTEGRATIONS.md)")
 
     print("\nFlow setup complete." + (" (dry-run — nothing external ran.)" if dry else ""))
     print("Finish the human-only steps flagged by `flow doctor` above")
