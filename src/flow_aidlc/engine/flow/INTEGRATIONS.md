@@ -251,3 +251,21 @@ id-scheme prefix is the team key.
 > mapping's `pull_request_write`) with the Linear id in the branch/PR title — keep the
 > `github` MCP server declared for the PR write path (Linear's GitHub integration then
 > auto-links and can auto-close the issue on merge).
+
+### To Azure DevOps / Shortcut / Asana / ClickUp (implemented)
+
+Same three steps as above — set `platform`/`mcp`, add the server to `.mcp.json`, run
+`flow doctor`. The full universal-operation mapping for each lives in the tracker
+adapter (`.flow/steps/shared/tracker.md`); the essentials:
+
+| Platform | MCP server | `tracker.repo` | Auth env | PR / notes |
+|---|---|---|---|---|
+| **azure-devops** | `microsoft/azure-devops-mcp` (first-party) | `<org>/<project>` | Azure PAT / Entra login | native work-item types; `OPEN_PR` native on **Azure Repos**, else your VCS |
+| **shortcut** | `useshortcut/mcp-server-shortcut` (official) | _unused_ (workspace-scoped); `id_scheme: sc-{n}` | `SHORTCUT_API_TOKEN` | native story type + epics; PR on your VCS |
+| **asana** | `roychri/mcp-server-asana` (community) | project **gid** | `ASANA_ACCESS_TOKEN` | no native type (tag fallback); PR on your VCS |
+| **clickup** | `clickup-mcp` (community) | **list id** | `CLICKUP_API_TOKEN` (+ team id) | custom task types; PR on your VCS |
+
+> Except Azure Repos, none of these host code — keep the `github` (or your VCS) MCP
+> declared so the Ship phase can open the PR, with the ticket id in the branch/PR for
+> the platform's VCS integration to link it. Tool names track each server and may vary
+> by version — confirm against the one you install.

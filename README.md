@@ -77,8 +77,12 @@ Then, in Claude Code:
 | **GitHub Issues** | ✅ Implemented (default) | `@modelcontextprotocol/server-github` | `tracker.repo` = `owner/name`; `OPEN_PR` native |
 | **Jira** | ✅ Implemented | `mcp-atlassian` (sooperset) | `tracker.repo` = the **project key**; site URL via `JIRA_URL`; `OPEN_PR` runs on your VCS with the Jira key in the PR |
 | **Linear** | ✅ Implemented | Linear MCP (`LINEAR_API_KEY`) | `tracker.repo` = the **team key**; type via labels (no native issue type); `OPEN_PR` runs on your VCS with the Linear id in the branch/PR |
+| **Azure DevOps** | ✅ Implemented | `microsoft/azure-devops-mcp` (first-party) | `tracker.repo` = `<org>/<project>`; native work-item types; `OPEN_PR` native on Azure Repos (else your VCS) |
+| **Shortcut** | ✅ Implemented | `useshortcut/mcp-server-shortcut` (official) | workspace-scoped (`tracker.repo` unused); native story type + epics; `OPEN_PR` on your VCS |
+| **Asana** | ✅ Implemented | `roychri/mcp-server-asana` (community) | `tracker.repo` = project gid; type via tags; `OPEN_PR` on your VCS |
+| **ClickUp** | ✅ Implemented | `clickup-mcp` (community) | `tracker.repo` = list id; custom task types; `OPEN_PR` on your VCS |
 
-Switch trackers via `flow init --tracker <platform>` (or edit `config.yaml`) — see [`INTEGRATIONS.md`](src/flow_aidlc/engine/flow/INTEGRATIONS.md).
+Switch trackers via `flow init --tracker <platform>` (or edit `config.yaml`) — see [`INTEGRATIONS.md`](src/flow_aidlc/engine/flow/INTEGRATIONS.md). Adapter tool names track each platform's MCP server and may vary by version.
 
 ## The two layers
 

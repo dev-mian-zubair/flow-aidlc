@@ -1,7 +1,7 @@
 ---
 name: scope-clarify
 description: Turn a raw idea into structured intent — extract the real goal, surface ambiguity, and agree on success criteria before any ticket is written. Repo-less.
-tools: Read, mcp__github, mcp__jira, mcp__linear, mcp__graphify, WebSearch
+tools: Read, mcp__github, mcp__jira, mcp__linear, mcp__azure-devops, mcp__shortcut, mcp__asana, mcp__clickup, mcp__graphify, WebSearch
 model: sonnet
 ---
 

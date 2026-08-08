@@ -236,10 +236,10 @@ def test_shipped_adapter_implements_all_trackers():
 
     adapter = (engine_dir() / "flow" / "steps" / "shared" / "tracker.md").read_text()
     # Every platform has a real section heading...
-    for platform in ("github", "jira", "linear"):
+    for platform in ("github", "jira", "linear", "azure-devops", "shortcut", "asana", "clickup"):
         assert f"### {platform}\n" in adapter, platform
     # ...and no platform heading is marked as a NOT IMPLEMENTED stub.
-    assert not re.search(r"^### \w+ — NOT IMPLEMENTED", adapter, re.MULTILINE), adapter
+    assert not re.search(r"^### [\w-]+ — NOT IMPLEMENTED", adapter, re.MULTILINE), adapter
 
 
 def _init_and_check(tmp_path, platform: str, key: str):
@@ -266,5 +266,24 @@ def test_c3_jira_passes_end_to_end(tmp_path):
 def test_c3_linear_passes_end_to_end(tmp_path):
     """`flow init --tracker linear` produces an instance the gate accepts."""
     errs = _init_and_check(tmp_path, "linear", "ENG")
+    assert not any("C3" in e for e in errs), errs
+    assert errs == [], errs
+
+
+import pytest
+
+
+@pytest.mark.parametrize(
+    "platform,key",
+    [
+        ("azure-devops", "ADOPRJ"),
+        ("shortcut", "SCWORK"),
+        ("asana", "ASPROJ"),
+        ("clickup", "CULIST"),
+    ],
+)
+def test_c3_new_trackers_pass_end_to_end(tmp_path, platform, key):
+    """Each newly-wired tracker produces an instance the gate fully accepts."""
+    errs = _init_and_check(tmp_path, platform, key)
     assert not any("C3" in e for e in errs), errs
     assert errs == [], errs

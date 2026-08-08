@@ -16,7 +16,7 @@ commands:                      # your project's shell commands; flow init fills 
 vcs:
   base: "{{BASE_BRANCH}}"   # default base branch for feature branches + PR target (per-task override: "Base branch:" in progress.md)
 tracker:
-  platform: "{{TRACKER_PLATFORM}}"   # github | jira | linear   (default: github)
+  platform: "{{TRACKER_PLATFORM}}"   # github|jira|linear|azure-devops|shortcut|asana|clickup (default: github)
   mcp: "{{TRACKER_MCP}}"
   repo: "{{TRACKER_REPO}}"
   id_scheme: "{{ID_PREFIX}}-{n}"   # expands to {{ID_PREFIX}}- + the tracker issue number, no zero-padding; worklog dir is {{ID_PREFIX}}-<n>-<slug>

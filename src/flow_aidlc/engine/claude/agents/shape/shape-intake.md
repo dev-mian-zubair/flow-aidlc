@@ -1,7 +1,7 @@
 ---
 name: shape-intake
 description: Open a Shape workstream for an existing ticket — verify it exists in the tracker, scaffold the worklog, announce the task, and route to the correct first Shape stage.
-tools: Read, Write, mcp__github, mcp__jira, mcp__linear
+tools: Read, Write, mcp__github, mcp__jira, mcp__linear, mcp__azure-devops, mcp__shortcut, mcp__asana, mcp__clickup
 model: sonnet
 ---
 

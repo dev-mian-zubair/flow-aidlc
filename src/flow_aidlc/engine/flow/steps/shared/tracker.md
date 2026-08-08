@@ -13,7 +13,13 @@ mapping section for that platform. **If the configured platform has no mapping h
 it yet; do not improvise platform calls. (The `config-consistency` check enforces
 that `tracker.platform` is an implemented platform.)
 
-**Implemented:** `github`, `jira`, `linear`.
+**Implemented:** `github`, `jira`, `linear`, `azure-devops`, `shortcut`, `asana`, `clickup`.
+
+> The four sections below (`azure-devops`, `shortcut`, `asana`, `clickup`) map to
+> each platform's MCP toolset; tool names track the referenced server and may
+> differ across versions — confirm against your installed server. Set
+> `config.tracker.mcp` to the server's key in `.mcp.json` and `config.tracker.repo`
+> to the platform's container id per each section.
 
 ## Universal operations (the contract callers use)
 
@@ -106,6 +112,100 @@ Linear ids are already `<team-key>-<number>`, set `config.tracker.id_scheme` to
 (a personal API key from Linear → Settings → Security & access → API). Workflow-state
 and label ids are workspace-specific; resolve them once (`list_issue_statuses`,
 `list_issue_labels`) and record them in `knowledge/map/` if `SET_TYPE`/`CLOSE` need them.
+
+### azure-devops
+
+Tool names are the `microsoft/azure-devops-mcp` toolset (work-item-tracking `wit_*`
+and repo `repo_*` families). **`config.tracker.repo` holds `<org>/<project>`**; work
+items are identified by their numeric id. Azure DevOps has **native work-item types**
+(Bug/Task/User Story/Epic/Feature) and hosts code in **Azure Repos**, so `OPEN_PR` is
+native when you use Azure Repos (else open on your VCS).
+
+| Operation | azure-devops tool call |
+|---|---|
+| `DEDUP_SEARCH` | `search_workitem` (WIQL/text) scoped to `<project>` |
+| `CREATE_TICKET` | `wit_create_work_item(project, type, title, description, fields)` |
+| `VERIFY_EXISTS` / `GET_TICKET` | `wit_get_work_item(id)` |
+| `SET_TYPE` | set the work-item **type** at create; native types map bug/feat/task/epic → Bug/User Story (or Feature)/Task/Epic |
+| `ADD_SUB_ISSUE` | `wit_update_work_item` adding a `System.LinkTypes.Hierarchy-Reverse` parent link (parent → child hierarchy) |
+| `SET_FIELDS` | `wit_update_work_item` — priority → `Microsoft.VSTS.Common.Priority`; effort → `…Scheduling.StoryPoints`; milestone → `System.IterationPath`; area → `System.AreaPath` |
+| `COMMENT` | `wit_add_work_item_comment(id, text)` |
+| `CLOSE` | `wit_update_work_item(id, System.State: "Closed"/"Done")` — state names depend on the process (Agile/Scrum/Basic) |
+| `OPEN_PR` | **Azure Repos:** `repo_create_pull_request(...)`. **Code on another VCS:** open there (the `github` mapping) with the work-item id (`#123`) in the PR to auto-link. |
+
+**Preconditions (azure-devops):** the `azure-devops` MCP authed via your Azure login
+(PAT/Entra). The state model and field reference names are process-specific; resolve
+once and record in `knowledge/map/` if `SET_FIELDS`/`CLOSE` need them.
+
+### shortcut
+
+Tool names are the `useshortcut/mcp-server-shortcut` toolset. Shortcut is
+workspace-scoped — **`config.tracker.repo` is unused** (leave empty) and the id is the
+numeric **story id**; set `config.tracker.id_scheme` to `sc-{n}`. Stories have a native
+**story type** (feature/bug/chore) and epics are first-class.
+
+| Operation | shortcut tool call |
+|---|---|
+| `DEDUP_SEARCH` | `search-stories(query)` (Shortcut search syntax) |
+| `CREATE_TICKET` | `create-story(name, description, story_type, labels, team/group)` |
+| `VERIFY_EXISTS` / `GET_TICKET` | `get-story(id)` |
+| `SET_TYPE` | set `story_type` at create — feature/bug/chore; an **epic** is created with `create-epic` rather than a story type |
+| `ADD_SUB_ISSUE` | set the child story's `epic_id` to the parent epic (epic → stories); story-to-story is a relationship, not parent/child |
+| `SET_FIELDS` | `update-story` — priority/estimate/state via workflow-state id, iteration, labels |
+| `COMMENT` | `create-story-comment(story_id, text)` |
+| `CLOSE` | `update-story(id, workflow_state_id: <a Done state>)` — states are workflow-specific |
+| `OPEN_PR` | **Shortcut does not host code.** Open the PR on the VCS with the story id (e.g. `sc-123`) in the branch/PR title so Shortcut's VCS integration links and can auto-complete it. |
+
+**Preconditions (shortcut):** the `shortcut` MCP authed via `SHORTCUT_API_TOKEN`.
+Workflow-state and epic ids are workspace-specific; resolve once and record in
+`knowledge/map/`.
+
+### asana
+
+Tool names are the `roychri/mcp-server-asana` toolset. **`config.tracker.repo` holds the
+Asana project gid** and the id is the numeric **task gid** (set `id_scheme` to a plain
+`{n}` or your own prefix). Asana has **no native issue type** — model type with a
+`type:*` **tag** or a custom field (label fallback, like github/linear); epics are a
+**parent task + subtasks** (or a project/section).
+
+| Operation | asana tool call |
+|---|---|
+| `DEDUP_SEARCH` | `asana_search_tasks(project/workspace, text)` |
+| `CREATE_TICKET` | `asana_create_task(project=<config.tracker.repo>, name, notes, tags)` |
+| `VERIFY_EXISTS` / `GET_TICKET` | `asana_get_task(task_gid)` |
+| `SET_TYPE` | apply a `type:<bug\|feat\|task\|epic>` **tag** (no native type) |
+| `ADD_SUB_ISSUE` | `asana_create_subtask(parent=<parent gid>)`, or `asana_update_task` setting `parent` |
+| `SET_FIELDS` | `asana_update_task` — priority/effort via **custom fields**; milestone via section/project; due date |
+| `COMMENT` | `asana_create_task_comment(task_gid, text)` |
+| `CLOSE` | `asana_update_task(task_gid, completed: true)` |
+| `OPEN_PR` | **Asana does not host code.** Open the PR on the VCS; reference the task URL/gid in the PR (Asana's GitHub integration links it). |
+
+**Preconditions (asana):** the `asana` MCP authed via `ASANA_ACCESS_TOKEN` (a personal
+access token). Custom-field gids are workspace-specific; resolve once and record in
+`knowledge/map/` if `SET_FIELDS` sets priority/effort.
+
+### clickup
+
+Tool names are the ClickUp MCP toolset (community `clickup-mcp`). **`config.tracker.repo`
+holds the ClickUp list id** and the id is the **task id** (ClickUp task ids are opaque,
+e.g. `86abc`; set `id_scheme` accordingly). ClickUp supports **custom task types** and
+subtasks via `parent`.
+
+| Operation | clickup tool call |
+|---|---|
+| `DEDUP_SEARCH` | `search_tasks` / `get_tasks(list_id=<config.tracker.repo>, query)` |
+| `CREATE_TICKET` | `create_task(list_id=<config.tracker.repo>, name, description, tags, custom_item_id?)` |
+| `VERIFY_EXISTS` / `GET_TICKET` | `get_task(task_id)` |
+| `SET_TYPE` | ClickUp **custom task types** via `custom_item_id`; else a `type:*` tag fallback |
+| `ADD_SUB_ISSUE` | `create_task(..., parent=<parent task id>)` (subtasks), or `update_task(parent=…)` |
+| `SET_FIELDS` | `update_task` — priority (1–4), points/time-estimate, status, due date; extra fields via **custom fields** |
+| `COMMENT` | `create_task_comment(task_id, comment_text)` |
+| `CLOSE` | `update_task(task_id, status: "closed"/"done")` — statuses are list/space-specific |
+| `OPEN_PR` | **ClickUp does not host code.** Open the PR on the VCS with the task id in the branch/PR; ClickUp's GitHub integration links it. |
+
+**Preconditions (clickup):** the `clickup` MCP authed via `CLICKUP_API_TOKEN` (personal
+token; a Team/workspace id may also be required). Status and custom-field ids are
+space-specific; resolve once and record in `knowledge/map/`.
 
 ## Rule
 
