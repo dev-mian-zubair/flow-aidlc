@@ -125,7 +125,7 @@ Switch trackers via `flow init --tracker <platform>` (or edit `config.yaml`) —
 | the `flow` CLI + check modules | `knowledge/map/*` — your subsystem invariants |
 | guardrail/config/map **templates** | `config.yaml → graph:` + the committed code graph |
 
-See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the full model and [`docs/build-plan.md`](docs/build-plan.md) for the implementation roadmap.
+See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the full model.
 
 ## Claude Code plugin
 
@@ -145,7 +145,7 @@ by `flow plugin build` (single source of truth: `src/flow_aidlc/engine/claude/`)
 ## Status
 
 **Canonical source of truth for the Flow engine.** The engine and CLI are
-feature-complete (M0–M6); we are in the polish phase. See `docs/build-plan.md`.
+feature-complete; we are in the polish phase.
 
 ## License
 

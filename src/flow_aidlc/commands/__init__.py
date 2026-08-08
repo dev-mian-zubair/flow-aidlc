@@ -8,6 +8,5 @@ def staged(name: str, milestone: str) -> int:
     """Uniform message for a command whose implementation is scheduled."""
     sys.stderr.write(
         f"flow {name}: not implemented yet (planned for {milestone}).\n"
-        f"See docs/build-plan.md for the roadmap.\n"
     )
     return 2
