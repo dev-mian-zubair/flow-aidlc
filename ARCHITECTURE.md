@@ -72,12 +72,39 @@ committed **code graph** ([Graphify](https://pypi.org/project/graphifyy/), ADR
   be implemented in the adapter (C6) and `graph.root` / `graph.focus` / `graph.ignore_file`
   must resolve on disk (C7).
 
-## Ship ends at the open PR
+## Two execution modes
 
-The Ship phase is **terminal at the open PR** (branch-hardening → learnings → open-pr,
-ADR 0010): Flow produces a reviewed, PR-ready branch and stops. Merge, required checks,
-approvals, ticket close, and any serialization-lock release are owned by the team on the
-host — branch protection on `vcs.base` is authoritative.
+Flow runs one lifecycle (Scope→Shape→Build→Ship) in two modes. The stages, artifacts,
+guardrails, and gates are identical across modes — the difference is **who enforces the
+gate**.
+
+- **`controlled` (default):** a human `/flow-approve`s each `checkpoint: yes` stage;
+  Ship is terminal at the open PR (below). Human-in-the-loop AI-DLC.
+- **`auto` (`/flow-auto` only):** the human checkpoints are replaced by **stage-typed
+  adversarial reviewer panels** (reusing `pr-review-toolkit` + `guardrail-verifier`) that
+  fix-loop to consensus or park; Ship extends past open-PR to **merge on green CI**, then
+  the loop pulls the next `flow-auto`-labeled ticket. On-the-loop autonomous AI-DLC.
+
+The load-bearing invariant: **auto runs every gate `controlled` runs** — it removes the
+human *stop*, not the *governance*. Enforcement moves from human judgment to agent panels
++ deterministic CI; the human moves from per-step approver to **policy author** (the
+guardrails, the `flow-auto` label as the work queue, branch protection). Safety rails:
+two-gate merge (panels + green CI), branch protection never bypassed, park-on-fail,
+`.flow/STOP` kill-switch, `max_tasks` cap, and a CI-required precondition. There is no
+global mode toggle — `auto` happens only via `/flow-auto`. Config defaults live under
+`config.yaml → execution:`.
+
+## Ship ends at the open PR (controlled) / merges on green CI (auto)
+
+In **`controlled`** mode the Ship phase is **terminal at the open PR** (branch-hardening →
+learnings → open-pr, ADR 0010): Flow produces a reviewed, PR-ready branch and stops.
+Merge, required checks, approvals, ticket close, and any serialization-lock release are
+owned by the team on the host — branch protection on `vcs.base` is authoritative.
+
+In **`auto`** mode Ship continues past open-pr: it polls the PR's required checks and
+**merges only on green CI** (respecting branch protection), then the autonomous loop
+proceeds to the next ticket. The team's control surface shifts from *approving each PR*
+to *setting policy* (branch protection + the CI gates + the `flow-auto` label).
 
 ## Distribution
 

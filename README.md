@@ -7,6 +7,13 @@ in CI. It is **project-agnostic** — the engine ships generic; a one-command
 `flow init` scaffolds a per-project instance, and each project authors its own
 invariants (guardrails), subsystem maps, and tracker config.
 
+It runs in **two modes over the same lifecycle**: **supervised** (`controlled`, the
+default — a human approves each checkpoint; terminates at the open PR) and
+**autonomous** (`auto`, via `/flow-auto` — adversarial agent panels replace the human
+stop, the PR merges on green CI, and the loop grinds the next ticket). Both run
+*every* gate; auto only changes *who holds the gate* — from a human to agent panels +
+deterministic CI. See [Execution modes](#execution-modes).
+
 > Flow is a reusable, project-agnostic engine + a CLI to install it into any repo.
 
 ---
@@ -70,6 +77,30 @@ Then, in Claude Code:
 - **Secrets, not in the repo** — `.mcp.json` holds only `${VAR}` references; supply values via a secrets manager (`flow secrets use infisical`/`doppler` — zero plaintext), a provider CLI (`gh auth token`), or a gitignored `.env`. `flow doctor` verifies they resolve.
 - **Observability** — `flow status` shows where each ticket sits in Scope→Shape→Build→Ship (read from `worklog/`); `flow learnings` surfaces correction/redirection signals from task journals and `--promote`s them into `knowledge/practices.md`. `flow ci init` scaffolds a workflow that runs the gate in CI (`--gates semgrep,conftest` adds deterministic SAST + policy-as-code gates beside the LLM guardrails).
 - **Design quality (optional, UI)** — `flow setup --with-impeccable` installs [Impeccable](https://impeccable.style/) (Apache-2.0); Flow reads its `PRODUCT.md`/`DESIGN.md` for grounding, generates/validates UI against them, and `flow ci init --gates impeccable` gates design quality in CI.
+- **Two execution modes** — the same lifecycle, supervised **or** autonomous (see below).
+
+## Execution modes
+
+Flow runs **one lifecycle** (Scope→Shape→Build→Ship) in either of two modes. The
+stages, artifacts, guardrails, and gates are identical — what differs is **who holds
+the gate**.
+
+| | **`controlled`** (default) | **`auto`** (`/flow-auto`) |
+|---|---|---|
+| Checkpoints | human `/flow-approve` at each gate | **adversarial agent panels** replace the human stop (reuse `pr-review-toolkit` + `guardrail-verifier`; loop until consensus or park) |
+| Terminates at | the **open PR** (the team owns the merge) | **merge on green CI**, then the loop pulls the next `flow-auto`-labeled ticket |
+| Human role | in-the-loop operator (approves each step) | on-the-loop policy-setter (labels the queue, authors the invariants, owns branch protection) |
+| Governance | human judgment per checkpoint | agent panels **+** deterministic CI + branch protection |
+
+**Auto runs every gate `controlled` runs** — it never trades a gate for speed. It's
+runaway-safe: a two-gate merge (panels **and** green CI), branch protection never
+bypassed, **park-on-fail** (a stuck task becomes a draft PR + `flow-blocked` and the
+loop continues), a `.flow/STOP` kill-switch, a `max_tasks` cap, and a hard precondition
+that CI exists. Auto is entered only via `/flow-auto` — there is no global toggle.
+
+> This is why Flow is still a **governed AI-DLC** in both modes: the governance
+> *structure* is unchanged; auto only moves the *enforcement* from a human to agent
+> panels + CI, and the human from per-step approver to policy author.
 
 ## Supported trackers
 
