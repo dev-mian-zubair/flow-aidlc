@@ -59,8 +59,21 @@ def test_unknown_provider_errors(tmp_path):
 
 def test_guided_only_provider_prints_pattern(tmp_path, capsys):
     _write_mcp(tmp_path)
-    assert secrets.run(["use", "doppler", "--path", str(tmp_path)]) == 2
-    assert "doppler run" in capsys.readouterr().out
+    assert secrets.run(["use", "op", "--path", str(tmp_path)]) == 2
+    assert "op run" in capsys.readouterr().out
+
+def test_use_doppler_wraps_first_class(tmp_path):
+    p = _write_mcp(tmp_path)
+    assert secrets.run(["use", "doppler", "--path", str(tmp_path)]) == 0
+    gh = _servers(p)["github"]
+    assert gh["command"] == "doppler"
+    assert gh["args"][:3] == ["run", "--", "npx"]
+    assert gh["_flowWrapped"]["command"] == "npx"
+
+def test_use_doppler_env_maps_to_config_flag(tmp_path):
+    p = _write_mcp(tmp_path)
+    secrets.run(["use", "doppler", "--env", "prd", "--path", str(tmp_path)])
+    assert _servers(p)["github"]["args"][:4] == ["run", "--config", "prd", "--"]
 
 def test_no_mcp_json_errors(tmp_path):
     assert secrets.run(["use", "infisical", "--path", str(tmp_path)]) == 2
@@ -110,7 +123,10 @@ def test_status_command_runs(tmp_path, capsys):
 def test_use_switches_provider(tmp_path, monkeypatch):
     p = _write_mcp(tmp_path)
     secrets.run(["use", "infisical", "--path", str(tmp_path)])
-    fake = secrets.Provider(name="vault", cli="vault", project_marker=".vault.json")
+    fake = secrets.Provider(
+        name="vault", cli="vault", env_flag="--env", project_marker=".vault.json",
+        setup_hint="run `vault setup`", probe_args=("secrets",),
+    )
     monkeypatch.setitem(secrets._PROVIDERS, "vault", fake)
     assert secrets.run(["use", "vault", "--path", str(tmp_path)]) == 0
     gh = _servers(p)["github"]

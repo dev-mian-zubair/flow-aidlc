@@ -6,6 +6,7 @@ manifest. The check must never FAIL (doctor runs in CI, where no manifest
 exists) — a missing pack or an unverifiable manifest is a WARN.
 """
 import json
+import os
 from pathlib import Path
 
 from flow_aidlc.commands import doctor
@@ -130,3 +131,31 @@ def test_check_secrets_pass_when_set(tmp_path, monkeypatch, capsys):
     doctor._check_secrets(rep, tmp_path)
     assert "[PASS]" in capsys.readouterr().out
     assert rep.any_fail is False
+
+
+# ---------------------------------------------------------------------------
+# _apply_fixes — `flow doctor --fix`
+# ---------------------------------------------------------------------------
+
+def test_apply_fixes_chmods_non_executable_hooks(tmp_path):
+    hooks = tmp_path / ".claude" / "hooks"
+    hooks.mkdir(parents=True)
+    hook = hooks / "session-start.sh"
+    hook.write_text("#!/bin/sh\n")
+    hook.chmod(0o644)  # not executable
+    fixed = doctor._apply_fixes(tmp_path)
+    assert os.access(hook, os.X_OK)
+    assert any("session-start.sh" in line for line in fixed)
+
+
+def test_apply_fixes_noop_when_hooks_already_executable(tmp_path):
+    hooks = tmp_path / ".claude" / "hooks"
+    hooks.mkdir(parents=True)
+    hook = hooks / "prompt-journal.sh"
+    hook.write_text("#!/bin/sh\n")
+    hook.chmod(0o755)
+    assert doctor._apply_fixes(tmp_path) == []
+
+
+def test_apply_fixes_noop_when_no_hooks_dir(tmp_path):
+    assert doctor._apply_fixes(tmp_path) == []

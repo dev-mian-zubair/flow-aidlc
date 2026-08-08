@@ -53,6 +53,7 @@ def _build_parser() -> argparse.ArgumentParser:
         description="Read-only health check of the current Flow repo.",
     )
     p.add_argument("--path", default=None, help="Directory to search upward from for a .flow/ (default: cwd).")
+    p.add_argument("--fix", action="store_true", help="Apply the safe mechanical fixes (e.g. make hook scripts executable) before reporting.")
     return p
 
 
@@ -85,6 +86,16 @@ def run(argv: list[str]) -> int:
     print(f"flow doctor — {root}")
     print()
 
+    if args.fix:
+        applied = _apply_fixes(root)
+        if applied:
+            print("Applied fixes:")
+            for item in applied:
+                print(f"  {item}")
+        else:
+            print("No auto-fixable issues found.")
+        print()
+
     _check_flow_present(rep, root, flow_dir)
     _check_config(rep, flow_dir)
     _check_guardrails(rep, flow_dir)
@@ -102,6 +113,28 @@ def run(argv: list[str]) -> int:
         print("Verdict: OK")
     print("Run `flow check` for the full quality gate.")
     return 1 if rep.any_fail else 0
+
+
+# ---------------------------------------------------------------------------
+# fixes (only mechanical, unambiguously-safe repairs)
+# ---------------------------------------------------------------------------
+
+def _apply_fixes(root: Path) -> list[str]:
+    """Apply the safe, mechanical fixes doctor can make on its own.
+
+    Currently: mark ``.claude/hooks/*.sh`` executable (the most common drift —
+    a fresh clone or a copy that lost the +x bit). Returns a human-readable line
+    per fix applied. Deliberately conservative: it never edits config, installs
+    tools, or touches anything a human should decide.
+    """
+    fixed: list[str] = []
+    hooks_dir = root / ".claude" / "hooks"
+    if hooks_dir.is_dir():
+        for sh in sorted(hooks_dir.glob("*.sh")):
+            if not os.access(sh, os.X_OK):
+                sh.chmod(sh.stat().st_mode | 0o111)
+                fixed.append(f"chmod +x {sh.relative_to(root)}")
+    return fixed
 
 
 # ---------------------------------------------------------------------------

@@ -26,19 +26,25 @@ PASS, WARN = "PASS", "WARN"
 
 @dataclass(frozen=True)
 class Provider:
+    """A secrets manager that *injects* a project's secrets into a wrapped
+    process (``<cli> run -- <cmd>``). Only managers with this inject model fit
+    the wrap-and-drop-env strategy — see ``_GUIDED_ONLY`` for the exception."""
     name: str
     cli: str
-    project_marker: str  # e.g. ".infisical.json"
+    env_flag: str          # CLI flag selecting an environment/config (e.g. "--env", "--config")
+    project_marker: str    # file that indicates the project is linked (e.g. ".infisical.json")
+    setup_hint: str        # how to link the project (e.g. "run `infisical init`")
+    probe_args: tuple[str, ...]  # args that exit 0 iff secrets resolve (the deep probe)
 
     def run_args(self, env: str | None) -> list[str]:
-        return ["run", *(["--env", env] if env else [])]
+        return ["run", *([self.env_flag, env] if env else [])]
 
     def preconditions(self, root: Path) -> list[str]:
         problems: list[str] = []
         if not shutil.which(self.cli):
             problems.append(f"`{self.cli}` not on PATH — install it (see INTEGRATIONS.md)")
         if not (root / self.project_marker).exists():
-            problems.append(f"no {self.project_marker} — run `{self.cli} init` to link the project")
+            problems.append(f"no {self.project_marker} — {self.setup_hint} to link the project")
         return problems
 
     def probe(self, root: Path) -> bool:
@@ -47,7 +53,7 @@ class Provider:
             return False
         try:
             r = subprocess.run(
-                [self.cli, "secrets", "--silent"],
+                [self.cli, *self.probe_args],
                 cwd=str(root), capture_output=True, timeout=15,
             )
             return r.returncode == 0
@@ -56,9 +62,21 @@ class Provider:
 
 
 _PROVIDERS: dict[str, Provider] = {
-    "infisical": Provider(name="infisical", cli="infisical", project_marker=".infisical.json"),
+    "infisical": Provider(
+        name="infisical", cli="infisical", env_flag="--env",
+        project_marker=".infisical.json", setup_hint="run `infisical init`",
+        probe_args=("secrets", "--silent"),
+    ),
+    "doppler": Provider(
+        name="doppler", cli="doppler", env_flag="--config",
+        project_marker="doppler.yaml", setup_hint="run `doppler setup`",
+        probe_args=("secrets", "--only-names"),
+    ),
 }
-_GUIDED_ONLY = {"op", "1password", "doppler"}
+# 1Password (`op`) resolves `op://` references already present in the env rather
+# than injecting a project's secrets, so it does NOT fit the wrap-and-drop-env
+# model — it stays guided-only until a reference-rewrite mechanism is added.
+_GUIDED_ONLY = {"op", "1password"}
 
 
 def _parser() -> argparse.ArgumentParser:

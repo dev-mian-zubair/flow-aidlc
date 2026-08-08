@@ -124,13 +124,15 @@ Flow reads MCP credentials from the environment via `${VAR}` references in
 three ways, best DX first:
 
 1. **Secrets manager (recommended, zero plaintext)** — `flow secrets use infisical`
-   rewrites every secret-bearing MCP server to `infisical run -- …`, so the
-   token is injected at launch and never touches the repo, `.env`, or your
-   shell. One-time: `infisical login` (stores a token in your OS keyring) +
-   `infisical init` (links the project). `flow secrets off` reverts; `flow
-   secrets status` verifies resolution. (`op`/`doppler` aren't wired
-   first-class yet — `flow secrets use <name>` prints the manual `<tool> run --
-   …` wrapper to apply by hand, and exits non-zero.)
+   (or `flow secrets use doppler`) rewrites every secret-bearing MCP server to
+   `<tool> run -- …`, so the secret is injected at launch and never touches the
+   repo, `.env`, or your shell. One-time: link the project — `infisical login` +
+   `infisical init` (token in your OS keyring), or `doppler login` + `doppler
+   setup`. `flow secrets off` reverts; `flow secrets status` verifies resolution.
+   (**1Password / `op`** stays guided-only: it resolves `op://` references in the
+   env rather than injecting a project's secrets, so it doesn't fit this
+   wrap-and-inject model — `flow secrets use op` prints the manual `op run -- …`
+   wrapper and exits non-zero.)
 2. **Provider CLI credential store** — e.g. `export GITHUB_TOKEN=$(gh auth token)`
    keeps the secret in `gh`'s store, not a file.
 3. **`.env` file (fallback)** — copy the generated `.env.example` to `.env`
@@ -157,7 +159,9 @@ It is read-only. It reports, per section:
 - **Hooks** — `.claude/hooks/*.sh` are executable.
 - **Code graph** — the graph CLI present and the graph artifact built.
 
-Each ✗ line names the fix (an install command or a config value).
+Each ✗ line names the fix (an install command or a config value). Run `flow
+doctor --fix` to apply the safe mechanical repairs automatically (currently:
+making `.claude/hooks/*.sh` executable) before re-reporting.
 
 ---
 
