@@ -20,6 +20,7 @@ _COMMANDS: dict[str, tuple[str, str]] = {
     "map": ("map", "Manage knowledge maps (e.g. `flow map add <glob> <doc>`)"),
     "doctor": ("doctor", "Health-check the install and integrations"),
     "check": ("check", "Run the quality gate"),
+    "ci": ("ci", "Scaffold CI that runs the quality gate (e.g. `flow ci init`)"),
     "selftest": ("selftest", "Run the mechanical offline self-test"),
     "refresh": ("refresh", "Rebuild the code graph (structure freshness); /flow-refresh curates invariants"),
     "plugin": ("plugin", "Build the Claude Code plugin (e.g. `flow plugin build`)"),
