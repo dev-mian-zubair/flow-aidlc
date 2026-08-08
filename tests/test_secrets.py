@@ -105,3 +105,16 @@ def test_status_command_runs(tmp_path, capsys):
     assert secrets.run(["status", "--path", str(tmp_path)]) == 0
     out = capsys.readouterr().out
     assert "[PASS]" in out or "[WARN]" in out
+
+
+def test_use_switches_provider(tmp_path, monkeypatch):
+    p = _write_mcp(tmp_path)
+    secrets.run(["use", "infisical", "--path", str(tmp_path)])
+    fake = secrets.Provider(name="vault", cli="vault", project_marker=".vault.json")
+    monkeypatch.setitem(secrets._PROVIDERS, "vault", fake)
+    assert secrets.run(["use", "vault", "--path", str(tmp_path)]) == 0
+    gh = _servers(p)["github"]
+    assert gh["command"] == "vault"
+    assert gh["args"][0] == "run"
+    # the switch restored the ORIGINAL before re-wrapping, so the stash holds npx, not infisical
+    assert gh["_flowWrapped"]["command"] == "npx"

@@ -116,7 +116,7 @@ def _use(root: Path, provider_name: str, env: str | None, dry: bool) -> int:
         return 2
     servers = mcp.get("mcpServers") or {}
     targets = list(mc.secret_vars(mcp).keys())
-    to_wrap = [n for n in targets if not mc.is_wrapped(servers[n])]
+    to_wrap = [n for n in targets if _known_provider_for(servers[n]) is not provider]
 
     if not targets:
         print("No secret-bearing servers in .mcp.json — nothing to wrap.")
@@ -132,7 +132,7 @@ def _use(root: Path, provider_name: str, env: str | None, dry: bool) -> int:
         print("DRY-RUN: would wrap " + ", ".join(to_wrap))
         return 0
     for name in to_wrap:
-        servers[name] = mc.wrap_server(servers[name], provider.cli, provider.run_args(env))
+        servers[name] = mc.wrap_server(mc.unwrap_server(servers[name]), provider.cli, provider.run_args(env))
     mc.dump_mcp(mcp_path, mcp)
     print(f"Wrapped via {provider.name}: " + ", ".join(to_wrap))
     print("Reload MCP servers in your client for the change to take effect.")

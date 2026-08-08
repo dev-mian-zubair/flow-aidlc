@@ -57,6 +57,8 @@ def test_init_dry_run_writes_nothing(tmp_path):
 
     assert init.run(["--yes", "--dry-run", "--path", str(tmp_path)]) == 0
     assert not (tmp_path / ".flow").exists()
+    assert not (tmp_path / ".env.example").exists()
+    assert not (tmp_path / ".gitignore").exists()
 
 
 def test_init_scaffolds_env_example_with_tracker_vars(tmp_path):
