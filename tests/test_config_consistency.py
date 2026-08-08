@@ -301,3 +301,41 @@ def test_c6_sourcegraph_graph_backend_implemented(tmp_path):
     cfg_path.write_text(cfg_path.read_text().replace("backend: graphify", "backend: sourcegraph"))
     errs = check(tmp_path)
     assert not any("C6" in e for e in errs), errs
+
+
+# ---------------------------------------------------------------------------
+# C8 — execution block shape
+# ---------------------------------------------------------------------------
+
+def test_c8_bad_merge_gate_blocks(tmp_path):
+    root = _make_repo(tmp_path)
+    cfg = root / ".flow" / "config.yaml"
+    cfg.write_text(cfg.read_text() + "\nexecution:\n  merge:\n    gate: yolo\n")
+    errs = check(root)
+    assert any("C8" in e and "green-ci" in e for e in errs), errs
+
+
+def test_c8_bad_require_ci_type_blocks(tmp_path):
+    root = _make_repo(tmp_path)
+    cfg = root / ".flow" / "config.yaml"
+    cfg.write_text(cfg.read_text() + "\nexecution:\n  require_ci: maybe\n")
+    errs = check(root)
+    assert any("C8" in e and "require_ci" in e for e in errs), errs
+
+
+def test_c8_bad_max_rounds_blocks(tmp_path):
+    root = _make_repo(tmp_path)
+    cfg = root / ".flow" / "config.yaml"
+    cfg.write_text(cfg.read_text() + "\nexecution:\n  review:\n    max_rounds: 0\n")
+    errs = check(root)
+    assert any("C8" in e and "max_rounds" in e for e in errs), errs
+
+
+def test_c8_valid_execution_block_clean(tmp_path):
+    root = _make_repo(tmp_path)
+    cfg = root / ".flow" / "config.yaml"
+    cfg.write_text(cfg.read_text() +
+        "\nexecution:\n  merge:\n    gate: green-ci\n  require_ci: true\n"
+        "  max_tasks: 5\n  review:\n    panel_size: 3\n    max_rounds: 5\n")
+    errs = check(root)
+    assert not any("C8" in e for e in errs), errs

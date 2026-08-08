@@ -27,6 +27,7 @@ Checks:
   C7 (graph paths): ``graph.root`` and every ``graph.focus`` entry must be an
      existing directory, and ``graph.ignore_file`` (if set) must exist — so the
      single-extract scope the config documents actually resolves on disk.
+  C8 (execution): the auto-mode 'execution:' block, if present, has a valid shape (merge.gate == green-ci, require_ci bool, positive-int caps).
 
 Note: the numbering skips C4 — a "guardrail echo" check that would require each
 ``always_on`` name to be repeated in the prose files that hardcode the list. The
@@ -219,6 +220,34 @@ def check(repo_root: Path | str) -> list[str]:
         errors.append(
             f"C7 graph.ignore_file: config sets graph.ignore_file '{ignore_file}' but it does not exist"
         )
+
+    # ---- C8: execution block shape (auto-mode defaults) --------------------
+    execution = cfg.get("execution")
+    if execution is not None:
+        if not isinstance(execution, dict):
+            errors.append("C8 execution: `execution:` must be a mapping")
+        else:
+            gate = (execution.get("merge", {}) or {}).get("gate")
+            if gate is not None and gate != "green-ci":
+                errors.append(
+                    f"C8 execution.merge.gate: only 'green-ci' is supported (got '{gate}') "
+                    "— the auto-merge safety model requires green CI"
+                )
+            require_ci = execution.get("require_ci")
+            if require_ci is not None and not isinstance(require_ci, bool):
+                errors.append("C8 execution.require_ci: must be a boolean")
+            review = execution.get("review", {}) or {}
+
+            def _pos_int(value: object) -> bool:
+                return isinstance(value, int) and not isinstance(value, bool) and value >= 1
+
+            for key in ("panel_size", "max_rounds"):
+                val = review.get(key)
+                if val is not None and not _pos_int(val):
+                    errors.append(f"C8 execution.review.{key}: must be an integer >= 1 (got {val!r})")
+            max_tasks = execution.get("max_tasks")
+            if max_tasks is not None and not _pos_int(max_tasks):
+                errors.append(f"C8 execution.max_tasks: must be an integer >= 1 (got {max_tasks!r})")
 
     return errors
 
