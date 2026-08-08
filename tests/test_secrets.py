@@ -100,6 +100,8 @@ def test_parse_env_file_ignores_comments(tmp_path):
     (tmp_path / ".env").write_text("# c\n\nA=1\nB = two \n")
     assert secrets._parse_env_file(tmp_path / ".env") == {"A": "1", "B": "two"}
 
-def test_status_command_runs(tmp_path):
+def test_status_command_runs(tmp_path, capsys):
     _write_mcp(tmp_path)
     assert secrets.run(["status", "--path", str(tmp_path)]) == 0
+    out = capsys.readouterr().out
+    assert "[PASS]" in out or "[WARN]" in out

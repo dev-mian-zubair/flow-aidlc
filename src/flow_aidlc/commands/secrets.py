@@ -170,7 +170,7 @@ def _parse_env_file(path: Path) -> dict[str, str]:
 
 
 def _known_provider_for(server: dict) -> Provider | None:
-    """If a server is wrapped by a known provider, return that Provider."""
+    """Return the registered Provider if this server is wrapped by one, else None."""
     if not mc.is_wrapped(server):
         return None
     cli = server.get("command")
@@ -204,7 +204,7 @@ def credential_report(root: Path, deep: bool = False) -> list[tuple[str, str, st
                 rows.append((name, PASS, f"{prov.name} (all vars injected at launch)"))
             continue
         # plain ${VAR} mode
-        unset = [v for v in vars_ if not os.environ.get(v)]
+        unset = [v for v in vars_ if v not in os.environ]
         if not unset:
             rows.append((name, PASS, "env vars set: " + ", ".join(vars_)))
         elif all(v in dotenv for v in unset):
