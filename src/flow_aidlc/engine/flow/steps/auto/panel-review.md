@@ -22,8 +22,8 @@ panel re-reviews the change only. Repeat up to `config.execution.review.max_roun
 |---|---|---|
 | Scope/publish, Shape/requirements, Shape/design | prose | `checkpoint-reviewer` + critics (completeness, traceability, ambiguity), `execution.review.panel_size` total |
 | Build/code-plan | plan | `checkpoint-reviewer` + a plan critic |
-| Build/verify | slice diff | `guardrail-verifier` + a `pr-review-toolkit` subset (`code-reviewer`, `silent-failure-hunter`, `pr-test-analyzer`, `type-design-analyzer`) |
-| Ship/branch-hardening | branch diff | the full `config.review.branch_hardening` set + `guardrail-verifier` |
+| Build/verify | slice diff | `guardrail-verifier` + a `pr-review-toolkit` subset (`code-reviewer`, `silent-failure-hunter`, `pr-test-analyzer`, `type-design-analyzer`) (+ Impeccable for UI slices) |
+| Ship/branch-hardening | branch diff | the full `config.review.branch_hardening` set + `guardrail-verifier` (+ Impeccable for UI slices) |
 
 The code-gate panels ARE `config.review.branch_hardening` (a subset per slice at
 Build/verify) — no new review agents.

@@ -57,7 +57,7 @@ def _parser() -> argparse.ArgumentParser:
     init.add_argument("--path", default=None, help="Repo dir (default: search up from cwd).")
     init.add_argument("--force", action="store_true", help="Overwrite an existing workflow.")
     init.add_argument("--dry-run", action="store_true", help="Print the workflow; write nothing.")
-    init.add_argument("--gates", default="", help="Extra deterministic gates, comma-separated: semgrep, conftest.")
+    init.add_argument("--gates", default="", help="Extra deterministic gates, comma-separated: semgrep, conftest, impeccable.")
     return p
 
 
