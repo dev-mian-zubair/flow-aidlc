@@ -21,6 +21,8 @@ _COMMANDS: dict[str, tuple[str, str]] = {
     "doctor": ("doctor", "Health-check the install and integrations"),
     "check": ("check", "Run the quality gate"),
     "ci": ("ci", "Scaffold CI that runs the quality gate (e.g. `flow ci init`)"),
+    "status": ("status", "Show where each ticket sits in the Scope→Shape→Build→Ship pipeline"),
+    "learnings": ("learnings", "Surface candidate learnings from worklog journals (`--promote` to record)"),
     "selftest": ("selftest", "Run the mechanical offline self-test"),
     "refresh": ("refresh", "Rebuild the code graph (structure freshness); /flow-refresh curates invariants"),
     "plugin": ("plugin", "Build the Claude Code plugin (e.g. `flow plugin build`)"),
