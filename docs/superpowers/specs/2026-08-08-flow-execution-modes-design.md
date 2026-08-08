@@ -37,8 +37,9 @@ next task — "a proper engineer grinding the backlog."
 - No skipping of any quality gate in auto (auto = no *human* stop, not no checks).
 - No new code-review agents — the code-gate panels reuse `pr-review-toolkit`.
 - No autonomous *merge to a protected main without green CI* — refused by design.
-- Impeccable: only its **validation + UI-generation** commands (not `live` mode,
-  `worlds`/dice, or deep `DESIGN.md`/`PRODUCT.md` standards authoring).
+- Impeccable: its **validation + UI-generation** commands and the
+  **`PRODUCT.md`/`DESIGN.md`** standards they read — but **not** `live` mode or
+  `worlds`/dice (runtime/generation mechanics).
 
 ## 4. Decisions captured during brainstorming
 
@@ -142,7 +143,8 @@ and (new check) if an `execution:` block sets auto defaults, a CI workflow exist
 ## 10. Companion: Impeccable integration (design quality)
 
 Impeccable (`pbakaus/impeccable`, **Apache-2.0**) is a Claude Code skill pack for
-UI design quality. Scope here: **validation + UI generation only.**
+UI design quality. Scope here: **validation + UI generation, grounded in the
+`PRODUCT.md`/`DESIGN.md` standards Impeccable reads.**
 
 - **Setup — opt-in auto-install (not a bare prerequisite).** Unlike
   superpowers/pr-review-toolkit (user-level interactive marketplace plugins),
@@ -152,18 +154,33 @@ UI design quality. Scope here: **validation + UI generation only.**
   if absent — the existing detect-and-guide posture). It writes
   `.claude/skills/impeccable/`; init gitignores its ephemera (`.impeccable/*.png`,
   `sessions/`, `previews/`, `cache/`, `config.local.json`).
-- **Touchpoints (validation + UI generation only):**
-  - **Build/generate** (UI slice): the phase agent may use the generation commands
-    (`/impeccable craft|polish|distill|typeset|layout|colorize|…`) to produce/refine UI.
+- **Design standards (`PRODUCT.md` + `DESIGN.md`) — first-class, authored once.**
+  These are the *inputs* that make audit/critique/generation product-specific
+  rather than generic: `PRODUCT.md` (audience, brand, voice, anti-references) and
+  `DESIGN.md` (the design system/standards). They are the **design analog of
+  Flow's guardrails + `knowledge/`** — authored once, committed (tracked), then
+  enforced. `flow setup --with-impeccable` runs `/impeccable init` to scaffold
+  `PRODUCT.md` (and `DESIGN.md` via `/impeccable init`/`document`); Flow references
+  them from `knowledge/map/` so Scope/Shape read them for grounding. Absent files →
+  Impeccable degrades to generic defaults (a `flow doctor` WARN, not a failure).
+- **Touchpoints:**
+  - **Scope/Shape** (UI work): the design standards in `PRODUCT.md`/`DESIGN.md` are
+    read for grounding — the same way the Knowledge Map grounds intent — so
+    requirements/design reflect the product's design language.
+  - **Build/generate** (UI slice): the generation commands
+    (`/impeccable craft|polish|distill|typeset|layout|colorize|…`) produce/refine UI
+    **against `DESIGN.md`**, not generic defaults.
   - **Build/verify + auto-mode panel** (UI slice): validation via `/impeccable audit`
-    + `/impeccable critique`, and the deterministic `npx impeccable detect --json .`
-    — Impeccable is the **design-quality lens** in the §7 panel for UI slices.
+    + `/impeccable critique` (checked **against the standards**), and the
+    deterministic `npx impeccable detect --json .` — Impeccable is the
+    **design-quality lens** in the §7 panel for UI slices.
   - **CI gate:** `flow ci init --gates impeccable` emits an
     `npx impeccable detect --json .` step (exit-code gated), beside semgrep/conftest.
-  - **`flow doctor`:** optional/frontend detection — is `.claude/skills/impeccable/`
-    present? WARN-only, only relevant when the repo builds UI.
-- **Out of scope:** `live` mode, `worlds`/dice, deep `DESIGN.md`/`PRODUCT.md`
-  standards authoring.
+  - **`flow doctor`:** optional/frontend detection — `.claude/skills/impeccable/`
+    installed? `PRODUCT.md`/`DESIGN.md` present? WARN-only, only relevant when the
+    repo builds UI.
+- **Out of scope:** `live` mode and `worlds`/dice (runtime/generation mechanics we
+  don't need).
 
 ## 11. Implementation surface
 
@@ -207,10 +224,13 @@ impeccable`; `flow setup --with-impeccable`; init gitignore additions.
 - **Engine (modified):** `playbook.md`, `steps/build/{generate,verify,code-plan}.md`,
   `steps/ship/branch-hardening.md` + `open-pr.md`, `config.tmpl.yaml`
   (`execution:` block), `claude/hooks/checkpoint-stop.sh`, `INTEGRATIONS.md`.
-- **CLI/Python (modified):** `commands/setup.py` (`--with-impeccable`),
-  `commands/ci.py` (`impeccable` gate), `commands/doctor.py` (auto precondition +
-  optional Impeccable detection), `commands/init.py` (gitignore ephemera),
-  `checks/config_consistency.py` (`execution:` validation).
+- **CLI/Python (modified):** `commands/setup.py` (`--with-impeccable`: install +
+  `/impeccable init` to scaffold `PRODUCT.md`/`DESIGN.md`), `commands/ci.py`
+  (`impeccable` gate), `commands/doctor.py` (auto precondition + optional Impeccable
+  detection incl. `PRODUCT.md`/`DESIGN.md` presence), `commands/init.py` (gitignore
+  Impeccable *ephemera* only — `PRODUCT.md`/`DESIGN.md` are tracked),
+  `checks/config_consistency.py` (`execution:` validation). Engine
+  `knowledge-map.tmpl.yaml` references `PRODUCT.md`/`DESIGN.md` for grounding.
 - **Tests:** `test_ci.py`, `test_setup.py`, `test_doctor.py`, `test_init.py`,
   `test_config_consistency.py`.
 - **Plugin:** regenerated (`flow plugin build`).
@@ -225,8 +245,9 @@ impeccable`; `flow setup --with-impeccable`; init gitignore additions.
    continues; a final report lists merged/parked.
 4. `.flow/STOP` halts the loop after the current unit; `max_tasks` caps the run.
 5. `flow ci init --gates impeccable` emits the detect step; `flow setup
-   --with-impeccable` installs the skill non-interactively; init gitignores its
-   ephemera; `flow doctor` shows the auto precondition + optional Impeccable line.
+   --with-impeccable` installs the skill non-interactively **and scaffolds
+   `PRODUCT.md`/`DESIGN.md`** (tracked; ephemera gitignored); `flow doctor` shows
+   the auto precondition + optional Impeccable line (skill + standards present).
 6. Full suite green; engine lints clean; plugin regenerates without drift.
 
 ## 15. Build phases (for the plan)
@@ -237,5 +258,7 @@ impeccable`; `flow setup --with-impeccable`; init gitignore additions.
 3. **Stage-typed panels** — playbook "Execution modes" + Build/verify +
    branch-hardening panel wiring (reuse pr-review-toolkit).
 4. **Ship poll-and-merge** — the green-CI gate + merge + next.
-5. **Impeccable integration** — setup auto-install, ci `--gates impeccable`,
-   Build touchpoints, doctor detection, init gitignore.
+5. **Impeccable integration** — setup auto-install + `PRODUCT.md`/`DESIGN.md`
+   scaffolding (`/impeccable init`), knowledge-map reference, ci `--gates
+   impeccable`, Scope/Shape grounding + Build generate/verify touchpoints, doctor
+   detection (skill + standards), init gitignore (ephemera only).
