@@ -159,3 +159,30 @@ def test_apply_fixes_noop_when_hooks_already_executable(tmp_path):
 
 def test_apply_fixes_noop_when_no_hooks_dir(tmp_path):
     assert doctor._apply_fixes(tmp_path) == []
+
+
+# ---------------------------------------------------------------------------
+# _check_auto — the auto-readiness line (CI backstop check)
+# ---------------------------------------------------------------------------
+
+def _ci_workflow(tmp_path):
+    wf = tmp_path / ".github" / "workflows"
+    wf.mkdir(parents=True)
+    (wf / "flow-check.yml").write_text("name: flow check\n")
+
+
+def test_check_auto_warns_without_ci(tmp_path, capsys):
+    rep = doctor._Report()
+    doctor._check_auto(rep, tmp_path)
+    out = capsys.readouterr().out
+    assert "[WARN]" in out and "auto" in out
+    assert rep.any_fail is False
+
+
+def test_check_auto_pass_with_ci(tmp_path, capsys):
+    _ci_workflow(tmp_path)
+    rep = doctor._Report()
+    doctor._check_auto(rep, tmp_path)
+    out = capsys.readouterr().out
+    assert "[PASS]" in out
+    assert rep.any_fail is False

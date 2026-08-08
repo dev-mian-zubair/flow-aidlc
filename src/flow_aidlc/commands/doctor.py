@@ -104,6 +104,7 @@ def run(argv: list[str]) -> int:
     _check_git(rep, root)
     _check_mcp(rep, root)
     _check_secrets(rep, root)
+    _check_auto(rep, root)
     _check_skills(rep, root)
 
     print()
@@ -297,6 +298,18 @@ def _check_secrets(rep: _Report, root: Path) -> None:
 
     status, detail = secrets_summary(root)
     rep.line("secrets", status, detail)
+
+
+def _check_auto(rep: _Report, root: Path) -> None:
+    """Report `/flow-auto` (auto mode) readiness. WARN/PASS only — controlled
+    mode (the default) needs none of this; auto needs a green-CI backstop.
+    """
+    ci_dir = root / ".github" / "workflows"
+    ci_present = (ci_dir.is_dir() and any(ci_dir.glob("*.yml"))) or (root / ".gitlab-ci.yml").exists()
+    if ci_present:
+        rep.line("auto", PASS, "CI workflow present — `/flow-auto` can merge on green CI")
+    else:
+        rep.line("auto", WARN, "no CI workflow — `/flow-auto` needs green CI to merge; run `flow ci init` (controlled mode is unaffected)")
 
 
 def _check_skills(rep: _Report, root: Path) -> None:
