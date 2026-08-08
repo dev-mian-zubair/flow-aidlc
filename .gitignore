@@ -3,8 +3,11 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .eggs/
-build/
-dist/
+# NOTE: anchor these to the repo root — an unanchored `build/`/`dist/` matches
+# ANY directory of that name at any depth, which silently excluded the engine's
+# Build-phase assets (src/flow_aidlc/engine/**/build/, .../steps/build/) from git.
+/build/
+/dist/
 .venv/
 venv/
 .pytest_cache/
