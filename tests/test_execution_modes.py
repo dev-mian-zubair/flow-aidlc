@@ -35,3 +35,20 @@ def test_panel_review_guide_is_stage_typed_and_reuses_pr_review_toolkit():
     assert "checkpoint-reviewer" in pr          # prose gates
     for marker in ("high-severity", "max_rounds", "park"):
         assert marker in pr, marker
+
+
+def test_merge_guide_polls_ci_and_merges_on_green():
+    m = (_engine() / "flow" / "steps" / "auto" / "merge.md").read_text()
+    for marker in ("green", "poll", "branch protection", "flow-blocked"):
+        assert marker in m.lower() or marker in m, marker
+
+
+def test_report_guide_lists_merged_and_parked():
+    r = (_engine() / "flow" / "steps" / "auto" / "report.md").read_text()
+    assert "merged" in r.lower() and "parked" in r.lower()
+
+
+def test_checkpoint_stop_hook_bypasses_in_auto():
+    h = (_engine() / "claude" / "hooks" / "checkpoint-stop.sh").read_text()
+    assert "STOP" in h  # the .flow/STOP sentinel or FLOW_MODE handling is referenced
+    assert "auto" in h.lower()

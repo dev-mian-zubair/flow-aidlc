@@ -16,6 +16,13 @@ source "$SCRIPT_DIR/_lib.sh" || true
 
 flow_read_input
 
+# Auto mode bypass: /flow-auto runs without human checkpoints. If the repo is in
+# an auto run (a .flow/STOP sentinel is the kill-switch, and FLOW_MODE=auto marks
+# the session), do not print the checkpoint reminder.
+if [ "${FLOW_MODE:-}" = "auto" ]; then
+  exit 0
+fi
+
 worklog="$(flow_active_worklog)"
 [ -z "$worklog" ] && exit 0
 

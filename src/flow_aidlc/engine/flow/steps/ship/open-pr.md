@@ -124,3 +124,9 @@ what changed and why, and any follow-on issues filed during the task.
 - `worklog/INDEX.md` row `pr-open` recorded (ticket-keyed).
 - `worklog/<PI-NNN>/journal.md` final entry; `progress.md` `open-pr` checked.
 - **Never delete the worklog directory — it is a committed audit trail.**
+
+## Auto mode
+
+In auto mode, open-pr does not terminate the Flow. After opening the PR, continue
+to `steps/auto/merge.md` (poll CI, merge on green, else park). The human-owned
+merge applies to controlled mode only.
