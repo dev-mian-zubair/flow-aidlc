@@ -19,7 +19,7 @@ TOKEN_DEFAULTS: dict[str, str] = {
     "TRACKER_PLATFORM": "github",
     "TRACKER_MCP": "github",
     "TRACKER_REPO": "",
-    "ID_PREFIX": "PI",
+    "ID_PREFIX": "TASK",
     "BASE_BRANCH": "origin/main",
     "TEST_CMD": "",
     "BUILD_CMD": "",

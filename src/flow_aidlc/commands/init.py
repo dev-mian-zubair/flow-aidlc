@@ -33,7 +33,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--tracker", default="github", help="Tracker platform (default: github).")
     p.add_argument("--repo", default=None, help="Tracker repo as owner/name.")
-    p.add_argument("--id-prefix", default="PI", help="Ticket ID prefix (default: PI).")
+    p.add_argument("--id-prefix", default="TASK", help="Ticket ID prefix (default: TASK).")
     p.add_argument("--base", default="origin/main", help="Default base branch for feature branches + PR target (default: origin/main).")
     p.add_argument("--test-cmd", default=None, help="Project test command.")
     p.add_argument("--build-cmd", default=None, help="Project build command.")
