@@ -101,3 +101,9 @@ deferrals; all high-severity resolved.
   `security-guidance` plugin or the `/security-review` command) alongside the configured
   `pr-review-toolkit` agents. For a runnable UI/endpoint, optionally smoke the app via
   the Playwright MCP — see `INTEGRATIONS.md → Optional integrations`.
+
+## Auto mode
+
+In auto mode this checkpoint is gated by the full `config.review.branch_hardening`
+panel + guardrail-verifier via `steps/auto/panel-review.md` (no `/flow-approve`);
+on consensus the run proceeds to `steps/auto/merge.md`.

@@ -48,6 +48,22 @@ Scope (front door) → Shape → Build (per slice) → Ship
 
 At each stage where `checkpoint: yes`, **stop and wait for `/flow-approve`** before advancing to the next stage. The `checkpoint-stop` hook enforces this automatically. Do not proceed past a checkpoint under any circumstance without explicit approval.
 
+## Execution modes
+
+Flow runs in one of two modes:
+
+- **controlled (default):** at each `checkpoint: yes` stage, STOP and wait for
+  `/flow-approve` (the `checkpoint-stop` hook reminds you). Terminates at open-PR.
+  This is the behavior described throughout this playbook unless auto mode is active.
+- **auto (`/flow-auto` only):** NO human stops. At each `checkpoint: yes` stage,
+  run the stage-typed **adversarial reviewer panel** (`steps/auto/panel-review.md`)
+  in place of `/flow-approve`; on consensus, advance automatically; on
+  non-convergence at `execution.review.max_rounds`, park the task. Ship opens AND
+  merges the PR on green CI (`steps/auto/merge.md`), then the loop
+  (`steps/auto/loop.md`) pulls the next `execution.label` ticket. Auto runs EVERY
+  gate controlled runs — it only removes the human stop and adds panel review +
+  merge. Auto is entered only via `/flow-auto`; there is no config toggle.
+
 ## Guardrail Loading
 
 At the **Build/verify** stage:
