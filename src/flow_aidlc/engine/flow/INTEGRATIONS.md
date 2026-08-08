@@ -269,3 +269,44 @@ adapter (`.flow/steps/shared/tracker.md`); the essentials:
 > declared so the Ship phase can open the PR, with the ticket id in the branch/PR for
 > the platform's VCS integration to link it. Tool names track each server and may vary
 > by version — confirm against the one you install.
+
+---
+
+## Optional integrations
+
+All opt-in — add the MCP server to `.mcp.json` (or the CI gate) only if you want it.
+
+### Behavioral verification — Playwright MCP
+
+For changes that touch a runnable UI/endpoint, add the **Playwright MCP**
+(`microsoft/playwright-mcp`, MIT, local) so an agent can drive the real app via
+accessibility snapshots and confirm the change *works*, not just that tests pass. Add:
+
+```json
+"playwright": { "command": "npx", "args": ["-y", "@playwright/mcp@latest"] }
+```
+
+Use it at **Build/verify** (behavioral check of the slice) or **Ship/branch-hardening**
+(smoke the whole branch). It needs no credentials.
+
+### Alternative documentation backends (context7 swap)
+
+Flow ships `context7` for up-to-date library docs. If you hit its rate limits or need
+**offline/self-hosted** docs, swap the docs MCP for a local one — e.g.
+`arabold/docs-mcp-server` (open-source, local-first) or **Docfork** (MIT). Replace the
+`context7` entry in `.mcp.json` with the alternative server; the Build stage consumes
+whichever docs MCP is declared.
+
+### Security review at Ship
+
+Flow's `pr-review-toolkit` branch-hardening pass covers general review. For a dedicated
+**security** pass, add Anthropic's first-party `security-guidance` plugin (or run the
+`/security-review` command) at **Ship/branch-hardening** before opening the PR — see the
+note in `steps/ship/branch-hardening.md`.
+
+### Deterministic CI gates (Semgrep / conftest)
+
+Guardrails are LLM-judged; pair them with deterministic gates in CI:
+`flow ci init --gates semgrep,conftest` emits Semgrep (SAST) and OPA/conftest
+(policy-as-code over `.flow/config.yaml` + `.mcp.json`, needs a `policy/` dir) steps
+beside `flow check`.

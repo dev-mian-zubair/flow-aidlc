@@ -96,3 +96,8 @@ deferrals; all high-severity resolved.
   required CI checks are the team's gate — the Ship phase ends at opening the PR).
 - If hardening surfaces a design-level problem, don't paper over it — raise it and
   consider whether a slice needs rework before merge.
+- **Optional security pass:** for changes touching auth, input handling, secrets, or
+  external surfaces, add a dedicated security review here (the first-party
+  `security-guidance` plugin or the `/security-review` command) alongside the configured
+  `pr-review-toolkit` agents. For a runnable UI/endpoint, optionally smoke the app via
+  the Playwright MCP — see `INTEGRATIONS.md → Optional integrations`.

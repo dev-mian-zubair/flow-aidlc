@@ -13,6 +13,7 @@ the file it would write and touches nothing.
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 from flow_aidlc.checks._root import find_repo_root
@@ -23,6 +24,24 @@ except ImportError:  # pragma: no cover - pyyaml is a runtime dependency
     yaml = None  # type: ignore[assignment]
 
 _PROVIDERS = ("github", "gitlab")
+_GATES = ("semgrep", "conftest")
+
+# Extra deterministic gate steps that run alongside `flow check` (opt-in via --gates).
+# Guardrails are LLM-judged; these are deterministic SAST / policy-as-code checks.
+_GH_GATE_STEPS = {
+    "semgrep": (
+        "      - name: Semgrep SAST\n"
+        "        run: pipx install semgrep && semgrep scan --config auto --error --quiet\n"
+    ),
+    "conftest": (
+        "      - name: Policy check (conftest)\n"
+        '        run: docker run --rm -v "$PWD:/project" -w /project openpolicyagent/conftest test .flow/config.yaml .mcp.json -p policy\n'
+    ),
+}
+_GL_GATE_STEPS = {
+    "semgrep": "    - pip install semgrep && semgrep scan --config auto --error --quiet\n",
+    "conftest": '    - docker run --rm -v "$PWD:/project" -w /project openpolicyagent/conftest test .flow/config.yaml .mcp.json -p policy\n',
+}
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -33,6 +52,7 @@ def _parser() -> argparse.ArgumentParser:
     init.add_argument("--path", default=None, help="Repo dir (default: search up from cwd).")
     init.add_argument("--force", action="store_true", help="Overwrite an existing workflow.")
     init.add_argument("--dry-run", action="store_true", help="Print the workflow; write nothing.")
+    init.add_argument("--gates", default="", help="Extra deterministic gates, comma-separated: semgrep, conftest.")
     return p
 
 
@@ -43,7 +63,12 @@ def run(argv: list[str]) -> int:
         return 2
     root = find_repo_root(args.path)
     if args.action == "init":
-        return _init(root, args.provider, args.force, args.dry_run)
+        gates = [g.strip() for g in args.gates.split(",") if g.strip()]
+        unknown = [g for g in gates if g not in _GATES]
+        if unknown:
+            sys.stderr.write(f"flow ci: unknown gate(s): {', '.join(unknown)}. Supported: {', '.join(_GATES)}\n")
+            return 2
+        return _init(root, args.provider, args.force, args.dry_run, gates)
     return 2
 
 
@@ -65,8 +90,9 @@ def _config(root: Path) -> tuple[str, str]:
     return base.rsplit("/", 1)[-1], build
 
 
-def _github_workflow(base: str, build: str) -> str:
+def _github_workflow(base: str, build: str, gates: list[str]) -> str:
     graph_step = f"      - name: Build code graph\n        run: {build}\n" if build else ""
+    gate_steps = "".join(_GH_GATE_STEPS[g] for g in gates)
     return (
         "name: flow check\n\n"
         "on:\n"
@@ -84,11 +110,13 @@ def _github_workflow(base: str, build: str) -> str:
         f"{graph_step}"
         "      - name: Run the quality gate\n"
         "        run: flow check\n"
+        f"{gate_steps}"
     )
 
 
-def _gitlab_ci(base: str, build: str) -> str:
+def _gitlab_ci(base: str, build: str, gates: list[str]) -> str:
     build_line = f"    - {build}\n" if build else ""
+    gate_steps = "".join(_GL_GATE_STEPS[g] for g in gates)
     return (
         "# Flow quality gate — runs `flow check` on merge requests.\n"
         "flow-check:\n"
@@ -99,17 +127,18 @@ def _gitlab_ci(base: str, build: str) -> str:
         "    - pip install flow-aidlc graphifyy\n"
         f"{build_line}"
         "    - flow check\n"
+        f"{gate_steps}"
     )
 
 
-def _init(root: Path, provider: str, force: bool, dry: bool) -> int:
+def _init(root: Path, provider: str, force: bool, dry: bool, gates: list[str]) -> int:
     base, build = _config(root)
     if provider == "github":
         dest = root / ".github" / "workflows" / "flow-check.yml"
-        content = _github_workflow(base, build)
+        content = _github_workflow(base, build, gates)
     else:
         dest = root / ".gitlab-ci.yml"
-        content = _gitlab_ci(base, build)
+        content = _gitlab_ci(base, build, gates)
 
     rel = dest.relative_to(root)
     if dest.exists() and not force:

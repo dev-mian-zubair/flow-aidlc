@@ -72,6 +72,33 @@ def test_dry_run_writes_nothing(tmp_path):
     assert not (tmp_path / ".github").exists()
 
 
+def test_gates_add_semgrep_and_conftest_steps(tmp_path):
+    _flow_repo(tmp_path)
+    ci.run(["init", "--gates", "semgrep,conftest", "--path", str(tmp_path)])
+    text = (tmp_path / ".github" / "workflows" / "flow-check.yml").read_text()
+    assert "semgrep scan" in text
+    assert "conftest test" in text
+
+
+def test_no_gates_by_default(tmp_path):
+    _flow_repo(tmp_path)
+    ci.run(["init", "--path", str(tmp_path)])
+    text = (tmp_path / ".github" / "workflows" / "flow-check.yml").read_text()
+    assert "semgrep" not in text
+    assert "conftest" not in text
+
+
+def test_unknown_gate_errors(tmp_path):
+    _flow_repo(tmp_path)
+    assert ci.run(["init", "--gates", "bandit", "--path", str(tmp_path)]) == 2
+
+
+def test_gates_in_gitlab(tmp_path):
+    _flow_repo(tmp_path)
+    ci.run(["init", "--provider", "gitlab", "--gates", "semgrep", "--path", str(tmp_path)])
+    assert "semgrep scan" in (tmp_path / ".gitlab-ci.yml").read_text()
+
+
 def test_registered_in_cli():
     from flow_aidlc.cli import _COMMANDS
     assert "ci" in _COMMANDS

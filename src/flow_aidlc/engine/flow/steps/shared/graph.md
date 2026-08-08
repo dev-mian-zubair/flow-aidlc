@@ -16,7 +16,7 @@ mapping section for that backend. **An unmapped / NOT IMPLEMENTED backend is a h
 stop** — do not improvise graph commands. (`config-consistency` C6 enforces that
 `graph.backend` is implemented here.)
 
-**Implemented:** `graphify`.
+**Implemented:** `graphify` (default), `sourcegraph`.
 
 ## Universal operations (the contract callers use)
 
@@ -89,6 +89,29 @@ changing product code.
 
 **Preconditions:** `graphify` CLI installed (`uv tool install graphifyy==0.9.33`) or the
 MCP running; the graph built for the repo; `code_only: true` for air-gapped deployments.
+
+### sourcegraph
+
+For teams already on **Sourcegraph**, use its MCP server (SCIP-precise code
+intelligence: cross-repo go-to-definition / find-references, plus the agentic *Code
+Finder*). Tool names are the Sourcegraph MCP toolset. Unlike `graphify`, Sourcegraph is
+a **hosted, continuously-indexed** backend — there is **no local build**: `config.graph`
+sets `backend: sourcegraph`, `mcp: sourcegraph`, and leaves `build`/`output`/`committed`
+empty (nothing to build or commit locally).
+
+| Operation | sourcegraph tool call |
+|---|---|
+| `WHO_CALLS` | find-references on the symbol (SCIP-precise), returning callers/dependents + `file:line` |
+| `NEIGHBORS` | go-to-definition + references around the symbol for its immediate structure |
+| `QUERY` | the **Code Finder** agentic search (natural-language question → scoped file/line results + explanation) |
+| `PATH` | not a native op — approximate via a reference/def walk between the two symbols |
+| `HUBS` | not native — approximate via reference counts (most-referenced symbols in the subsystem) |
+| `IMPACT_OF_DIFF` | find-references for each changed symbol → the affected set |
+| `BUILD` / `UPDATE` | **n/a** — Sourcegraph indexes server-side continuously; the graph is never built or committed locally |
+
+**Preconditions (sourcegraph):** the `sourcegraph` MCP is connected + authed to your
+instance (endpoint URL + `SRC_ACCESS_TOKEN`); the repos you query are indexed. `PATH`
+and `HUBS` are approximations here — prefer `graphify` if a project leans on them.
 
 ## Consumers (who calls these ops)
 

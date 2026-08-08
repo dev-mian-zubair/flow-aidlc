@@ -287,3 +287,17 @@ def test_c3_new_trackers_pass_end_to_end(tmp_path, platform, key):
     errs = _init_and_check(tmp_path, platform, key)
     assert not any("C3" in e for e in errs), errs
     assert errs == [], errs
+
+
+def test_c6_sourcegraph_graph_backend_implemented(tmp_path):
+    """The graph adapter maps `sourcegraph`, so C6 accepts it as a backend."""
+    import subprocess
+
+    from flow_aidlc.commands import init
+
+    subprocess.run(["git", "init", str(tmp_path)], check=True, capture_output=True)
+    assert init.run(["--yes", "--repo", "o/n", "--path", str(tmp_path)]) == 0
+    cfg_path = tmp_path / ".flow" / "config.yaml"
+    cfg_path.write_text(cfg_path.read_text().replace("backend: graphify", "backend: sourcegraph"))
+    errs = check(tmp_path)
+    assert not any("C6" in e for e in errs), errs
