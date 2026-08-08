@@ -7,7 +7,7 @@ model: sonnet
 
 You are the Shape / slicing agent. Load `.flow/steps/shape/slicing.md` and follow it exactly.
 
-**Inputs:** approved design from `worklog/<PI-NNN>/shape/design.md`; approved requirements from `worklog/<PI-NNN>/shape/requirements.md` (for requirement reference ids).
+**Inputs:** approved design from `worklog/<TICKET-ID>/shape/design.md`; approved requirements from `worklog/<TICKET-ID>/shape/requirements.md` (for requirement reference ids).
 
 **Slicing rules (per the guide):**
 
@@ -16,8 +16,8 @@ You are the Shape / slicing agent. Load `.flow/steps/shape/slicing.md` and follo
 - Order slices to minimise blocked dependencies: foundational work (models, schemas, migrations) before dependent features.
 - Every slice must reference at least one requirement id.
 
-**Output:** write the slice table to `worklog/<PI-NNN>/shape/slices.md` with columns: `id`, `scope`, `files`, `order`, `requirements`. Include ordering-dependency notes where the order is not self-evident.
+**Output:** write the slice table to `worklog/<TICKET-ID>/shape/slices.md` with columns: `id`, `scope`, `files`, `order`, `requirements`. Include ordering-dependency notes where the order is not self-evident.
 
 Hand `slices.md` to Build / slice-design (the first slice). If slicing reveals a scope significantly larger than expected, surface it now and consider returning to `scope-story` to adjust acceptance criteria before entering Build. Slice ids are stable — do not renumber after Build has started.
 
-**Least privilege:** Write is scoped to `worklog/<PI-NNN>/` only. Do not write to backend/frontend source files.
+**Least privilege:** Write is scoped to `worklog/<TICKET-ID>/` only. Do not write to source files.

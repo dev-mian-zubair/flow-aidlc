@@ -6,7 +6,7 @@ discrepancies, and handoffs — one line per event, kept in `progress.md`.
 ## File location
 
 ```
-worklog/<PI-NNN>/progress.md   (## Decision log section)
+worklog/<TICKET-ID>/progress.md   (## Decision log section)
 ```
 
 Not a standalone file. Lives at the bottom of the task's `progress.md`.
@@ -52,7 +52,7 @@ Cross-cutting choices with trade-offs graduate to `knowledge/decisions/` via
 ## Examples
 
 ```
-2026-08-03T09:14:00Z · Scope/publish · ticket PI-042 approved, scope locked · requirements stable, no outstanding questions
+2026-08-03T09:14:00Z · Scope/publish · ticket ABC-042 approved, scope locked · requirements stable, no outstanding questions
 2026-08-03T11:30:22Z · Shape/map-existing · skipped — greenfield module, no prior surface · no existing files under src/billing/
 2026-08-04T08:05:44Z · Build/verify · guardrail test-coverage passed · new logic covered, no untested branches remain
 ```

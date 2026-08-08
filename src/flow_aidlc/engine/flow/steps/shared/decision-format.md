@@ -33,7 +33,7 @@ number in `knowledge/decisions/`. If the directory is empty, start at `0001`.
 
 **Date:** <ISO-8601 date>
 
-**Task:** <PI-NNN>
+**Task:** <TICKET-ID>
 
 ## Context
 

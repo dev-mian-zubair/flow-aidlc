@@ -9,7 +9,7 @@ artefact that drives `generate.md`; generate nothing without it.
 
 ## Inputs
 
-- `worklog/<PI-NNN>/build/<slice-id>/design.md` — completed slice design.
+- `worklog/<TICKET-ID>/build/<slice-id>/design.md` — completed slice design.
 - `.flow/config.yaml` — active guardrails (note `always_on` list).
 
 ## Steps
@@ -18,7 +18,7 @@ artefact that drives `generate.md`; generate nothing without it.
    checkbox items. Follow the output of that skill for sequencing and grouping logic.
 2. **Copy the template and fill it:**
    ```bash
-   cp .flow/templates/code-plan.tmpl.md worklog/<PI-NNN>/build/<slice-id>/code-plan.md
+   cp .flow/templates/code-plan.tmpl.md worklog/<TICKET-ID>/build/<slice-id>/code-plan.md
    ```
    Fill the SNAPSHOT header (Owner = you, Last updated = today), then under
    `## Steps` add one `- [ ]` checkbox per file to be created or modified
@@ -44,4 +44,4 @@ The reviewer must confirm:
 
 ## Output
 
-`worklog/<PI-NNN>/build/<slice-id>/code-plan.md` — approved, all checkboxes unchecked.
+`worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` — approved, all checkboxes unchecked.

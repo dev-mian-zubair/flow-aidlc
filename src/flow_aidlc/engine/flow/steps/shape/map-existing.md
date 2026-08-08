@@ -73,7 +73,7 @@ and its immediate callers, not the whole `WHO_CALLS` transitive closure.
 Write the map to:
 
 ```
-worklog/<PI-NNN>/shape/map-existing.md
+worklog/<TICKET-ID>/shape/map-existing.md
 ```
 
 Format:

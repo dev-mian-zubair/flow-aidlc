@@ -54,7 +54,7 @@ required approvals. Confirm before opening (use your project's commands from
 
 ### 3 — Draft the PR
 
-Prepare the PR title (imperative, ≤72 chars) and body (Summary + `Fixes <PI-NNN>` +
+Prepare the PR title (imperative, ≤72 chars) and body (Summary + `Fixes <TICKET-ID>` +
 Why-body + Test plan). Present this draft at the checkpoint — it is not created yet.
 
 ### 4 — CHECKPOINT (approve opening the PR)
@@ -69,18 +69,18 @@ On approval, commit the wrap-up so it is part of the PR's initial diff (one CI r
 it is **ticket-keyed** — the PR number does not exist yet and is recorded on the ticket in
 step 7:
 
-- Append the final entry to `worklog/<PI-NNN>/journal.md`:
+- Append the final entry to `worklog/<TICKET-ID>/journal.md`:
   ```
-  <ISO-8601 timestamp>  Ship/open-pr — branch finalized for <PI-NNN>; opening PR. Flow done; team owns merge.
+  <ISO-8601 timestamp>  Ship/open-pr — branch finalized for <TICKET-ID>; opening PR. Flow done; team owns merge.
   ```
 - Add a **point-in-time** row to `worklog/INDEX.md` (create it with a header row if absent):
   ```
-  | <PI-NNN> | <short title> | <date> | pr-open |
+  | <TICKET-ID> | <short title> | <date> | pr-open |
   ```
   A fact, not a live status — the Flow ends here and cannot update it, so it never claims
   "merged". Current merge state lives on the host; the PR is reached via the ticket (step 7).
-- Mark the `open-pr` checkbox in `worklog/<PI-NNN>/progress.md`.
-- Commit: `chore(flow): finalize worklog for <PI-NNN> — opening PR`.
+- Mark the `open-pr` checkbox in `worklog/<TICKET-ID>/progress.md`.
+- Commit: `chore(flow): finalize worklog for <TICKET-ID> — opening PR`.
 
 ### 6 — Push + open the PR
 
@@ -93,19 +93,19 @@ child (epic children are independent branches):
 OPEN_PR(
   base:  <base>,   # the recorded Base branch — default config.yaml → vcs.base
   title: <imperative subject — ≤72 chars>,
-  body:  Summary of changes + Fixes <PI-NNN>,
+  body:  Summary of changes + Fixes <TICKET-ID>,
          Why body (not just what),
          Test plan,
 )
 ```
 
-The body must include `Fixes <PI-NNN>` so the ticket auto-closes **when the team merges**.
+The body must include `Fixes <TICKET-ID>` so the ticket auto-closes **when the team merges**.
 Do not merge, squash, or rebase-merge on the team's behalf — the merge method and timing are
 theirs.
 
 ### 7 — Record the PR on the ticket
 
-Perform `COMMENT` (adapter) on ticket `<PI-NNN>` with the **PR link** (this is where the
+Perform `COMMENT` (adapter) on ticket `<TICKET-ID>` with the **PR link** (this is where the
 issue↔PR number linkage lives — the host maintains it both ways), a one-paragraph summary of
 what changed and why, and any follow-on issues filed during the task.
 
@@ -113,16 +113,16 @@ what changed and why, and any follow-on issues filed during the task.
 
 - Required CI checks + approvals gate the merge (branch protection on the base branch).
 - The team performs the merge (merge queue / captain) — one PR at a time, rebased.
-- On merge: `Fixes <PI-NNN>` closes the ticket; any serialization lock is released; the
+- On merge: `Fixes <TICKET-ID>` closes the ticket; any serialization lock is released; the
   branch may be cleaned up. A host-workflow-driven issue lifecycle handles this (separate work).
 
 ## Output
 
 - Worklog wrap-up committed **before** the PR, so the PR's initial diff contains the full
   audit trail (single CI run).
-- PR opened (review-ready), body carries `Fixes <PI-NNN>`; PR link recorded on the ticket.
+- PR opened (review-ready), body carries `Fixes <TICKET-ID>`; PR link recorded on the ticket.
 - `worklog/INDEX.md` row `pr-open` recorded (ticket-keyed).
-- `worklog/<PI-NNN>/journal.md` final entry; `progress.md` `open-pr` checked.
+- `worklog/<TICKET-ID>/journal.md` final entry; `progress.md` `open-pr` checked.
 - **Never delete the worklog directory — it is a committed audit trail.**
 
 ## Auto mode

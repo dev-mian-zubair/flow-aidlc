@@ -20,7 +20,7 @@ resolve high-severity findings, and gate the branch before the PR is opened.
 ### 1 — Compute the branch diff
 
 The review target is this branch vs its **base** — the `Base branch:` recorded in
-`worklog/<PI-NNN>/progress.md` (default the configured `vcs.base`; a sibling branch for a
+`worklog/<TICKET-ID>/progress.md` (default the configured `vcs.base`; a sibling branch for a
 stacked epic child, since epic children are independent branches):
 
 ```bash
@@ -63,7 +63,7 @@ findings; fixes are applied separately (step 4).
 ### 3 — Collect + record findings
 
 Dedupe findings across agents and record them to
-`worklog/<PI-NNN>/ship/branch-hardening.md`, each with: agent, `file:line`, severity
+`worklog/<TICKET-ID>/ship/branch-hardening.md`, each with: agent, `file:line`, severity
 (`high` | `medium` | `low`), and a one-line description.
 
 ### 4 — Resolve high-severity findings
@@ -83,7 +83,7 @@ for `/flow-approve` before advancing to `learnings`.
 
 ## Output
 
-`worklog/<PI-NNN>/ship/branch-hardening.md` — findings, resolutions, and any explicit
+`worklog/<TICKET-ID>/ship/branch-hardening.md` — findings, resolutions, and any explicit
 deferrals; all high-severity resolved.
 
 ## Notes

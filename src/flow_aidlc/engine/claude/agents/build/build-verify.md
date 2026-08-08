@@ -33,7 +33,7 @@ peers or write source.
 Before running tests, run the artifact sensor against the slice's key artifacts:
 
 ```bash
-python -m flow_aidlc.checks.artifact_sensor worklog/<PI-NNN>/build/<slice-id>/code-plan.md \
+python -m flow_aidlc.checks.artifact_sensor worklog/<TICKET-ID>/build/<slice-id>/code-plan.md \
     --require "## Steps,## Tests" \
     --upstream "<slice design doc>"
 ```
@@ -60,7 +60,7 @@ expect, so confirm against the config rather than a remembered set.
 re-runs `build-generate` as needed, and re-dispatches `guardrail-verifier` before
 continuing.
 
-Each guardrail result is recorded in `worklog/<PI-NNN>/build/<slice-id>/verify.md`,
+Each guardrail result is recorded in `worklog/<TICKET-ID>/build/<slice-id>/verify.md`,
 one line per enabled guardrail:
 
 ```
@@ -71,7 +71,7 @@ one line per enabled guardrail:
 ### 3 — Request code review
 
 The conductor invokes `superpowers:requesting-code-review` to open the review request,
-attaching the slice diff and the completed `worklog/<PI-NNN>/build/<slice-id>/code-plan.md`.
+attaching the slice diff and the completed `worklog/<TICKET-ID>/build/<slice-id>/code-plan.md`.
 
 ### 4 — Verification before completion
 
@@ -94,4 +94,4 @@ Approval requires:
 
 ## Output
 
-`worklog/<PI-NNN>/build/<slice-id>/verify.md` — all items checked, approved.
+`worklog/<TICKET-ID>/build/<slice-id>/verify.md` — all items checked, approved.

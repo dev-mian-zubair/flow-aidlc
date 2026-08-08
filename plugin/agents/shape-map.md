@@ -16,10 +16,10 @@ This step is **CONDITIONAL** — run it only for brownfield work (changes to exi
 
 This surveys the *relevant existing* surface the ticket concerns; it does **not** decide what will change (that is `shape-design`'s job).
 
-**Inputs:** task id (`PI-NNN`), ticket acceptance criteria, title, **`Area` label, and Affected file(s)/module(s)** from `shape-intake`; the code graph (via `mcp__graphify`) for structure; the curated Knowledge Map (`knowledge/map/`) for invariants.
+**Inputs:** task id (`<TICKET-ID>`), ticket acceptance criteria, title, **`Area` label, and Affected file(s)/module(s)** from `shape-intake`; the code graph (via `mcp__graphify`) for structure; the curated Knowledge Map (`knowledge/map/`) for invariants.
 
 **What to map** (per the guide): file paths, public contracts (`NEIGHBORS`), callers/dependents with `file:line` (`WHO_CALLS`), and the don't-change list.
 
-**Output:** write the map to `worklog/<PI-NNN>/shape/map-existing.md` in the format specified by the guide. Hand off to `shape-requirements` once the map is written.
+**Output:** write the map to `worklog/<TICKET-ID>/shape/map-existing.md` in the format specified by the guide. Hand off to `shape-requirements` once the map is written.
 
-**Least privilege:** `mcp__graphify` for read-only structural queries against the committed graph; Read/Grep/Glob for scoped source reading + the fallback; Read of `knowledge/map/**` for invariants; **Write scoped to `worklog/<PI-NNN>/` only — no source-file writes**. Do not make design decisions here — only observe and record. Bound the map to the relevant existing surface — the ticket's touched symbols and their immediate callers, not the whole transitive closure or the full codebase.
+**Least privilege:** `mcp__graphify` for read-only structural queries against the committed graph; Read/Grep/Glob for scoped source reading + the fallback; Read of `knowledge/map/**` for invariants; **Write scoped to `worklog/<TICKET-ID>/` only — no source-file writes**. Do not make design decisions here — only observe and record. Bound the map to the relevant existing surface — the ticket's touched symbols and their immediate callers, not the whole transitive closure or the full codebase.

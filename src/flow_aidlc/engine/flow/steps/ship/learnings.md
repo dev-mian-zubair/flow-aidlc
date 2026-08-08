@@ -20,10 +20,10 @@ Run the learnings extractor against this task's worklog directory, pointing at
 the practices store so already-recorded entries are flagged:
 
 ```bash
-python -m flow_aidlc.checks.learnings worklog/<PI-NNN> --practices knowledge/practices.md
+python -m flow_aidlc.checks.learnings worklog/<TICKET-ID> --practices knowledge/practices.md
 ```
 
-The tool scans `worklog/<PI-NNN>/journal.md` for correction and redirection
+The tool scans `worklog/<TICKET-ID>/journal.md` for correction and redirection
 signals (words such as "actually", "instead", "should have", "revert", etc.)
 and prints a numbered candidate list. Candidates already present in
 `knowledge/practices.md` are marked `[already recorded]`.
@@ -58,7 +58,7 @@ For the journal entry format that is the source of candidates, see
 Commit the updated `knowledge/practices.md` (if any practices were appended):
 
 ```
-docs(flow): capture learnings from <PI-NNN>
+docs(flow): capture learnings from <TICKET-ID>
 ```
 
 Include in the body which practices were added and why they were kept.
@@ -72,5 +72,5 @@ kickoff — no further wiring is needed.
 ## Output
 
 - `knowledge/practices.md` updated with any kept practices (idempotent).
-- Commit `docs(flow): capture learnings from <PI-NNN>` if practices were added.
+- Commit `docs(flow): capture learnings from <TICKET-ID>` if practices were added.
 - Discarded candidates are not recorded anywhere.

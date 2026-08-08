@@ -10,15 +10,15 @@ interfaces, and any choices with meaningful trade-offs.
 
 ## Inputs
 
-- Approved requirements from `worklog/<PI-NNN>/shape/requirements.md`.
-- Existing-code map from `worklog/<PI-NNN>/shape/map-existing.md` (if present).
+- Approved requirements from `worklog/<TICKET-ID>/shape/requirements.md`.
+- Existing-code map from `worklog/<TICKET-ID>/shape/map-existing.md` (if present).
 
 ## Write the design document
 
 Copy the template as the skeleton, then fill it in place:
 
 ```bash
-cp .flow/templates/design.tmpl.md worklog/<PI-NNN>/shape/design.md
+cp .flow/templates/design.tmpl.md worklog/<TICKET-ID>/shape/design.md
 ```
 
 Fill the SNAPSHOT header (Owner = you, Last updated = today), every `[Answer]:`,
@@ -48,13 +48,13 @@ is in the code graph):
 A decision is **cross-cutting** if it affects more than one task, establishes a
 new pattern for the codebase, or has lasting architectural impact. **Adopting an
 external dependency** (from Shape / research) is always cross-cutting — its ADR
-cites `worklog/<PI-NNN>/shape/research.md`.
+cites `worklog/<TICKET-ID>/shape/research.md`.
 
 For each cross-cutting decision in the design:
 
 1. Create a record at `knowledge/decisions/NNNN-<slug>.md` following
    `steps/shared/decision-format.md`.
-2. Add a link to that record in `worklog/<PI-NNN>/shape/design.md` under a
+2. Add a link to that record in `worklog/<TICKET-ID>/shape/design.md` under a
    `## Graduated decisions` section.
 3. Do **not** duplicate the rationale — the worklog design may summarise; the
    `knowledge/decisions/` record is the authoritative source.

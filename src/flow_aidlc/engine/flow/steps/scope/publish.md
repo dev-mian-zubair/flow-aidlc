@@ -88,7 +88,7 @@ manual step — see the adapter. Do not block creation on them.
 
 ## Notes
 
-- The worklog directory `worklog/<PI-NNN>/` is created by `steps/shared/kickoff.md`
+- The worklog directory `worklog/<TICKET-ID>/` is created by `steps/shared/kickoff.md`
   once the ticket id is known.
 - If creation fails (network error, permissions), report the error and retry once
   before escalating to the user.

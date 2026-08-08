@@ -9,8 +9,8 @@ the workspace. Nothing is written to `worklog/`.
 
 ## Inputs
 
-- `worklog/<PI-NNN>/build/<slice-id>/code-plan.md` — approved, all checkboxes unchecked.
-- `worklog/<PI-NNN>/build/<slice-id>/design.md` — signatures and edge cases.
+- `worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` — approved, all checkboxes unchecked.
+- `worklog/<TICKET-ID>/build/<slice-id>/design.md` — signatures and edge cases.
 
 ## Scope guard
 
@@ -37,7 +37,7 @@ modifying any file:
 ## Output
 
 - All workspace files modified or created per the plan.
-- `worklog/<PI-NNN>/build/<slice-id>/code-plan.md` — all checkboxes checked.
+- `worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` — all checkboxes checked.
 - Test suite green.
 
 Proceed to `steps/build/verify.md`.

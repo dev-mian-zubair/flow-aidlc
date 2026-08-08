@@ -13,9 +13,9 @@ Read `.flow/steps/build/generate.md` and follow it exactly.
 
 ## Inputs
 
-- `worklog/<PI-NNN>/build/<slice-id>/code-plan.md` — approved, all checkboxes unchecked.
-- `worklog/<PI-NNN>/build/<slice-id>/design.md` — signatures and edge cases.
-- `worklog/<PI-NNN>/shape/slices.md` — the file list for this slice id (scope fence).
+- `worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` — approved, all checkboxes unchecked.
+- `worklog/<TICKET-ID>/build/<slice-id>/design.md` — signatures and edge cases.
+- `worklog/<TICKET-ID>/shape/slices.md` — the file list for this slice id (scope fence).
 
 ## Skill invocation
 
@@ -25,7 +25,7 @@ Invoke `superpowers:test-driven-development` **at the start of this stage** and 
 
 Before creating or modifying any workspace file:
 1. Confirm the file path appears in the slice's file list in `slices.md`.
-2. If it does not, stop and raise a scope-creep flag in `worklog/<PI-NNN>/journal.md`. Do not write the file.
+2. If it does not, stop and raise a scope-creep flag in `worklog/<TICKET-ID>/journal.md`. Do not write the file.
 
 ## Steps
 
@@ -44,7 +44,7 @@ All tests must be green before leaving this stage. A red suite blocks entry to `
 ## Output
 
 - All workspace files modified or created per the plan.
-- `worklog/<PI-NNN>/build/<slice-id>/code-plan.md` — all checkboxes checked.
+- `worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` — all checkboxes checked.
 - Test suite green.
 
 Proceed to `steps/build/verify.md` (dispatched by the flow).

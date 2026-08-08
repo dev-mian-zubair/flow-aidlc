@@ -13,4 +13,4 @@ idempotency marker so the retro never duplicates one.
 just read it. A reproducibility harness shipped with a self-consistency command
 that silently FAILed because a path was wrong.
 **Why:** Documented-but-broken commands read as working; only execution catches them.
-**Source:** PI-WS10
+**Source:** ABC-WS10

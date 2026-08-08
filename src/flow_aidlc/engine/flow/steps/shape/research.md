@@ -35,7 +35,7 @@ than discovering it at Build/CI.
 Copy the template as the skeleton, then fill it in place:
 
 ```bash
-cp .flow/templates/research.tmpl.md worklog/<PI-NNN>/shape/research.md
+cp .flow/templates/research.tmpl.md worklog/<TICKET-ID>/shape/research.md
 ```
 
 Fill the SNAPSHOT header, the Question, Options (with sources), Recommendation,
