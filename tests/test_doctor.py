@@ -184,5 +184,5 @@ def test_check_auto_pass_with_ci(tmp_path, capsys):
     rep = doctor._Report()
     doctor._check_auto(rep, tmp_path)
     out = capsys.readouterr().out
-    assert "[PASS]" in out
+    assert "[PASS]" in out and "auto" in out
     assert rep.any_fail is False
