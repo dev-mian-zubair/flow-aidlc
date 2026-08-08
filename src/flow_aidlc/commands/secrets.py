@@ -11,6 +11,7 @@ manual wrapper pattern. Only servers with a ``${VAR}`` env block are wrapped.
 from __future__ import annotations
 
 import argparse
+import os
 import shutil
 import subprocess
 import sys
@@ -157,6 +158,79 @@ def _off(root: Path, dry: bool) -> int:
     return 0
 
 
+def _parse_env_file(path: Path) -> dict[str, str]:
+    out: dict[str, str] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        out[key.strip()] = value.strip()
+    return out
+
+
+def _known_provider_for(server: dict) -> Provider | None:
+    """If a server is wrapped by a known provider, return that Provider."""
+    if not mc.is_wrapped(server):
+        return None
+    cli = server.get("command")
+    for prov in _PROVIDERS.values():
+        if prov.cli == cli:
+            return prov
+    return None
+
+
+def credential_report(root: Path, deep: bool = False) -> list[tuple[str, str, str]]:
+    """Per secret-bearing server, return (server, status, detail). WARN/PASS only."""
+    mcp_path = root / ".mcp.json"
+    if not mcp_path.exists():
+        return []
+    mcp = mc.load_mcp(mcp_path)
+    inventory = mc.secret_vars(mcp)
+    servers = mcp.get("mcpServers") or {}
+    dotenv = _parse_env_file(root / ".env") if (root / ".env").exists() else {}
+
+    rows: list[tuple[str, str, str]] = []
+    for name, vars_ in inventory.items():
+        server = servers[name]
+        prov = _known_provider_for(server)
+        if prov is not None:
+            missing = prov.preconditions(root)
+            if missing:
+                rows.append((name, WARN, f"{prov.name}: " + "; ".join(missing)))
+            elif deep and not prov.probe(root):
+                rows.append((name, WARN, f"{prov.name}: CLI present but secrets did not resolve"))
+            else:
+                rows.append((name, PASS, f"{prov.name} (all vars injected at launch)"))
+            continue
+        # plain ${VAR} mode
+        unset = [v for v in vars_ if not os.environ.get(v)]
+        if not unset:
+            rows.append((name, PASS, "env vars set: " + ", ".join(vars_)))
+        elif all(v in dotenv for v in unset):
+            rows.append((name, WARN, ".env present but not loaded — source it or use direnv "
+                                     f"(unset: {', '.join(unset)})"))
+        else:
+            rows.append((name, WARN, "unset env vars: " + ", ".join(unset)))
+    return rows
+
+
+def secrets_summary(root: Path) -> tuple[str, str]:
+    """Aggregate credential_report (shallow) into one (status, detail) for doctor."""
+    rows = credential_report(root, deep=False)
+    if not rows:
+        return PASS, "no secret-bearing MCP servers"
+    warns = [r for r in rows if r[1] == WARN]
+    if warns:
+        return WARN, "; ".join(f"{name}: {detail}" for name, _s, detail in warns)
+    return PASS, ", ".join(f"{name}: {detail}" for name, _s, detail in rows)
+
+
 def _status(root: Path) -> int:
-    print("flow secrets status: not implemented yet")
+    rows = credential_report(root, deep=True)
+    if not rows:
+        print("No secret-bearing MCP servers in .mcp.json.")
+        return 0
+    for name, status, detail in rows:
+        print(f"[{status}] {name} — {detail}")
     return 0

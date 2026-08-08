@@ -1,5 +1,6 @@
 # tests/test_secrets.py
 import json
+import os
 from pathlib import Path
 
 from flow_aidlc.commands import secrets
@@ -63,3 +64,42 @@ def test_guided_only_provider_prints_pattern(tmp_path, capsys):
 
 def test_no_mcp_json_errors(tmp_path):
     assert secrets.run(["use", "infisical", "--path", str(tmp_path)]) == 2
+
+
+def test_summary_var_mode_all_set(tmp_path, monkeypatch):
+    _write_mcp(tmp_path)
+    monkeypatch.setenv("GITHUB_TOKEN", "x")
+    status, _ = secrets.secrets_summary(tmp_path)
+    assert status == "PASS"
+
+def test_summary_var_mode_missing_warns(tmp_path, monkeypatch):
+    _write_mcp(tmp_path)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    status, detail = secrets.secrets_summary(tmp_path)
+    assert status == "WARN"
+    assert "GITHUB_TOKEN" in detail
+
+def test_summary_dotenv_present_but_not_loaded(tmp_path, monkeypatch):
+    _write_mcp(tmp_path)
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    (tmp_path / ".env").write_text("GITHUB_TOKEN=abc\n")
+    status, detail = secrets.secrets_summary(tmp_path)
+    assert status == "WARN"
+    assert "not loaded" in detail.lower()
+
+def test_summary_wrapped_mode_reports_provider(tmp_path, monkeypatch):
+    _write_mcp(tmp_path)
+    secrets.run(["use", "infisical", "--path", str(tmp_path)])
+    monkeypatch.setattr(secrets.shutil, "which", lambda c: "/usr/bin/infisical")
+    (tmp_path / ".infisical.json").write_text("{}")
+    status, detail = secrets.secrets_summary(tmp_path)
+    assert status == "PASS"
+    assert "infisical" in detail
+
+def test_parse_env_file_ignores_comments(tmp_path):
+    (tmp_path / ".env").write_text("# c\n\nA=1\nB = two \n")
+    assert secrets._parse_env_file(tmp_path / ".env") == {"A": "1", "B": "two"}
+
+def test_status_command_runs(tmp_path):
+    _write_mcp(tmp_path)
+    assert secrets.run(["status", "--path", str(tmp_path)]) == 0
