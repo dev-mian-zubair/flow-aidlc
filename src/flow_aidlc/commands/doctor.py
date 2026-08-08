@@ -105,6 +105,7 @@ def run(argv: list[str]) -> int:
     _check_mcp(rep, root)
     _check_secrets(rep, root)
     _check_auto(rep, root)
+    _check_impeccable(rep, root)
     _check_skills(rep, root)
 
     print()
@@ -310,6 +311,23 @@ def _check_auto(rep: _Report, root: Path) -> None:
         rep.line("auto", PASS, "CI workflow present — `/flow-auto` can merge on green CI")
     else:
         rep.line("auto", WARN, "no CI workflow — `/flow-auto` needs green CI to merge; run `flow ci init` (controlled mode is unaffected)")
+
+
+def _check_impeccable(rep: _Report, root: Path) -> None:
+    """Optional design-quality check (Impeccable). Only reports when the repo has
+    opted in — i.e. the skill is installed OR a PRODUCT.md/DESIGN.md exists. Stays
+    SILENT otherwise so a non-UI repo is never nagged. WARN/PASS only, never FAIL.
+    """
+    skill = (root / ".claude" / "skills" / "impeccable").is_dir()
+    standards = [n for n in ("PRODUCT.md", "DESIGN.md") if (root / n).exists()]
+    if not skill and not standards:
+        return  # not opted in — say nothing
+    if skill and standards:
+        rep.line("impeccable", PASS, f"skill installed; standards: {', '.join(standards)}")
+    elif skill and not standards:
+        rep.line("impeccable", WARN, "skill installed but no PRODUCT.md/DESIGN.md — run `/impeccable init`")
+    else:
+        rep.line("impeccable", WARN, "PRODUCT.md/DESIGN.md present but skill missing — `flow setup --with-impeccable`")
 
 
 def _check_skills(rep: _Report, root: Path) -> None:

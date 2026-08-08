@@ -197,3 +197,33 @@ def test_check_auto_pass_with_yaml_workflow(tmp_path, capsys):
     out = capsys.readouterr().out
     assert "[PASS]" in out and "auto" in out
     assert rep.any_fail is False
+
+
+# ---------------------------------------------------------------------------
+# _check_impeccable — opt-in design quality check
+# ---------------------------------------------------------------------------
+
+def test_check_impeccable_silent_when_absent(tmp_path, capsys):
+    rep = doctor._Report()
+    doctor._check_impeccable(rep, tmp_path)
+    assert "impeccable" not in capsys.readouterr().out.lower()  # no opt-in signal → no line
+    assert rep.any_fail is False
+
+
+def test_check_impeccable_pass_when_skill_and_standard(tmp_path, capsys):
+    (tmp_path / ".claude" / "skills" / "impeccable").mkdir(parents=True)
+    (tmp_path / "PRODUCT.md").write_text("# Product\n")
+    rep = doctor._Report()
+    doctor._check_impeccable(rep, tmp_path)
+    assert "[PASS]" in capsys.readouterr().out
+    assert rep.any_fail is False
+
+
+def test_check_impeccable_warns_when_partial(tmp_path, capsys):
+    # standards present but the skill isn't installed → WARN (opted in, but incomplete)
+    (tmp_path / "DESIGN.md").write_text("# Design\n")
+    rep = doctor._Report()
+    doctor._check_impeccable(rep, tmp_path)
+    out = capsys.readouterr().out
+    assert "[WARN]" in out and "impeccable" in out
+    assert rep.any_fail is False
