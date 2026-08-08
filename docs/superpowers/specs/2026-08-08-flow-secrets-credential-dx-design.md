@@ -28,8 +28,11 @@ Two gaps:
 ## 2. Goals
 
 - Make a **secrets manager a first-class, wired path** — `flow secrets use
-  infisical` rewrites the tracker MCP server to inject its token at launch, with
-  **no secret in the repo, no `.env`, no shell export**.
+  infisical` rewrites **every secret-bearing MCP server** to inject its
+  credentials at launch, with **no secret in the repo, no `.env`, no shell
+  export**. Once adopted, **all Flow secrets** (the tracker token *and* any other
+  secret an MCP server needs — e.g. the read-only DB URI for the postgres MCP)
+  come from the manager, not the environment.
 - Add a **mode-aware credential health check** to `flow doctor` (and a deeper
   verifying `flow secrets status`), closing the doc/code gap. WARN, never FAIL.
 - Provide a **`.env` fallback** for users who don't adopt a secrets manager:
@@ -57,9 +60,10 @@ Two gaps:
 | Scope | Pragmatic first slice **plus** first-class Infisical wiring |
 | Infisical role | First-class **wired** path (not just documented) |
 | Wiring mechanism | Dedicated **`flow secrets`** subcommand (extensible broker) |
+| Wrap target | **All secret-bearing servers** (any with a `${VAR}` env block), not just the tracker |
 | `.env` loading | Guided only + doctor "present but not loaded" safety net |
 | doctor probe depth | Shallow (offline) in `doctor`; deep (network) only in `flow secrets status` |
-| `.env.example` source | Generated in `flow init` from a per-tracker required-var map |
+| Secret inventory | Derived by **scanning `.mcp.json` for `${VAR}` references** — the single source of truth for "what are Flow's secrets" |
 
 ## 5. Command surface & architecture
 
@@ -73,39 +77,48 @@ flow secrets status                                      # detailed, verifying r
 
 - Providers are data: `infisical` implemented; `op` / `doppler` recognized (print
   the manual `<tool> run --` wrapper + "first-class wiring coming").
-- Only the **tracker server** is ever touched — resolved via
-  `config.yaml → tracker.mcp` (the server key in `.mcp.json`), never hardcoded, so
-  it works for github/jira/linear.
+- **Every secret-bearing server** is wrapped — a server "bears secrets" iff its
+  `env` block contains one or more `${VAR}` references. Non-secret servers
+  (`graphify`, `context7`) have no such block and are left untouched. This covers
+  the tracker (github/jira/linear) *and* any other secret server (e.g. postgres
+  via `FLOW_DB_READONLY_URI`) uniformly, with no per-platform special-casing.
 
 ## 6. `.mcp.json` wrapping mechanics
 
-`use infisical` rewrites only the tracker server's `command`/`args`:
+`use infisical` rewrites **each secret-bearing server**. Per server it stashes the
+original config under an ignored `_flowWrapped` key (Claude Code ignores unknown
+per-server keys), replaces `command`/`args` with the wrapper, and drops the
+top-level `env` block (Infisical injects the values into the child):
 
 ```jsonc
 // before
 "github": { "command": "npx", "args": ["-y","@modelcontextprotocol/server-github"],
             "env": { "GITHUB_TOKEN": "${GITHUB_TOKEN}" } }
-// after — env block dropped; Infisical injects the token into the child process
-"github": { "command": "infisical", "args": ["run","--","npx","-y","@modelcontextprotocol/server-github"] }
+// after
+"github": {
+  "command": "infisical", "args": ["run","--","npx","-y","@modelcontextprotocol/server-github"],
+  "_flowWrapped": { "provider": "infisical",
+                    "command": "npx", "args": ["-y","@modelcontextprotocol/server-github"],
+                    "env": { "GITHUB_TOKEN": "${GITHUB_TOKEN}" } }
+}
 ```
 
 With `--env prod`, args become `["run","--env","prod","--",...]`.
 
-- **Idempotent** — an already-wrapped server (`command == "infisical"` with a
-  `run ... --` prefix) is detected; no double-wrap.
-- **Reversible** — `off` strips everything up to and including the `--` sentinel,
-  reconstructing the original `command`/`args` generically, and restores the
-  `${VAR}` env block from the per-tracker var map (see §8).
-- **Round-trip assumption** — wrap/unwrap targets the **standard engine-shaped**
-  tracker server (a single token-var `env` block, as `flow init` produces). If a
-  user hand-added extra `env` keys, `off` restores only the standard block; this
-  is documented, and `--dry-run` shows the exact result before writing.
+- **Lossless round-trip** — `off` restores each server verbatim from
+  `_flowWrapped` and deletes the stash. No var map or reconstruction guessing, and
+  it round-trips **even hand-customized servers** (extra env keys, custom args).
+- **Idempotent** — presence of `_flowWrapped` marks a server as wrapped; re-running
+  `use` is a no-op for already-wrapped servers.
+- **Env block dropped on wrap (correctness)** — removing the `${VAR}` block means
+  the manager's injected value is the *only* source; no stale/empty `${VAR}` can
+  shadow it. The original block lives safely in `_flowWrapped` for restore.
 - **Cross-platform safe** — `command: "infisical"` (not `sh -c`), so it works
   natively on Windows (a key advantage over `.env` auto-wiring).
-- **`--dry-run`** prints the diff and writes nothing. `.mcp.json` is committed, so
-  a wrap is a reviewable change.
-- **Provider switch** — `use X` when wrapped by `Y` unwraps then rewraps
-  (idempotent to the target).
+- **`--dry-run`** prints the per-server diff and writes nothing. `.mcp.json` is
+  committed, so a wrap is a reviewable change.
+- **Provider switch** — `use X` when wrapped by `Y` unwraps (from `_flowWrapped`)
+  then rewraps, idempotent to the target.
 
 ## 7. Preconditions & the mode-aware credential check
 
@@ -114,16 +127,19 @@ With `--env prod`, args become `["run","--env","prod","--",...]`.
 (from `infisical init`). Missing pieces are printed guidance, not hard failures.
 
 A **shared credential check** (reported by `flow doctor` under a `secrets` line,
-and in full by `flow secrets status`):
+and in full by `flow secrets status`) evaluates **every secret-bearing server**
+and reports the aggregate:
 
-- **Wrapped mode** (tracker server `command` is a known secrets tool):
+- **Wrapped mode** (server `command` is a known secrets tool):
   - `doctor` (shallow, offline, fast): tool on PATH? `.infisical.json` present?
   - `flow secrets status` (deep): additionally run a resolve probe
     (e.g. `infisical run -- printenv <VAR>` / `infisical secrets --silent`) to
-    confirm auth + the token actually resolve over the network.
-- **Plain `${VAR}` mode**: each placeholder set in the environment? If a var is
-  unset **but present in `.env`** → "`.env` present but not loaded — source it or
-  use direnv."
+    confirm auth + the values actually resolve over the network.
+- **Plain `${VAR}` mode**: each placeholder (across all secret-bearing servers)
+  set in the environment? If a var is unset **but present in `.env`** → "`.env`
+  present but not loaded — source it or use direnv."
+- **Mixed** — some servers wrapped, some plain — is reported per server so a
+  half-migrated repo is visible.
 - **WARN, never FAIL** — `doctor`/CI stay green (CI often lacks any of this).
 
 This replaces the currently-false `INTEGRATIONS.md` claim with a real check.
@@ -132,16 +148,18 @@ This replaces the currently-false `INTEGRATIONS.md` claim with a real check.
 
 For users who don't adopt a secrets manager, `flow init`:
 
-- writes a committed **`.env.example`** listing required vars for the chosen
-  tracker, from a per-tracker var map:
-  - `github` → `GITHUB_TOKEN`
-  - `jira` → `JIRA_URL`, `JIRA_USERNAME`, `JIRA_API_TOKEN`
-  - `linear` → `LINEAR_API_KEY`
+- writes a committed **`.env.example`** listing **every `${VAR}` referenced in the
+  freshly-rendered `.mcp.json`** — the complete Flow secret inventory. For the
+  default github tracker that is `GITHUB_TOKEN`; jira adds `JIRA_URL`,
+  `JIRA_USERNAME`, `JIRA_API_TOKEN`; linear `LINEAR_API_KEY`; a configured postgres
+  MCP adds `FLOW_DB_READONLY_URI`; and any future secret server is covered for free.
 - adds **`.env`** to `.gitignore` (alongside `worklog/.active`, `.superpowers/`).
 
 It does **not** create a real `.env` (no empty secret file) and does not load it.
-The same per-tracker var map is the single source of truth used by `secrets off`
-(to restore the `${VAR}` env block) and by the doctor `${VAR}`-mode check.
+**Scanning `.mcp.json` for `${VAR}` references is the single source of truth** for
+the secret inventory — used by `.env.example` generation and by the doctor
+`${VAR}`-mode check. (`secrets off` does not need it: it restores from
+`_flowWrapped`, see §6.)
 
 ## 9. Provider abstraction
 
@@ -161,11 +179,13 @@ the tracker/graph adapter pattern already in the engine.
 
 ## 10. Testing
 
-- **`tests/test_secrets.py`** (new): wrap idempotent; `off` round-trips to the
-  exact original; wrap targets the `config.tracker.mcp` server (not hardcoded);
-  `--dry-run` writes nothing; unknown provider errors cleanly; provider switch
-  unwrap-then-rewrap. **Infisical CLI presence mocked via PATH** — tests never
-  require it installed; the deep probe is injected/skipped.
+- **`tests/test_secrets.py`** (new): wrap targets **all** secret-bearing servers
+  and leaves non-secret ones (graphify/context7) untouched; wrap idempotent;
+  `off` round-trips every server to the exact original via `_flowWrapped`
+  (including a hand-customized server with extra env/args); `--dry-run` writes
+  nothing; unknown provider errors cleanly; provider switch unwrap-then-rewrap.
+  **Infisical CLI presence mocked via PATH** — tests never require it installed;
+  the deep probe is injected/skipped.
 - **`tests/test_doctor.py`** (extend): wrapped-mode, `${VAR}`-mode, and
   `.env`-present-but-not-loaded lines — all assert `any_fail is False`.
 - **`tests/test_init.py`** (extend): `.env.example` scaffolded with the right vars
@@ -184,12 +204,15 @@ the tracker/graph adapter pattern already in the engine.
 
 ## 12. Acceptance
 
-1. `flow secrets use infisical` (in a repo with a wrappable tracker server)
-   rewrites only the tracker server to the `infisical run --` form, idempotently;
-   `flow secrets off` restores the original exactly. `--dry-run` writes nothing.
-2. `flow doctor` reports a `secrets` line: PASS/WARN per mode, `any_fail`
-   unaffected; `flow secrets status` additionally reports the deep probe result.
-3. `flow init --tracker <t>` produces a committed `.env.example` with `<t>`'s vars
-   and a gitignored `.env`.
+1. `flow secrets use infisical` rewrites **every secret-bearing server** to the
+   `infisical run --` form (stashing originals in `_flowWrapped`), leaving
+   non-secret servers untouched, idempotently; `flow secrets off` restores every
+   server exactly. `--dry-run` writes nothing.
+2. `flow doctor` reports a `secrets` line aggregating all secret-bearing servers:
+   PASS/WARN per mode, `any_fail` unaffected; `flow secrets status` additionally
+   reports the deep probe result per server.
+3. `flow init --tracker <t>` produces a committed `.env.example` containing every
+   `${VAR}` in the rendered `.mcp.json` (tracker vars + any others) and a
+   gitignored `.env`.
 4. Full suite green; no engine-template drift; github/jira/linear regressions
    pass.
