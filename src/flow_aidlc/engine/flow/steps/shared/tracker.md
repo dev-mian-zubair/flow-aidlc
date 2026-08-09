@@ -85,7 +85,7 @@ issue key), not `owner/repo`; the site base URL is the `JIRA_URL` env var (see
 **Preconditions (jira):** the `jira` MCP (`mcp-atlassian`) is connected + authed —
 Cloud: `JIRA_URL` + `JIRA_USERNAME` + `JIRA_API_TOKEN`; Server/DC: `JIRA_URL` +
 `JIRA_PERSONAL_TOKEN`. The story-points/effort custom-field id is instance-specific;
-resolve it once and record it in `knowledge/map/` if `SET_FIELDS` sets effort.
+resolve it once and record it in `docs/flow/knowledge/map/` if `SET_FIELDS` sets effort.
 
 ### linear
 
@@ -111,7 +111,7 @@ Linear ids are already `<team-key>-<number>`, set `config.tracker.id_scheme` to
 **Preconditions (linear):** the `linear` MCP is connected + authed via `LINEAR_API_KEY`
 (a personal API key from Linear → Settings → Security & access → API). Workflow-state
 and label ids are workspace-specific; resolve them once (`list_issue_statuses`,
-`list_issue_labels`) and record them in `knowledge/map/` if `SET_TYPE`/`CLOSE` need them.
+`list_issue_labels`) and record them in `docs/flow/knowledge/map/` if `SET_TYPE`/`CLOSE` need them.
 
 ### azure-devops
 
@@ -135,7 +135,7 @@ native when you use Azure Repos (else open on your VCS).
 
 **Preconditions (azure-devops):** the `azure-devops` MCP authed via your Azure login
 (PAT/Entra). The state model and field reference names are process-specific; resolve
-once and record in `knowledge/map/` if `SET_FIELDS`/`CLOSE` need them.
+once and record in `docs/flow/knowledge/map/` if `SET_FIELDS`/`CLOSE` need them.
 
 ### shortcut
 
@@ -158,7 +158,7 @@ numeric **story id**; set `config.tracker.id_scheme` to `sc-{n}`. Stories have a
 
 **Preconditions (shortcut):** the `shortcut` MCP authed via `SHORTCUT_API_TOKEN`.
 Workflow-state and epic ids are workspace-specific; resolve once and record in
-`knowledge/map/`.
+`docs/flow/knowledge/map/`.
 
 ### asana
 
@@ -182,7 +182,7 @@ Asana project gid** and the id is the numeric **task gid** (set `id_scheme` to a
 
 **Preconditions (asana):** the `asana` MCP authed via `ASANA_ACCESS_TOKEN` (a personal
 access token). Custom-field gids are workspace-specific; resolve once and record in
-`knowledge/map/` if `SET_FIELDS` sets priority/effort.
+`docs/flow/knowledge/map/` if `SET_FIELDS` sets priority/effort.
 
 ### clickup
 
@@ -205,7 +205,7 @@ subtasks via `parent`.
 
 **Preconditions (clickup):** the `clickup` MCP authed via `CLICKUP_API_TOKEN` (personal
 token; a Team/workspace id may also be required). Status and custom-field ids are
-space-specific; resolve once and record in `knowledge/map/`.
+space-specific; resolve once and record in `docs/flow/knowledge/map/`.
 
 ## Rule
 

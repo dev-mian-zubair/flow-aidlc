@@ -9,7 +9,7 @@
 ## Rule
 
 Every external dependency **newly added** in the diff must trace to an **approved
-research ADR** (`knowledge/decisions/`) produced by Shape / research. What Build
+research ADR** (`docs/flow/knowledge/decisions/`) produced by Shape / research. What Build
 installs must equal what the governance screen reviewed and approved — no
 unreviewed, substituted, or extra dependencies.
 
@@ -21,8 +21,8 @@ unreviewed, substituted, or extra dependencies.
   (Mechanical: `git diff` the manifests; collect added package names.) If none
   were added, the guardrail is **N/A** for this slice.
 - **DEP-02** (ADR exists): for each newly-added top-level dependency, an approved
-  ADR under `knowledge/decisions/` (or this task's
-  `worklog/<ID>-NNN/shape/research.md`) names that exact package as the adopted
+  ADR under `docs/flow/knowledge/decisions/` (or this task's
+  `docs/flow/worklog/<ID>-NNN/shape/research.md`) names that exact package as the adopted
   dependency.
 - **DEP-03** (matches the approved package): the installed package name — and,
   where the ADR pins it, the major version / source registry — matches the ADR,

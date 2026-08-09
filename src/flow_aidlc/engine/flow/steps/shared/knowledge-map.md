@@ -1,6 +1,6 @@
 # Consulting the Knowledge Map
 
-`knowledge/map/` is the project's curated **Knowledge Map** — short, ≤1-screen
+`docs/flow/knowledge/map/` is the project's curated **Knowledge Map** — short, ≤1-screen
 subsystem docs. Each doc holds a subsystem's **invariants and rationale** (the "why" and the
 load-bearing rules); the *structure* it once described — files, symbols, callers —
 now lives in the **code graph** (query it via `steps/shared/graph.md`). Reading the
@@ -13,10 +13,10 @@ Consult on **every** Scope run — begin `clarify` by reading the index.
 
 ## How — the three-move recipe
 
-1. **Index** — read `knowledge/map/README.md`; its table names each subsystem,
+1. **Index** — read `docs/flow/knowledge/map/README.md`; its table names each subsystem,
    what it covers, and its `derives-from` code globs. Pick the subsystem(s) the
    idea touches.
-2. **Subsystem** — open the relevant `knowledge/map/<subsystem>.md` for its
+2. **Subsystem** — open the relevant `docs/flow/knowledge/map/<subsystem>.md` for its
    **invariants** and real vocabulary. For *structure* (which symbols, who calls
    what), query the code graph (`steps/shared/graph.md`).
 3. **Affected modules** — use `.flow/knowledge-map.yaml`'s subsystem→path index to
@@ -51,6 +51,6 @@ Use the map for **invariants and vocabulary**; use the graph for **structure**.
 
 ## Boundary
 
-Read `knowledge/map/**` and `.flow/knowledge-map.yaml` only. Do **not** read
+Read `docs/flow/knowledge/map/**` and `.flow/knowledge-map.yaml` only. Do **not** read
 source files and do **not** write anything to the repository — Scope remains
 write-less and source-less in the read sense.

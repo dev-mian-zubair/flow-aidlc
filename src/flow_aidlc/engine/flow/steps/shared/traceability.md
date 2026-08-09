@@ -15,7 +15,7 @@ slice's `Requirement refs` field.
 ## Traceability matrix
 
 The Shape stage emits a traceability matrix as
-`worklog/<TICKET-ID>/shape/traceability.md`. This document lists every FR/NFR and
+`docs/flow/worklog/<TICKET-ID>/shape/traceability.md`. This document lists every FR/NFR and
 which slices cover it (a requirement→slice cross-reference).
 
 ## Coverage rule
@@ -30,14 +30,14 @@ which slices cover it (a requirement→slice cross-reference).
 To generate the traceability matrix and validate coverage:
 
 ```bash
-python -m flow_aidlc.checks.traceability worklog/<TICKET-ID> --write
+python -m flow_aidlc.checks.traceability docs/flow/worklog/<TICKET-ID> --write
 ```
 
 This command:
 
-1. Parses all FR/NFR IDs from `worklog/<TICKET-ID>/shape/requirements.md`.
-2. Parses all `Requirement refs` from `worklog/<TICKET-ID>/shape/slices.md`.
-3. Generates `worklog/<TICKET-ID>/shape/traceability.md` with the matrix.
+1. Parses all FR/NFR IDs from `docs/flow/worklog/<TICKET-ID>/shape/requirements.md`.
+2. Parses all `Requirement refs` from `docs/flow/worklog/<TICKET-ID>/shape/slices.md`.
+3. Generates `docs/flow/worklog/<TICKET-ID>/shape/traceability.md` with the matrix.
 4. Reports any uncovered requirements (error) or unknown requirement IDs
    (warning).
 5. Exits with a non-zero status if any error is found.

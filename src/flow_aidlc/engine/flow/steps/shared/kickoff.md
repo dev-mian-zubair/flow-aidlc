@@ -7,7 +7,7 @@ Load this guide at the start of every Flow task, before any stage begins.
 1. Read `.flow/config.yaml` — note `guardrails.always_on[]`, `tracker.id_scheme`.
 2. Read `.flow/playbook.md` — know the stage sequence and which guides to load per stage.
 3. Identify the task id (format: `<TICKET-ID>`), and confirm it exists in the tracker. If no id is known yet — or the id does not exist — do **not** scaffold a worklog; route to `/flow-scope` (the front door that creates the ticket) first. Shape requires a real, tracker-created ticket for traceability.
-4. Read `knowledge/practices.md` if present — accumulated working practices from prior tasks; apply them this task.
+4. Read `docs/flow/knowledge/practices.md` if present — accumulated working practices from prior tasks; apply them this task.
 
 ## Sync + branch (Shape entry only)
 
@@ -38,7 +38,7 @@ git switch -c feat/<area>-<TICKET-ID>-<slug> origin/main    # base = config.yaml
 - If a task branch already exists (e.g. a worktree branched off the base this session
   with no new trunk commits since), that is a no-op — confirm and continue; otherwise
   `git rebase origin/main` to update it.
-- **Record the base** on the `Base branch:` line in `worklog/<TICKET-ID>/progress.md` so
+- **Record the base** on the `Base branch:` line in `docs/flow/worklog/<TICKET-ID>/progress.md` so
   `branch-hardening` and `open-pr` target it. Default is the configured `vcs.base`.
 
 **Epic children default to independent branches off the base** — each child is its own
@@ -59,12 +59,12 @@ code — lands on the feature branch, never on the trunk.
 Scaffold the worklog directory once, at Shape entry, **on the task branch created above**:
 
 ```
-cp .flow/templates/progress.tmpl.md   worklog/<TICKET-ID>/progress.md
-touch worklog/<TICKET-ID>/journal.md
-mkdir -p worklog/<TICKET-ID>/questions
-mkdir -p worklog/<TICKET-ID>/shape
-mkdir -p worklog/<TICKET-ID>/build
-mkdir -p worklog/<TICKET-ID>/ship
+cp .flow/templates/progress.tmpl.md   docs/flow/worklog/<TICKET-ID>/progress.md
+touch docs/flow/worklog/<TICKET-ID>/journal.md
+mkdir -p docs/flow/worklog/<TICKET-ID>/questions
+mkdir -p docs/flow/worklog/<TICKET-ID>/shape
+mkdir -p docs/flow/worklog/<TICKET-ID>/build
+mkdir -p docs/flow/worklog/<TICKET-ID>/ship
 ```
 
 Do **not** pre-copy requirements, design, or slices templates here — each stage

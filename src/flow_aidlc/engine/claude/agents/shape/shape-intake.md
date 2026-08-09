@@ -19,7 +19,7 @@ Read `.flow/steps/shared/kickoff.md` and follow it exactly.
 
 1. **Verify the ticket exists.** Perform `VERIFY_EXISTS` via the tracker adapter (`steps/shared/tracker.md`) against `config.tracker.repo`. If it does **not** exist — or no id was supplied — **STOP; scaffold nothing.** Report back so `/flow-start` can ask for a valid id or route to `/flow-scope`. A worklog must never be scaffolded for a ticket that does not exist.
 2. Load `.flow/config.yaml` (note `guardrails.always_on[]`, `tracker.id_scheme`) and `.flow/playbook.md` (confirm the Shape stage sequence).
-3. Scaffold `worklog/<TICKET-ID>/` per the guide if absent (progress.md, journal.md, questions/, shape/, build/, ship/).
+3. Scaffold `docs/flow/worklog/<TICKET-ID>/` per the guide if absent (progress.md, journal.md, questions/, shape/, build/, ship/).
 4. Route the conditional pre-steps, then `shape-requirements`:
    - **Brownfield** (existing code touched) → `shape-map` first.
    - **Needs an external dependency** the stack lacks → `shape-research`.
@@ -32,4 +32,4 @@ Read `.flow/steps/shared/kickoff.md` and follow it exactly.
 
 ## Least privilege
 
-Read/Write plus **read-only** tracker MCP (verification only — no tracker writes). Write is limited to the `worklog/<TICKET-ID>/` scaffold. Do not read or modify project source files here.
+Read/Write plus **read-only** tracker MCP (verification only — no tracker writes). Write is limited to the `docs/flow/worklog/<TICKET-ID>/` scaffold. Do not read or modify project source files here.

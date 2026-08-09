@@ -6,7 +6,7 @@ discrepancies, and handoffs — one line per event, kept in `progress.md`.
 ## File location
 
 ```
-worklog/<TICKET-ID>/progress.md   (## Decision log section)
+docs/flow/worklog/<TICKET-ID>/progress.md   (## Decision log section)
 ```
 
 Not a standalone file. Lives at the bottom of the task's `progress.md`.
@@ -26,12 +26,12 @@ Append one line at each of the following events:
 
 - **Checkpoint approved** — stage outcome confirmed; next stage authorised.
 - **Stage skipped** — e.g. `Shape/map-existing` skipped for greenfield work.
-- **Map discrepancy** — reality differs from knowledge/map/ after a codebase scan.
+- **Map discrepancy** — reality differs from docs/flow/knowledge/map/ after a codebase scan.
 - **Handoff** — task handed to another agent or paused across sessions.
 
 ## How it differs from the other logs
 
-| | decision-log | journal.md | knowledge/decisions/ |
+| | decision-log | journal.md | docs/flow/knowledge/decisions/ |
 |---|---|---|---|
 | **Voice** | terse (one line) | verbose (raw, verbatim) | structured (multi-section) |
 | **Scope** | per-gate events only | everything that happened | cross-cutting, codebase-wide |
@@ -39,7 +39,7 @@ Append one line at each of the following events:
 | **Audience** | quick status scan | full audit trail | future maintainers |
 
 The journal captures every detail; the decision-log is the navigable spine.
-Cross-cutting choices with trade-offs graduate to `knowledge/decisions/` via
+Cross-cutting choices with trade-offs graduate to `docs/flow/knowledge/decisions/` via
 `steps/shared/decision-format.md`.
 
 ## Rules

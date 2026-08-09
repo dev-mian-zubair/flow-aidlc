@@ -28,4 +28,4 @@ Draft from the confirmed type's `templates/scope/*` template (an epic draws the 
 
 ## Least privilege
 
-Read only — no tracker writes, no repo writes (the outward write happens only in `scope-publish`). You MAY read `knowledge/map/**` and `.flow/knowledge-map.yaml` to ground the `area` labels and Affected file(s)/module(s) (see `.flow/steps/shared/knowledge-map.md`); do not read source files.
+Read only — no tracker writes, no repo writes (the outward write happens only in `scope-publish`). You MAY read `docs/flow/knowledge/map/**` and `.flow/knowledge-map.yaml` to ground the `area` labels and Affected file(s)/module(s) (see `.flow/steps/shared/knowledge-map.md`); do not read source files.

@@ -5,7 +5,7 @@ developers know what was decided and why, without reopening the question.
 
 ## When to graduate a decision
 
-Promote a choice from `worklog/` to `knowledge/decisions/` when it meets any of
+Promote a choice from `docs/flow/worklog/` to `docs/flow/knowledge/decisions/` when it meets any of
 these criteria:
 
 - It affects more than one stage or one slice.
@@ -18,11 +18,11 @@ Minor in-stage choices (e.g., picking a variable name) stay in the journal only.
 ## File location and naming
 
 ```
-knowledge/decisions/NNNN-<kebab-slug>.md
+docs/flow/knowledge/decisions/NNNN-<kebab-slug>.md
 ```
 
 `NNNN` is a zero-padded four-digit integer. Increment from the highest existing
-number in `knowledge/decisions/`. If the directory is empty, start at `0001`.
+number in `docs/flow/knowledge/decisions/`. If the directory is empty, start at `0001`.
 
 ## File structure
 
@@ -56,5 +56,5 @@ number in `knowledge/decisions/`. If the directory is empty, start at `0001`.
 
 1. During Shape/design or Build/verify, identify a choice that meets the criteria.
 2. Write the record using the structure above.
-3. Append a journal entry: `[agent] Graduated decision to knowledge/decisions/NNNN-<slug>.md`.
+3. Append a journal entry: `[agent] Graduated decision to docs/flow/knowledge/decisions/NNNN-<slug>.md`.
 4. Reference the decision number in the relevant worklog artifact (e.g., design.md).

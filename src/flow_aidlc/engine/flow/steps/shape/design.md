@@ -10,15 +10,15 @@ interfaces, and any choices with meaningful trade-offs.
 
 ## Inputs
 
-- Approved requirements from `worklog/<TICKET-ID>/shape/requirements.md`.
-- Existing-code map from `worklog/<TICKET-ID>/shape/map-existing.md` (if present).
+- Approved requirements from `docs/flow/worklog/<TICKET-ID>/shape/requirements.md`.
+- Existing-code map from `docs/flow/worklog/<TICKET-ID>/shape/map-existing.md` (if present).
 
 ## Write the design document
 
 Copy the template as the skeleton, then fill it in place:
 
 ```bash
-cp .flow/templates/design.tmpl.md worklog/<TICKET-ID>/shape/design.md
+cp .flow/templates/design.tmpl.md docs/flow/worklog/<TICKET-ID>/shape/design.md
 ```
 
 Fill the SNAPSHOT header (Owner = you, Last updated = today), every `[Answer]:`,
@@ -30,7 +30,7 @@ Per `steps/shared/content-validation.md`, keep every template section — mark o
 ## Cross-check the design against the knowledge map
 
 For each subsystem the design touches, compare the design against its
-`knowledge/map/*.md` doc — which now holds the subsystem's **invariants** (structure
+`docs/flow/knowledge/map/*.md` doc — which now holds the subsystem's **invariants** (structure
 is in the code graph):
 
 1. If the design honors the map's invariants, note "consistent" and move on.
@@ -48,16 +48,16 @@ is in the code graph):
 A decision is **cross-cutting** if it affects more than one task, establishes a
 new pattern for the codebase, or has lasting architectural impact. **Adopting an
 external dependency** (from Shape / research) is always cross-cutting — its ADR
-cites `worklog/<TICKET-ID>/shape/research.md`.
+cites `docs/flow/worklog/<TICKET-ID>/shape/research.md`.
 
 For each cross-cutting decision in the design:
 
-1. Create a record at `knowledge/decisions/NNNN-<slug>.md` following
+1. Create a record at `docs/flow/knowledge/decisions/NNNN-<slug>.md` following
    `steps/shared/decision-format.md`.
-2. Add a link to that record in `worklog/<TICKET-ID>/shape/design.md` under a
+2. Add a link to that record in `docs/flow/worklog/<TICKET-ID>/shape/design.md` under a
    `## Graduated decisions` section.
 3. Do **not** duplicate the rationale — the worklog design may summarise; the
-   `knowledge/decisions/` record is the authoritative source.
+   `docs/flow/knowledge/decisions/` record is the authoritative source.
 
 Decisions that affect only this task stay in the worklog and are not graduated.
 

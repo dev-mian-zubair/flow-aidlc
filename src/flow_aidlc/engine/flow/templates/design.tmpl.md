@@ -42,7 +42,7 @@ or state why none is needed.
 ## Knowledge-map cross-check
 
 For each touched subsystem, note whether the design honors its
-`knowledge/map/*.md` **invariants** (structure lives in the code graph).
+`docs/flow/knowledge/map/*.md` **invariants** (structure lives in the code graph).
 A design that would violate a stated invariant is a load-bearing rule enforced by a
 guardrail at Build/verify — redesign to honor it, or graduate the change as a
 decision and flag the doc's `enforced-by:` guardrail for the curator. "consistent"
@@ -61,11 +61,11 @@ if none.
 ## Cross-Cutting Decisions
 
 List any decision that affects more than one component. Graduate each to
-`knowledge/decisions/NNNN-<slug>.md` using `decision.tmpl.md`.
+`docs/flow/knowledge/decisions/NNNN-<slug>.md` using `decision.tmpl.md`.
 
 | Decision | Decision file |
 |----------|---------------|
-| [Answer]: | `knowledge/decisions/NNNN-[Answer]:` |
+| [Answer]: | `docs/flow/knowledge/decisions/NNNN-[Answer]:` |
 
 ## Risks and Mitigations
 

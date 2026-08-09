@@ -33,14 +33,14 @@ Optional guardrails for this task:
 Enable any? (list names, or "none")
 ```
 
-Record enabled optional guardrails in `worklog/<TICKET-ID>/progress.md` under a
+Record enabled optional guardrails in `docs/flow/worklog/<TICKET-ID>/progress.md` under a
 `## Guardrails` section. The always-on guardrails (`migration-safety`,
 `budget-integrity`, `authz-completeness`, `router-safety`, `license-sku-gating`) are already active.
 
 ## Produce a question file
 
 For any requirement that is still ambiguous, write one entry in
-`worklog/<TICKET-ID>/questions/requirements.questions.md` per
+`docs/flow/worklog/<TICKET-ID>/questions/requirements.questions.md` per
 `steps/shared/question-format.md`.
 
 Apply `steps/shared/overconfidence-prevention.md` when deciding whether to ask
@@ -60,7 +60,7 @@ enforced at Build/verify — plan for it now, not later.
 Copy the template as the skeleton, then fill it in place:
 
 ```bash
-cp .flow/templates/requirements.tmpl.md worklog/<TICKET-ID>/shape/requirements.md
+cp .flow/templates/requirements.tmpl.md docs/flow/worklog/<TICKET-ID>/shape/requirements.md
 ```
 
 Fill the SNAPSHOT header (Owner = you, Last updated = today), every `[Answer]:`,

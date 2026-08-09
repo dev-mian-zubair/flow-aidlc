@@ -14,14 +14,14 @@ Read `.flow/steps/shape/requirements.md` and follow it exactly. Invoke `superpow
 
 ## Inputs
 
-- Ticket acceptance criteria, and (if brownfield) the map from `worklog/<TICKET-ID>/shape/map-existing.md`.
+- Ticket acceptance criteria, and (if brownfield) the map from `docs/flow/worklog/<TICKET-ID>/shape/map-existing.md`.
 
 ## Workflow
 
 1. Brainstorm to surface functional requirements, non-functional requirements, constraints, edge cases, and failure modes.
-2. Present the optional guardrail opt-in prompts (`security-baseline`, `resiliency-baseline`, `test-coverage`) and record enabled ones in `worklog/<TICKET-ID>/progress.md` under `## Guardrails`.
-3. Write any ambiguous requirements to `worklog/<TICKET-ID>/questions/requirements.questions.md` per `steps/shared/question-format.md`; resolve all blocking questions before writing the document.
-4. Write the requirements document to `worklog/<TICKET-ID>/shape/requirements.md`.
+2. Present the optional guardrail opt-in prompts (`security-baseline`, `resiliency-baseline`, `test-coverage`) and record enabled ones in `docs/flow/worklog/<TICKET-ID>/progress.md` under `## Guardrails`.
+3. Write any ambiguous requirements to `docs/flow/worklog/<TICKET-ID>/questions/requirements.questions.md` per `steps/shared/question-format.md`; resolve all blocking questions before writing the document.
+4. Write the requirements document to `docs/flow/worklog/<TICKET-ID>/shape/requirements.md`.
 5. **CHECKPOINT** — present it to the user; wait for `/flow-approve` before `shape-design`.
 
 ## Return to caller
@@ -30,4 +30,4 @@ Read `.flow/steps/shape/requirements.md` and follow it exactly. Invoke `superpow
 
 ## Least privilege
 
-Write is scoped to `worklog/<TICKET-ID>/` only. Do not read or modify source files.
+Write is scoped to `docs/flow/worklog/<TICKET-ID>/` only. Do not read or modify source files.

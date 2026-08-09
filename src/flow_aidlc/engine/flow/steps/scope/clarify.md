@@ -39,7 +39,7 @@ vs infer — never proceed past unresolved ambiguity.
 ## Ground in the Knowledge Map
 
 Before classifying, consult the curated Knowledge Map — see
-`steps/shared/knowledge-map.md`. Read `knowledge/map/README.md` (the index) on every
+`steps/shared/knowledge-map.md`. Read `docs/flow/knowledge/map/README.md` (the index) on every
 run and open the subsystem map(s) the idea touches. Reading the map is **not**
 reading source; Scope stays source-less and write-less.
 
@@ -104,7 +104,7 @@ questions are answered.
 
 ## Notes
 
-- This step is **source-less and write-less** — you MAY read `knowledge/map/`
+- This step is **source-less and write-less** — you MAY read `docs/flow/knowledge/map/`
   (the curated Knowledge Map) for grounding, but do not read or modify any source
   file, and write nothing to the repository.
 - Do not create a worklog entry; the worklog is created in `steps/shared/kickoff.md`

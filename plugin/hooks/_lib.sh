@@ -44,8 +44,8 @@ flow_repo_root() {
 # flow_active_worklog
 #   Returns the absolute path to the active worklog directory, or empty.
 #   Resolution order:
-#     1. worklog/.active file exists → worklog/<its-contents>
-#     2. Most-recently-modified worklog/*/progress.md parent dir
+#     1. docs/flow/worklog/.active file exists → docs/flow/worklog/<its-contents>
+#     2. Most-recently-modified docs/flow/worklog/*/progress.md parent dir
 #     3. Empty → hooks should no-op
 # ---------------------------------------------------------------------------
 flow_active_worklog() {

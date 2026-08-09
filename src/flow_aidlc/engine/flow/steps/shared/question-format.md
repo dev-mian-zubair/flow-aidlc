@@ -7,18 +7,18 @@ Questions in the Flow are on-disk files, never inline chat prompts.
 Write question files to the `questions/` subdirectory of the task worklog:
 
 ```
-worklog/<TICKET-ID>/questions/<stage>.questions.md
+docs/flow/worklog/<TICKET-ID>/questions/<stage>.questions.md
 ```
 
 Examples:
 
 ```
-worklog/<TICKET-ID>/questions/requirements.questions.md
-worklog/<TICKET-ID>/questions/design.questions.md
+docs/flow/worklog/<TICKET-ID>/questions/requirements.questions.md
+docs/flow/worklog/<TICKET-ID>/questions/design.questions.md
 ```
 
 Name the file `<stage>.questions.md` (dot-separated, not hyphenated) inside
-`worklog/<TICKET-ID>/questions/`.
+`docs/flow/worklog/<TICKET-ID>/questions/`.
 
 ## File structure
 

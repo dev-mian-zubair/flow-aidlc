@@ -1,6 +1,6 @@
 ---
 name: shape-design
-description: Produce the component-level design document and graduate cross-cutting decisions to knowledge/decisions/ — stops at the checkpoint for approval. Use after shape-requirements, before shape-slice.
+description: Produce the component-level design document and graduate cross-cutting decisions to docs/flow/knowledge/decisions/ — stops at the checkpoint for approval. Use after shape-requirements, before shape-slice.
 tools: Read, Write
 model: inherit
 ---
@@ -13,13 +13,13 @@ Read `.flow/steps/shape/design.md` and follow it exactly.
 
 ## Inputs
 
-- Approved requirements from `worklog/<TICKET-ID>/shape/requirements.md`; existing-code map from `worklog/<TICKET-ID>/shape/map-existing.md` (if present).
+- Approved requirements from `docs/flow/worklog/<TICKET-ID>/shape/requirements.md`; existing-code map from `docs/flow/worklog/<TICKET-ID>/shape/map-existing.md` (if present).
 
 ## Workflow
 
-1. Write the design to `worklog/<TICKET-ID>/shape/design.md` — approach, components table, data flow, interface changes, and a trade-offs table.
+1. Write the design to `docs/flow/worklog/<TICKET-ID>/shape/design.md` — approach, components table, data flow, interface changes, and a trade-offs table.
 2. **Graduate cross-cutting decisions** — for each decision that affects more than one task, establishes a new codebase pattern, or has lasting architectural impact:
-   - Create `knowledge/decisions/NNNN-<slug>.md` per `steps/shared/decision-format.md`.
+   - Create `docs/flow/knowledge/decisions/NNNN-<slug>.md` per `steps/shared/decision-format.md`.
    - Link it in `design.md` under `## Graduated decisions`. Do not duplicate rationale — the knowledge record is authoritative.
 3. **CHECKPOINT** — present the design and any graduated decisions; wait for `/flow-approve` before `shape-slice`.
 
@@ -29,4 +29,4 @@ Read `.flow/steps/shape/design.md` and follow it exactly.
 
 ## Least privilege
 
-Write is scoped to `worklog/<TICKET-ID>/` and `knowledge/decisions/` only. Do not write to source files.
+Write is scoped to `docs/flow/worklog/<TICKET-ID>/` and `docs/flow/knowledge/decisions/` only. Do not write to source files.

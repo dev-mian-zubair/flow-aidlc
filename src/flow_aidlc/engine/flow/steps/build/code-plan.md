@@ -9,7 +9,7 @@ artefact that drives `generate.md`; generate nothing without it.
 
 ## Inputs
 
-- `worklog/<TICKET-ID>/build/<slice-id>/design.md` — completed slice design.
+- `docs/flow/worklog/<TICKET-ID>/build/<slice-id>/design.md` — completed slice design.
 - `.flow/config.yaml` — active guardrails (note `always_on` list).
 
 ## Steps
@@ -18,7 +18,7 @@ artefact that drives `generate.md`; generate nothing without it.
    checkbox items. Follow the output of that skill for sequencing and grouping logic.
 2. **Copy the template and fill it:**
    ```bash
-   cp .flow/templates/code-plan.tmpl.md worklog/<TICKET-ID>/build/<slice-id>/code-plan.md
+   cp .flow/templates/code-plan.tmpl.md docs/flow/worklog/<TICKET-ID>/build/<slice-id>/code-plan.md
    ```
    Fill the SNAPSHOT header (Owner = you, Last updated = today), then under
    `## Steps` add one `- [ ]` checkbox per file to be created or modified
@@ -26,7 +26,7 @@ artefact that drives `generate.md`; generate nothing without it.
    boundary, and flag any item touching an always-on guardrail domain with
    `<!-- guardrail: <name> -->`. In particular, flag any checkbox that **adds an
    external dependency** with `<!-- guardrail: dependency-provenance — ADR:
-   knowledge/decisions/NNNN -->` so verify can match the install to the approved ADR.
+   docs/flow/knowledge/decisions/NNNN -->` so verify can match the install to the approved ADR.
 3. **Verify completeness**: every signature and edge case from `design.md` maps to at least one
    checkbox. Apply `steps/shared/overconfidence-prevention.md` — if the design is unclear,
    ask for clarification before planning.
@@ -44,4 +44,4 @@ The reviewer must confirm:
 
 ## Output
 
-`worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` — approved, all checkboxes unchecked.
+`docs/flow/worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` — approved, all checkboxes unchecked.

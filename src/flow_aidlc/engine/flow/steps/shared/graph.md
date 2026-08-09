@@ -5,7 +5,7 @@ of the configured graph backend. Steps and agents that need code *structure*
 (callers, dependents, contracts, impact) use the universal operation names below
 and look the mapping up here — **no step names a backend-specific command.**
 
-The code graph is the source of truth for derivable **structure**; `knowledge/map/`
+The code graph is the source of truth for derivable **structure**; `docs/flow/knowledge/map/`
 holds the **invariants** the graph cannot know. Flow reaches the graph only through
 this adapter — the backend is swappable (Graphify by default).
 
@@ -126,6 +126,6 @@ and `HUBS` are approximations here — prefer `graphify` if a project leans on t
 - Steps and agents invoke operations by **universal name** and cite this file —
   never a backend command directly. That keeps the methodology graph-tool-neutral.
 - An unmapped or stubbed backend is a **hard stop**, not an improvisation.
-- The graph carries **structure only**; invariants come from `knowledge/map/`.
+- The graph carries **structure only**; invariants come from `docs/flow/knowledge/map/`.
 - Adding a backend = filling in its `### <backend>` section here + granting its CLI/MCP
   to the graph-consuming agents. No caller-prose changes.
