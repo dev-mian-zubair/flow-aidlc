@@ -174,9 +174,20 @@ def run(argv: list[str]) -> int:
         _write_env_example(target)
 
     # ---- .gitignore -------------------------------------------------------
-    action("ensure .gitignore contains worklog/.active, .superpowers/, .env")
+    action("ensure .gitignore covers worklog/.active, .superpowers/, .env, and the graph cache")
     if not dry:
-        _ensure_gitignore(target / ".gitignore", ["worklog/.active", ".superpowers/", ".env"])
+        _ensure_gitignore(
+            target / ".gitignore",
+            [
+                "worklog/.active",
+                ".superpowers/",
+                ".env",
+                # Code graph: only graphify-out/graph.json is committed; ignore the
+                # build cache, root marker, and manifest graphify writes beside it.
+                "graphify-out/*",
+                "!graphify-out/graph.json",
+            ],
+        )
 
     # ---- CLAUDE.md pointer ------------------------------------------------
     action(f"ensure {target / 'CLAUDE.md'} points at .flow/playbook.md")

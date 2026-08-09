@@ -80,6 +80,17 @@ def test_init_does_not_create_real_dot_env(tmp_path):
     assert not (tmp_path / ".env").exists()
 
 
+def test_init_gitignores_graph_cache_but_keeps_graph_json(tmp_path):
+    _git_init(tmp_path)
+    init.run(["--yes", "--repo", "o/n", "--path", str(tmp_path)])
+    lines = (tmp_path / ".gitignore").read_text().splitlines()
+    # Cache/marker/manifest under graphify-out/ are ignored...
+    assert "graphify-out/*" in lines
+    # ...but the committed graph is re-included, and the negation must come after.
+    assert "!graphify-out/graph.json" in lines
+    assert lines.index("graphify-out/*") < lines.index("!graphify-out/graph.json")
+
+
 def test_init_renders_execution_block(tmp_path):
     import yaml
     _git_init(tmp_path)
