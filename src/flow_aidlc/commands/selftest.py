@@ -46,7 +46,10 @@ def run(argv: list[str]) -> int:
     tests_dir = _find_tests_dir()
     if tests_dir is None:
         sys.stderr.write(
-            "flow selftest: could not locate the vendored tests/ directory.\n"
+            "flow selftest: no vendored tests/ directory found — this command runs the\n"
+            "engine's own unit suite and only works from a source checkout, not an\n"
+            "installed package. To verify an installed instance, use `flow check`\n"
+            "(the quality gate) and `flow doctor` (install + integration health).\n"
         )
         return 2
 

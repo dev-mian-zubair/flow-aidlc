@@ -130,7 +130,7 @@ Two complementary channels, same engine:
 | `flow ci init` | Scaffold a CI workflow that runs the gate (`--gates semgrep,conftest,impeccable` adds deterministic gates) |
 | `flow status` | Show where each ticket sits in the Scope→Shape→Build→Ship pipeline (from `worklog/`) |
 | `flow learnings` | Surface correction/redirection signals from task journals; `--promote` records them |
-| `flow selftest` | Mechanical offline self-test of the wiring |
+| `flow selftest` | Mechanical offline self-test of the wiring (maintainer command; runs the vendored unit suite from a source checkout — end users verify installs with `flow check` + `flow doctor`) |
 | `flow refresh` | Rebuild the code graph (structure freshness); `/flow-refresh` curates map invariants |
 | `flow plugin build` | Regenerate the Claude Code plugin from the engine (`src/flow_aidlc/engine/claude/`) |
 | `flow upgrade` | Update the engine assets without clobbering the instance |
