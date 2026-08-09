@@ -13,16 +13,24 @@ and the sdist (they are — see below).
 ## 1. Pre-flight
 
 ```bash
-# From the repo root, on a clean tree at the version you intend to release.
-python -m pytest -q                            # all tests green
-grep '^version' pyproject.toml                 # confirm the release version
-grep __version__ src/flow_aidlc/__init__.py    # must match pyproject
-cat src/flow_aidlc/engine/flow/VERSION         # the engine VERSION seed — bump in lock-step
+# From the repo root, on a clean tree.
+uv run --with pytest --with pyyaml python -m pytest -q   # all tests green
+uv run python scripts/bump_version.py --check            # the three versions agree
 ```
 
-Bump the version in **three** places together (they are asserted equal by the
-upgrade path and tests): `pyproject.toml`, `src/flow_aidlc/__init__.py`
-(`__version__`), and `src/flow_aidlc/engine/flow/VERSION`.
+The version lives in **three** files that must stay equal (the upgrade path
+stamps `__version__` into each instance's `.flow/VERSION`, and the engine seed
+must match): `pyproject.toml`, `src/flow_aidlc/__init__.py` (`__version__`), and
+`src/flow_aidlc/engine/flow/VERSION`. Bump all three in lockstep with one command:
+
+```bash
+uv run python scripts/bump_version.py 0.1.1   # explicit version
+# or: --patch / --minor / --major
+```
+
+It edits the three files, verifies they agree, and prints the remaining
+build → check → upload → tag steps. It does **not** build, commit, or upload.
+A `test_bump_version.py` guard fails CI if the three ever drift.
 
 ## 2. Build the distributions
 
