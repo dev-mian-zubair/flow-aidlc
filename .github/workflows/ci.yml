@@ -1,0 +1,25 @@
+name: ci
+
+# Runs the test suite and the version-drift guard on every push and PR.
+# Keep this green before tagging a release (release.yml re-runs it as a gate).
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Run tests
+        run: uv run --with pytest --with pyyaml python -m pytest -q
+
+      - name: Version drift guard
+        run: uv run python scripts/bump_version.py --check

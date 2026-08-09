@@ -111,7 +111,12 @@ def main(argv: list[str] | None = None) -> int:
     g.add_argument("--minor", action="store_const", const="minor", dest="level")
     g.add_argument("--patch", action="store_const", const="patch", dest="level")
     g.add_argument("--check", action="store_true", help="verify the three agree; exit 1 if not")
+    g.add_argument("--show", action="store_true", help="print the current version (errors on drift)")
     args = ap.parse_args(argv)
+
+    if args.show:
+        print(current_version())
+        return 0
 
     if args.check:
         versions = read_versions()

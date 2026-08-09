@@ -1,0 +1,62 @@
+name: release
+
+# Publishes flow-aidlc to PyPI when a version tag is pushed.
+# Auth is PyPI Trusted Publishing (OIDC) — NO API token is stored anywhere.
+# One-time setup on PyPI: project -> Manage -> Publishing -> add a GitHub
+# trusted publisher (owner: dev-mian-zubair, repo: flow-aidlc,
+# workflow: release.yml, environment: pypi). See docs/PUBLISHING.md.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+
+      - name: Version is in sync and matches the tag
+        run: |
+          uv run python scripts/bump_version.py --check
+          VER="$(uv run python scripts/bump_version.py --show)"
+          TAG="${GITHUB_REF_NAME#v}"
+          if [ "$VER" != "$TAG" ]; then
+            echo "::error::tag v$TAG does not match package version $VER — bump with scripts/bump_version.py before tagging"
+            exit 1
+          fi
+          echo "releasing $VER"
+
+      - name: Run tests
+        run: uv run --with pytest --with pyyaml python -m pytest -q
+
+      - name: Build sdist + wheel
+        run: uv build
+
+      - name: Check metadata
+        run: uv run --with twine python -m twine check dist/*
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/flow-aidlc/
+    permissions:
+      id-token: write   # required for Trusted Publishing (OIDC)
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

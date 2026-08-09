@@ -84,3 +84,9 @@ def test_live_repo_versions_are_in_sync():
     """Regression guard: the real repo's three version files must always agree."""
     versions = bv.read_versions(_REPO)
     assert len(set(versions.values())) == 1, f"version drift in repo: {versions}"
+
+
+def test_show_prints_bare_version(capsys):
+    """`--show` prints just the version — the release workflow reads it for the tag guard."""
+    assert bv.main(["--show"]) == 0
+    assert capsys.readouterr().out.strip() == bv.current_version(_REPO)

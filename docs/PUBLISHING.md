@@ -6,9 +6,42 @@ The package name is **`flow-aidlc`**; it installs the **`flow`** CLI
 read them from the installed package, so they MUST be bundled in both the wheel
 and the sdist (they are — see below).
 
-> **Maintainer-only.** The steps below upload to a public index and require a
-> PyPI API token. Run them yourself, with your own credentials — never commit a
-> token, and never let an automated agent upload.
+> **Maintainer-only.** The manual steps below upload to a public index and
+> require a PyPI API token. Run them yourself, with your own credentials — never
+> commit a token, and never let an automated agent upload.
+
+## Automated release (recommended) — GitHub Actions + Trusted Publishing
+
+`.github/workflows/release.yml` builds, tests, and publishes to PyPI on any
+`v*` tag, using **PyPI Trusted Publishing (OIDC)** — no API token is stored in
+GitHub. `.github/workflows/ci.yml` runs the suite + version-drift guard on every
+push/PR.
+
+**One-time setup:**
+
+1. **PyPI trusted publisher** — on PyPI: your project → *Manage* → *Publishing* →
+   *Add a pending publisher* (or, since the project already exists, add a GitHub
+   publisher) with:
+   - Owner: `dev-mian-zubair` · Repository: `flow-aidlc`
+   - Workflow name: `release.yml` · Environment name: `pypi`
+2. **GitHub environment** — repo *Settings* → *Environments* → create `pypi`
+   (optionally add required reviewers for a manual approval gate before publish).
+
+**Each release:**
+
+```bash
+uv run python scripts/bump_version.py --patch    # or --minor / --major / X.Y.Z
+uv run --with pytest --with pyyaml python -m pytest -q     # green
+git commit -am "release: v$(uv run python scripts/bump_version.py --show)"
+git tag "v$(uv run python scripts/bump_version.py --show)"
+git push && git push --tags                       # the tag triggers release.yml
+```
+
+The workflow refuses to publish if the tag doesn't match the package version
+(the `--show`/`--check` guard), so a mistyped tag fails fast instead of shipping.
+
+The manual path below remains valid as a fallback (e.g. the first release, or if
+Actions is unavailable).
 
 ## 1. Pre-flight
 
