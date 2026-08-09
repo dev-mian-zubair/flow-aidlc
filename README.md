@@ -52,7 +52,7 @@ one is missing, so a `/flow-*` run never fails mid-stage on an absent dependency
 pipx install flow-aidlc          # or: pip install flow-aidlc
 uv tool install "graphifyy[mcp]" # the code-graph backend (structure source of truth)
 cd your-repo
-flow init                        # scaffold .flow/, .claude/, knowledge/, git hooks (--base sets vcs.base)
+flow init                        # scaffold .flow/, .claude/, docs/flow/, git hooks (--base sets vcs.base)
 flow setup                       # one-command onboarding: graph tool + graph build + flow doctor
 flow check                       # run the quality gate
 ```
@@ -77,12 +77,12 @@ Then, in Claude Code:
 - **The state machine** (`.flow/playbook.md`) — Scope → Shape → Build → Ship, gated at each checkpoint.
 - **Mechanical enforcement** — Claude Code hooks that journal prompts, guard scope, and hold checkpoints.
 - **Guardrails** — always-on, blocking invariant checks you author for *your* codebase (the engine ships the mechanism + templates; `flow guardrail add` scaffolds one, or `flow guardrail add --from <pack>` installs a curated starter pack — see `flow guardrail packs`).
-- **Code graph as structure source of truth** — a committed [Graphify](https://pypi.org/project/graphifyy/) graph, queried over MCP, answers "who calls this / what depends on it / what's the contract" deterministically. Curated `knowledge/map/` docs hold only the **invariants** a graph can't know; each is enforced by a guardrail, so structure can't go stale.
+- **Code graph as structure source of truth** — a committed [Graphify](https://pypi.org/project/graphifyy/) graph, queried over MCP, answers "who calls this / what depends on it / what's the contract" deterministically. Curated `docs/flow/knowledge/map/` docs hold only the **invariants** a graph can't know; each is enforced by a guardrail, so structure can't go stale.
 - **Quality gate** — `flow check` (guardrail-lint, structure-check, reference-selfcheck, config-consistency incl. graph-backend + graph-paths) — runnable locally and in CI.
 - **Superpowers-powered** — delegates brainstorming, plan-writing, TDD, and code review to the `superpowers` skill ecosystem.
 - **Pluggable issue tracker** — Scope publishes tickets and Ship opens the PR through a tracker adapter (`steps/shared/tracker.md`) that maps Flow's universal operations (`CREATE_TICKET`, `ADD_SUB_ISSUE`, `OPEN_PR`, …) to a platform. No step or agent names a platform-specific tool, and the `config-consistency` gate (C3) refuses an unimplemented platform.
 - **Secrets, not in the repo** — `.mcp.json` holds only `${VAR}` references; supply values via a secrets manager (`flow secrets use infisical`/`doppler` — zero plaintext), a provider CLI (`gh auth token`), or a gitignored `.env`. `flow doctor` verifies they resolve.
-- **Observability** — `flow status` shows where each ticket sits in Scope→Shape→Build→Ship (read from `worklog/`); `flow learnings` surfaces correction/redirection signals from task journals and `--promote`s them into `knowledge/practices.md`. `flow ci init` scaffolds a workflow that runs the gate in CI (`--gates semgrep,conftest` adds deterministic SAST + policy-as-code gates beside the LLM guardrails).
+- **Observability** — `flow status` shows where each ticket sits in Scope→Shape→Build→Ship (read from `docs/flow/worklog/`); `flow learnings` surfaces correction/redirection signals from task journals and `--promote`s them into `docs/flow/knowledge/practices.md`. `flow ci init` scaffolds a workflow that runs the gate in CI (`--gates semgrep,conftest` adds deterministic SAST + policy-as-code gates beside the LLM guardrails).
 - **Design quality (optional, UI)** — `flow setup --with-impeccable` installs [Impeccable](https://impeccable.style/) (Apache-2.0); Flow reads its `PRODUCT.md`/`DESIGN.md` for grounding, generates/validates UI against them, and `flow ci init --gates impeccable` gates design quality in CI.
 - **Two execution modes** — the same lifecycle, supervised **or** autonomous (see below).
 
@@ -129,7 +129,7 @@ Switch trackers via `flow init --tracker <platform>` (or edit `config.yaml`) —
 |---|---|
 | playbook, step guides, templates | `config.yaml` (tracker, id-scheme) |
 | commands, agents, hooks | `guardrails/always-on/*` — your invariants |
-| the `flow` CLI + check modules | `knowledge/map/*` — your subsystem invariants |
+| the `flow` CLI + check modules | `docs/flow/knowledge/map/*` — your subsystem invariants |
 | guardrail/config/map **templates** | `config.yaml → graph:` + the committed code graph |
 
 See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the full model.
