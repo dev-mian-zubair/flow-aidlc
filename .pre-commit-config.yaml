@@ -1,0 +1,22 @@
+# Shared git hooks for contributors. Enable once with:  pre-commit install
+# (or: uv run pre-commit install). Runs on `git commit`.
+repos:
+  # Version-drift guard: pyproject / __init__ __version__ / engine VERSION must agree.
+  - repo: local
+    hooks:
+      - id: version-sync
+        name: version drift guard (pyproject / __version__ / engine VERSION)
+        entry: scripts/bump_version.py       # run via its #!/usr/bin/env python3 shebang
+        args: [--check]
+        language: script
+        pass_filenames: false
+        always_run: true
+
+  # Non-mutating hygiene checks (no auto-edits — safe on a doc-heavy public tree).
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: check-added-large-files

@@ -1,5 +1,10 @@
 # Flow — a governed AI-DLC methodology you can drop into any repo
 
+[![PyPI](https://img.shields.io/pypi/v/flow-aidlc.svg)](https://pypi.org/project/flow-aidlc/)
+[![Python versions](https://img.shields.io/pypi/pyversions/flow-aidlc.svg)](https://pypi.org/project/flow-aidlc/)
+[![CI](https://github.com/dev-mian-zubair/flow-aidlc/actions/workflows/ci.yml/badge.svg)](https://github.com/dev-mian-zubair/flow-aidlc/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **Flow** turns "vibe coding with an AI agent" into a governed, auditable development
 loop: **Scope → Shape → Build → Ship**, with mechanical guardrails, a committed
 **code graph** as the source of truth for code structure, and quality gates that run
@@ -148,6 +153,18 @@ by `flow plugin build` (single source of truth: `src/flow_aidlc/engine/claude/`)
 
 **Canonical source of truth for the Flow engine.** The engine and CLI are
 feature-complete; we are in the polish phase.
+
+## Development
+
+```bash
+uv run --with pytest --with pyyaml python -m pytest -q   # run the suite
+uv run pre-commit install                                # enable the git hooks (once)
+```
+
+The pre-commit hooks run a **version-drift guard** (`scripts/bump_version.py
+--check` — keeps `pyproject.toml`, `__version__`, and the engine `VERSION` in
+lockstep) plus basic hygiene. Releases are cut by pushing a `v*` tag; see
+[`docs/PUBLISHING.md`](docs/PUBLISHING.md).
 
 ## License
 
