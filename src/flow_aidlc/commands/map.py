@@ -17,6 +17,7 @@ import sys
 from pathlib import Path
 
 from flow_aidlc.checks._root import find_repo_root
+from flow_aidlc.paths import KNOWLEDGE_DIR
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -72,7 +73,7 @@ def run(argv: list[str]) -> int:
 
     glob = args.glob
     doc = args.doc
-    doc_path = root / "knowledge" / "map" / f"{doc}.md"
+    doc_path = root / KNOWLEDGE_DIR / "map" / f"{doc}.md"
 
     if doc_path.exists():
         sys.stderr.write(f"flow map: {doc_path.relative_to(root)} already exists.\n")
@@ -123,7 +124,7 @@ def _register_map(map_file: Path, doc: str, glob: str) -> None:
     inline empty list with a block list) and an existing block list (append a
     new item at the end of the ``maps:`` block).
     """
-    doc_rel = f"knowledge/map/{doc}.md"
+    doc_rel = f"docs/flow/knowledge/map/{doc}.md"
     entry_line = f"  - {{ doc: {doc_rel}, derives-from: [{glob}] }}"
 
     text = map_file.read_text(encoding="utf-8")

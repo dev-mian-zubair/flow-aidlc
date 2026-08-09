@@ -30,7 +30,7 @@ def test_init_scaffolds_and_gate_passes(tmp_path):
     assert (tmp_path / ".flow" / "playbook.md").exists()
     assert (tmp_path / ".claude" / "commands").is_dir()
     assert (tmp_path / ".claude" / "hooks" / "session-start.sh").exists()
-    assert (tmp_path / "knowledge" / "map" / "README.md").exists()
+    assert (tmp_path / "docs/flow/knowledge" / "map" / "README.md").exists()
     assert (tmp_path / ".mcp.json").exists()
 
     gitignore = (tmp_path / ".gitignore").read_text(encoding="utf-8")
@@ -89,6 +89,18 @@ def test_init_gitignores_graph_cache_but_keeps_graph_json(tmp_path):
     # ...but the committed graph is re-included, and the negation must come after.
     assert "!graphify-out/graph.json" in lines
     assert lines.index("graphify-out/*") < lines.index("!graphify-out/graph.json")
+
+
+def test_init_puts_docs_under_docs_flow(tmp_path):
+    _git_init(tmp_path)
+    init.run(["--yes", "--repo", "o/n", "--path", str(tmp_path)])
+    # worklog + knowledge now live under docs/flow/
+    assert (tmp_path / "docs/flow/worklog").is_dir()
+    assert (tmp_path / "docs/flow/knowledge/map/README.md").exists()
+    assert "docs/flow/worklog/.active" in (tmp_path / ".gitignore").read_text().splitlines()
+    # the old root-level locations are not created
+    assert not (tmp_path / "worklog").exists()
+    assert not (tmp_path / "knowledge").exists()
 
 
 def test_init_renders_execution_block(tmp_path):

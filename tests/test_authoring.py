@@ -78,7 +78,7 @@ def test_map_add_registers_and_gate_passes(tmp_path):
     rc = map_cmd.run(["add", "backend/**", "backend-core", "--path", str(repo)])
     assert rc == 0
 
-    doc = repo / "knowledge" / "map" / "backend-core.md"
+    doc = repo / "docs/flow/knowledge" / "map" / "backend-core.md"
     assert doc.exists()
     text = doc.read_text(encoding="utf-8")
     assert "status: FRESH" in text
@@ -87,7 +87,7 @@ def test_map_add_registers_and_gate_passes(tmp_path):
     map_file = repo / ".flow" / "knowledge-map.yaml"
     data = yaml.safe_load(map_file.read_text(encoding="utf-8"))
     docs = [e["doc"] for e in data["maps"]]
-    assert "knowledge/map/backend-core.md" in docs
+    assert "docs/flow/knowledge/map/backend-core.md" in docs
 
     assert gate.run(repo) == 0
 
@@ -104,7 +104,7 @@ def test_map_add_second_entry_preserves_first(tmp_path):
     assert map_cmd.run(["add", "frontend/**", "frontend-core", "--path", str(repo)]) == 0
     data = yaml.safe_load((repo / ".flow" / "knowledge-map.yaml").read_text(encoding="utf-8"))
     docs = {e["doc"] for e in data["maps"]}
-    assert docs == {"knowledge/map/backend-core.md", "knowledge/map/frontend-core.md"}
+    assert docs == {"docs/flow/knowledge/map/backend-core.md", "docs/flow/knowledge/map/frontend-core.md"}
 
 
 def test_doctor_ok_on_fresh_init(tmp_path):

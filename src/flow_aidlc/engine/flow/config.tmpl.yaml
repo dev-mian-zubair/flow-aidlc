@@ -1,6 +1,6 @@
 version: 0.1.0
 worklog:
-  committed: true                 # worklog/<{{ID_PREFIX}}-NNN>/ is committed (locked decision)
+  committed: true                 # docs/flow/worklog/<{{ID_PREFIX}}-NNN>/ is committed (locked decision)
 guardrails:
   # always_on is empty on a fresh project: a new repo has no invariants to
   # protect yet. Author one guardrail per invariant with `flow guardrail add
@@ -19,7 +19,7 @@ tracker:
   platform: "{{TRACKER_PLATFORM}}"   # github|jira|linear|azure-devops|shortcut|asana|clickup (default: github)
   mcp: "{{TRACKER_MCP}}"
   repo: "{{TRACKER_REPO}}"
-  id_scheme: "{{ID_PREFIX}}-{n}"   # expands to {{ID_PREFIX}}- + the tracker issue number, no zero-padding; worklog dir is {{ID_PREFIX}}-<n>-<slug>
+  id_scheme: "{{ID_PREFIX}}-{n}"   # expands to {{ID_PREFIX}}- + the tracker issue number, no zero-padding; worklog dir is docs/flow/worklog/{{ID_PREFIX}}-<n>-<slug>
   create:
     dedupe: true
     required_labels: [type, priority, area]
@@ -27,7 +27,7 @@ tracker:
     priority_scheme: [P0, P1, P2, P3]        # keep body Severity, the priority label, and the tracker priority field in sync
     epic_children: sub_issues                # create an Epic parent + child stubs, linked via the tracker's sub-issue link
 knowledge:
-  map_index: knowledge/map/README.md          # curated Knowledge Map — Scope/Shape read it for grounding (see steps/shared/knowledge-map.md)
+  map_index: docs/flow/knowledge/map/README.md   # curated Knowledge Map — Scope/Shape read it for grounding (see steps/shared/knowledge-map.md)
   map_machine_index: .flow/knowledge-map.yaml  # derives-from globs for naming affected file(s)/module(s)
 
 review:

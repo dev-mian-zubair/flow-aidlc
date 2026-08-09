@@ -16,6 +16,7 @@ from pathlib import Path
 
 from flow_aidlc.checks import learnings as L
 from flow_aidlc.checks._root import find_repo_root
+from flow_aidlc.paths import KNOWLEDGE_DIR, WORKLOG_DIR
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -31,8 +32,8 @@ def run(argv: list[str]) -> int:
     except SystemExit:
         return 2
     root = find_repo_root(args.path)
-    worklog = root / "worklog"
-    practices = root / "knowledge" / "practices.md"
+    worklog = root / WORKLOG_DIR
+    practices = root / KNOWLEDGE_DIR / "practices.md"
     ptext = practices.read_text(encoding="utf-8") if practices.exists() else ""
     recorded = L.existing_markers(ptext)
 
@@ -58,7 +59,7 @@ def run(argv: list[str]) -> int:
         added = 0
         for ticket, cand, _marker, _is_new in new:
             before = ptext
-            ptext = L.append_practice(ptext, cand, cand, "surfaced from a task journal", f"worklog/{ticket}")
+            ptext = L.append_practice(ptext, cand, cand, "surfaced from a task journal", f"docs/flow/worklog/{ticket}")
             if ptext != before:
                 added += 1
         practices.parent.mkdir(parents=True, exist_ok=True)

@@ -14,6 +14,7 @@ import re
 from pathlib import Path
 
 from flow_aidlc.checks._root import find_repo_root
+from flow_aidlc.paths import WORKLOG_DIR
 
 _PHASES = ("Scope", "Shape", "Build", "Ship")
 _STAGE_RE = re.compile(r"^\s*- \[([ xX])\]\s+(.+?)\s*$")
@@ -32,9 +33,9 @@ def run(argv: list[str]) -> int:
     except SystemExit:
         return 2
     root = find_repo_root(args.path)
-    worklog = root / "worklog"
+    worklog = root / WORKLOG_DIR
     if not worklog.is_dir():
-        print("no worklog/ here — run `flow init` first")
+        print("no worklog dir (docs/flow/worklog) — run `flow init` first")
         return 0
 
     rows = []
