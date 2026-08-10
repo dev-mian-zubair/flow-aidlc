@@ -29,12 +29,16 @@ flow-aidlc (this package)                 target-repo/ (after `flow init`)
 └── tests/                                 ├── .claude/
                                            │   ├── commands/ agents/ hooks/  (engine)
                                            │   └── settings.json        (engine, merged)
-                                           ├── knowledge/
-                                           │   ├── map/                 (INSTANCE — seeded, curated)
-                                           │   ├── decisions/           (INSTANCE)
-                                           │   └── practices.md         (INSTANCE, seeded)
-                                           └── worklog/                 (runtime, per-task)
+                                           └── docs/flow/
+                                               ├── knowledge/
+                                               │   ├── map/             (INSTANCE — seeded, curated)
+                                               │   ├── decisions/       (INSTANCE)
+                                               │   └── practices.md     (INSTANCE, seeded)
+                                               └── worklog/             (runtime, per-task)
 ```
+
+> `.flow/` is the hidden engine + config (machinery). `docs/flow/` holds the
+> human-facing artifacts — the curated `knowledge/` and the per-ticket `worklog/`.
 
 ## Why the boundary is clean
 
@@ -64,7 +68,7 @@ queried by agents over MCP through a backend-neutral adapter
   `uv tool install "graphifyy[mcp]"`; the graph is built by the configured
   `config.yaml → graph.build` and committed (`graphify-out/graph.json`). If it is
   absent, structural steps fall back to a read-only `Explore`/grep survey.
-- **The curated `knowledge/map/` docs hold only invariants** — the load-bearing rules
+- **The curated `docs/flow/knowledge/map/` docs hold only invariants** — the load-bearing rules
   a graph can't know — each stamped `enforced-by: <guardrail>`. There is **no
   doc-freshness loop**: structure can't go stale (it's re-derived from the graph), and
   invariants are held by their guardrail at Build/verify, not by a stale flag.
@@ -122,13 +126,13 @@ Two complementary channels, same engine:
 | `flow init` | Scaffold the instance into the current repo (interactive; `--base` sets `vcs.base`) |
 | `flow setup` | One-command onboarding — detect `uv` + install the graph tool, run `graph.build`, then `flow doctor` (detect-and-guide; never fails hard on a missing tool) |
 | `flow guardrail add <name>` | Scaffold a new always-on guardrail from the template + register it |
-| `flow map add <glob> <doc>` | Scaffold a knowledge/map doc + wire knowledge-map.yaml |
+| `flow map add <glob> <doc>` | Scaffold a docs/flow/knowledge/map doc + wire knowledge-map.yaml |
 | `flow guardrail add --from <pack>` | Install a curated starter-pack of guardrails (`flow guardrail packs` lists them) |
 | `flow secrets use <provider>` | Route MCP credentials through a secrets manager (Infisical/Doppler); `off` / `status` |
 | `flow doctor` | Health check — hooks installed, MCP reachable, structure valid, code graph wired, credentials + auto-mode readiness |
 | `flow check` | Run the quality gate (guardrail-lint, structure, reference-selfcheck, config-consistency) |
 | `flow ci init` | Scaffold a CI workflow that runs the gate (`--gates semgrep,conftest,impeccable` adds deterministic gates) |
-| `flow status` | Show where each ticket sits in the Scope→Shape→Build→Ship pipeline (from `worklog/`) |
+| `flow status` | Show where each ticket sits in the Scope→Shape→Build→Ship pipeline (from `docs/flow/worklog/`) |
 | `flow learnings` | Surface correction/redirection signals from task journals; `--promote` records them |
 | `flow selftest` | Mechanical offline self-test of the wiring (maintainer command; runs the vendored unit suite from a source checkout — end users verify installs with `flow check` + `flow doctor`) |
 | `flow refresh` | Rebuild the code graph (structure freshness); `/flow-refresh` curates map invariants |
@@ -141,5 +145,5 @@ Two complementary channels, same engine:
 `flow init` records the engine version in `.flow/VERSION`. `flow upgrade` replaces
 only engine-owned files (playbook, steps, templates, commands, agents, hooks, check
 modules) and never touches instance files (guardrails/always-on, config.yaml,
-knowledge/map, knowledge-map.yaml, worklog). A manifest marks each shipped file as
+docs/flow/knowledge/map, knowledge-map.yaml, docs/flow/worklog). A manifest marks each shipped file as
 `engine` or `instance`.

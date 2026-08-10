@@ -12,12 +12,12 @@ Each map carries provenance frontmatter (`status`, `derives-from`,
 and queued for re-derivation by the `curator` agent (WS-7).
 
 Maps are **descriptive** (what a subsystem is) and **concise** (≤ 1 screen).
-They are never prescriptive — decisions live in `knowledge/decisions/`.
+They are never prescriptive — decisions live in `docs/flow/knowledge/decisions/`.
 
 ## Maps
 
 This table starts empty. Add a map with `flow map add <doc> <glob>...`, which
-creates `knowledge/map/<doc>.md` and records its `derives-from` globs in
+creates `docs/flow/knowledge/map/<doc>.md` and records its `derives-from` globs in
 `.flow/knowledge-map.yaml`. Then add a row here:
 
 | Document | What it covers | derives-from |

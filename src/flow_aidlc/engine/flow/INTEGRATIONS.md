@@ -53,7 +53,7 @@ What each declared server does, what it needs, and whether Flow needs it:
 ## Code graph (Graphify)
 
 The code graph is Flow's source of truth for code *structure* (callers, dependents,
-contracts); the curated `knowledge/map/` docs hold only the invariants a graph can't
+contracts); the curated `docs/flow/knowledge/map/` docs hold only the invariants a graph can't
 know. Flow reaches the graph only through the graph adapter — the backend is swappable
 (Graphify by default). See `steps/shared/graph.md`.
 

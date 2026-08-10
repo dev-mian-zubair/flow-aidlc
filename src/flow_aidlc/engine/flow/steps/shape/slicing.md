@@ -10,8 +10,8 @@ testable increment.
 
 ## Inputs
 
-- Approved design from `worklog/<TICKET-ID>/shape/design.md`.
-- Approved requirements from `worklog/<TICKET-ID>/shape/requirements.md` (for requirement
+- Approved design from `docs/flow/worklog/<TICKET-ID>/shape/design.md`.
+- Approved requirements from `docs/flow/worklog/<TICKET-ID>/shape/requirements.md` (for requirement
   reference ids).
 
 ## Slicing rules
@@ -28,7 +28,7 @@ testable increment.
 Copy the template as the skeleton, then fill it in place:
 
 ```bash
-cp .flow/templates/slices.tmpl.md worklog/<TICKET-ID>/shape/slices.md
+cp .flow/templates/slices.tmpl.md docs/flow/worklog/<TICKET-ID>/shape/slices.md
 ```
 
 Fill the SNAPSHOT header (Owner = you, Last updated = today), the `## Slice List`
@@ -46,10 +46,10 @@ After writing `slices.md`, run the traceability check to confirm every requireme
 is covered by at least one slice:
 
 ```bash
-python -m flow_aidlc.checks.traceability worklog/<TICKET-ID> --write
+python -m flow_aidlc.checks.traceability docs/flow/worklog/<TICKET-ID> --write
 ```
 
-This emits `worklog/<TICKET-ID>/shape/traceability.md` (the requirement→slice
+This emits `docs/flow/worklog/<TICKET-ID>/shape/traceability.md` (the requirement→slice
 coverage matrix) and exits non-zero if any FR or NFR is uncovered.
 
 **The slicing stage is not complete while any requirement is orphaned.** Resolve

@@ -35,7 +35,7 @@ than discovering it at Build/CI.
 Copy the template as the skeleton, then fill it in place:
 
 ```bash
-cp .flow/templates/research.tmpl.md worklog/<TICKET-ID>/shape/research.md
+cp .flow/templates/research.tmpl.md docs/flow/worklog/<TICKET-ID>/shape/research.md
 ```
 
 Fill the SNAPSHOT header, the Question, Options (with sources), Recommendation,
@@ -52,7 +52,7 @@ complete, a clear recommendation).
 
 **Stop here.** Present the recommendation + governance screen to the user. Wait
 for `/flow-approve` before advancing to Shape / requirements. Adopting the chosen
-dependency is a cross-cutting decision — it graduates to `knowledge/decisions/` at
+dependency is a cross-cutting decision — it graduates to `docs/flow/knowledge/decisions/` at
 Shape / design, referencing this document.
 
 ## Notes

@@ -26,7 +26,7 @@ _PROGRESS = """# Progress — {ticket}
 
 
 def _worklog(root: Path, ticket: str, text: str | None = None) -> None:
-    d = root / "worklog" / ticket
+    d = root / "docs/flow/worklog" / ticket
     d.mkdir(parents=True, exist_ok=True)
     (d / "progress.md").write_text(text if text is not None else _PROGRESS.format(ticket=ticket))
 
@@ -37,7 +37,7 @@ def test_no_worklog_dir(tmp_path, capsys):
 
 
 def test_empty_worklog(tmp_path, capsys):
-    (tmp_path / "worklog").mkdir()
+    (tmp_path / "docs/flow/worklog").mkdir(parents=True)
     assert status.run(["--path", str(tmp_path)]) == 0
     assert "No worklogs yet" in capsys.readouterr().out
 
@@ -62,7 +62,7 @@ def test_complete_ticket(tmp_path, capsys):
 
 def test_ignores_dot_dirs_and_falls_back_to_dirname(tmp_path, capsys):
     # a hidden dir is skipped
-    (tmp_path / "worklog" / ".active").mkdir(parents=True)
+    (tmp_path / "docs/flow/worklog" / ".active").mkdir(parents=True)
     # a progress file with an unfilled placeholder header falls back to the dir name
     _worklog(tmp_path, "PI-3", "# Progress — [Task ID]\n\n## Scope\n- [ ] clarify\n")
     status.run(["--path", str(tmp_path)])

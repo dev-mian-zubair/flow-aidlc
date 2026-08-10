@@ -46,7 +46,7 @@ blocker to surface **now**, not at Build/CI.
 ## Integration notes
 
 How the chosen option slots into the existing architecture (ground in
-`knowledge/map/`). Name the subsystems and seams it touches.
+`docs/flow/knowledge/map/`). Name the subsystems and seams it touches.
 
 [Answer]:
 

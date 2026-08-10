@@ -39,7 +39,7 @@ except ImportError:  # pragma: no cover - pyyaml is a runtime dependency
     yaml = None  # type: ignore[assignment]
 
 # engine/<top>/ maps onto the repo directory <target>/.
-_TREE_TO_TARGET = {"flow": ".flow", "claude": ".claude", "knowledge": "knowledge"}
+_TREE_TO_TARGET = {"flow": ".flow", "claude": ".claude", "knowledge": "docs/flow/knowledge"}
 # settings.json is re-merged, not copied.
 _SETTINGS_REL = "claude/settings.json"
 

@@ -14,13 +14,13 @@ Read `.flow/steps/build/generate.md` and follow it exactly. Invoke `superpowers:
 
 ## Inputs
 
-- `worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` — approved, all checkboxes unchecked.
-- `worklog/<TICKET-ID>/build/<slice-id>/design.md` — signatures and edge cases.
-- `worklog/<TICKET-ID>/shape/slices.md` — the file list for this slice id (the scope fence).
+- `docs/flow/worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` — approved, all checkboxes unchecked.
+- `docs/flow/worklog/<TICKET-ID>/build/<slice-id>/design.md` — signatures and edge cases.
+- `docs/flow/worklog/<TICKET-ID>/shape/slices.md` — the file list for this slice id (the scope fence).
 
 ## Scope guard
 
-Before creating or modifying any workspace file, confirm its path appears in the slice's file list in `slices.md`. If it does not, **stop**, raise a scope-creep flag in `worklog/<TICKET-ID>/journal.md`, and do not write the file.
+Before creating or modifying any workspace file, confirm its path appears in the slice's file list in `slices.md`. If it does not, **stop**, raise a scope-creep flag in `docs/flow/worklog/<TICKET-ID>/journal.md`, and do not write the file.
 
 ## Workflow
 
@@ -40,4 +40,4 @@ After all checkboxes are checked, run the project's test command (`config.yaml �
 
 ## Least privilege
 
-Read/Write/Edit/Bash on workspace source and `worklog/<TICKET-ID>/`, bounded by the scope guard above. Do not touch files outside the slice's declared list.
+Read/Write/Edit/Bash on workspace source and `docs/flow/worklog/<TICKET-ID>/`, bounded by the scope guard above. Do not touch files outside the slice's declared list.

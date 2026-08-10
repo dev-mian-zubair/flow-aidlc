@@ -13,7 +13,7 @@ Read `.flow/steps/shape/slicing.md` and follow it exactly.
 
 ## Inputs
 
-- Approved design from `worklog/<TICKET-ID>/shape/design.md`; approved requirements from `worklog/<TICKET-ID>/shape/requirements.md` (for requirement reference ids).
+- Approved design from `docs/flow/worklog/<TICKET-ID>/shape/design.md`; approved requirements from `docs/flow/worklog/<TICKET-ID>/shape/requirements.md` (for requirement reference ids).
 
 ## Slicing rules
 
@@ -24,7 +24,7 @@ Read `.flow/steps/shape/slicing.md` and follow it exactly.
 
 ## Output
 
-Write the slice table to `worklog/<TICKET-ID>/shape/slices.md` with columns: `id`, `scope`, `files`, `order`, `requirements`. Include ordering-dependency notes where the order is not self-evident. Slice ids are stable — do not renumber after Build has started.
+Write the slice table to `docs/flow/worklog/<TICKET-ID>/shape/slices.md` with columns: `id`, `scope`, `files`, `order`, `requirements`. Include ordering-dependency notes where the order is not self-evident. Slice ids are stable — do not renumber after Build has started.
 
 ## Return to caller
 
@@ -32,4 +32,4 @@ Write the slice table to `worklog/<TICKET-ID>/shape/slices.md` with columns: `id
 
 ## Least privilege
 
-Write is scoped to `worklog/<TICKET-ID>/` only. Do not write to source files.
+Write is scoped to `docs/flow/worklog/<TICKET-ID>/` only. Do not write to source files.

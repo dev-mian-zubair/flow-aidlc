@@ -18,20 +18,20 @@ Run **only** when the feature needs an external capability the current stack doe
 
 ## Inputs
 
-- Task id (`<TICKET-ID>`), the ticket intent + acceptance criteria, and the Knowledge Map (`knowledge/map/`) for integration context.
+- Task id (`<TICKET-ID>`), the ticket intent + acceptance criteria, and the Knowledge Map (`docs/flow/knowledge/map/`) for integration context.
 
 ## Workflow
 
 1. Frame a specific research question (capability + hard constraints). Ask 1–2 clarifying questions if under-specified.
 2. Research candidates with `deep-research`; cite a source for every non-obvious claim.
 3. Run the **governance screen** on each candidate — self-host / air-gap, data egress / residency, license compatibility, security-scan expectations, maintenance risk.
-4. Write `worklog/<TICKET-ID>/shape/research.md` from `.flow/templates/research.tmpl.md` — options, recommendation, trade-offs, governance screen, integration notes, open questions.
+4. Write `docs/flow/worklog/<TICKET-ID>/shape/research.md` from `.flow/templates/research.tmpl.md` — options, recommendation, trade-offs, governance screen, integration notes, open questions.
 5. **CHECKPOINT** — present the recommendation + governance screen; wait for `/flow-approve` before `shape-requirements`.
 
 ## Return to caller
 
-`STATUS: DONE (awaiting approval) | NEEDS_CONTEXT | BLOCKED`, plus the `research.md` path and the recommendation summary. Do **not** adopt or install anything — the adoption decision graduates to `knowledge/decisions/` at `shape-design`.
+`STATUS: DONE (awaiting approval) | NEEDS_CONTEXT | BLOCKED`, plus the `research.md` path and the recommendation summary. Do **not** adopt or install anything — the adoption decision graduates to `docs/flow/knowledge/decisions/` at `shape-design`.
 
 ## Least privilege
 
-Read + web research (`WebSearch`, `WebFetch`) only; **Write scoped to `worklog/<TICKET-ID>/`** — no source writes. May read `knowledge/map/**` for integration context.
+Read + web research (`WebSearch`, `WebFetch`) only; **Write scoped to `docs/flow/worklog/<TICKET-ID>/`** — no source writes. May read `docs/flow/knowledge/map/**` for integration context.

@@ -5,12 +5,12 @@ Powered by superpowers — invokes `superpowers:test-driven-development`.
 ## Goal
 
 Implement the slice by working through the approved code plan, test-first, writing all code to
-the workspace. Nothing is written to `worklog/`.
+the workspace. Nothing is written to `docs/flow/worklog/`.
 
 ## Inputs
 
-- `worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` — approved, all checkboxes unchecked.
-- `worklog/<TICKET-ID>/build/<slice-id>/design.md` — signatures and edge cases.
+- `docs/flow/worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` — approved, all checkboxes unchecked.
+- `docs/flow/worklog/<TICKET-ID>/build/<slice-id>/design.md` — signatures and edge cases.
 
 ## Scope guard
 
@@ -37,7 +37,7 @@ modifying any file:
 ## Output
 
 - All workspace files modified or created per the plan.
-- `worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` — all checkboxes checked.
+- `docs/flow/worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` — all checkboxes checked.
 - Test suite green.
 
 Proceed to `steps/build/verify.md`.

@@ -27,7 +27,7 @@ if [ -f "$progress_file" ]; then
     next_stage="$(grep -m1 '^\- \[ \]' "$progress_file" 2>/dev/null | sed 's/^- \[ \] *//' || true)"
 fi
 
-# Count STALE docs: files under knowledge/map/ with frontmatter status: STALE
+# Count STALE docs: files under docs/flow/knowledge/map/ with frontmatter status: STALE
 root="$(flow_repo_root)"
 stale_count=0
 if [ -n "$root" ] && [ -d "$root/knowledge/map" ]; then

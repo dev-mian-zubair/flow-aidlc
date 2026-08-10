@@ -79,6 +79,6 @@ Current guardrails (from `config.yaml`):
 
 ## State Tracking
 
-- As each stage completes, update the checkbox for that stage in `worklog/<task>/progress.md`.
+- As each stage completes, update the checkbox for that stage in `docs/flow/worklog/<task>/progress.md`.
 - Append a one-line entry to `journal.md` recording the stage name, outcome, and timestamp.
 - At each checkpoint outcome (approved, skipped, discrepancy, or handoff), also append one `steps/shared/decision-log.md` line to the `## Decision log` section in `progress.md`.

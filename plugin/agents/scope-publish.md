@@ -27,4 +27,4 @@ Read `.flow/steps/scope/publish.md` and follow it exactly.
 
 ## Least privilege
 
-The configured tracker's MCP (per `steps/shared/tracker.md`) for search and creation only. You MAY read `knowledge/map/**` for subsystem vocabulary to sharpen dedup terms. No source-file reads or writes. The worklog directory is created by `steps/shared/kickoff.md`, not here.
+The configured tracker's MCP (per `steps/shared/tracker.md`) for search and creation only. You MAY read `docs/flow/knowledge/map/**` for subsystem vocabulary to sharpen dedup terms. No source-file reads or writes. The worklog directory is created by `steps/shared/kickoff.md`, not here.

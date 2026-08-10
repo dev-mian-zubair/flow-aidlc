@@ -33,7 +33,7 @@ hardcode a guardrail list here.
 **A failing guardrail blocks the checkpoint.** Resolve the issue and re-run the
 failing guardrail before requesting review.
 
-Record each guardrail result in `worklog/<TICKET-ID>/build/<slice-id>/verify.md`, one line per enabled guardrail:
+Record each guardrail result in `docs/flow/worklog/<TICKET-ID>/build/<slice-id>/verify.md`, one line per enabled guardrail:
 
 ```
 - [x] <guardrail-name> — passed
@@ -64,7 +64,7 @@ Approval requires:
 
 ## Output
 
-`worklog/<TICKET-ID>/build/<slice-id>/verify.md` — all items checked, approved.
+`docs/flow/worklog/<TICKET-ID>/build/<slice-id>/verify.md` — all items checked, approved.
 
 ## Auto mode
 

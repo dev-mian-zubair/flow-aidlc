@@ -5,7 +5,7 @@ The journal is the append-only record of everything that happened during a task.
 ## File location
 
 ```
-worklog/<TICKET-ID>/journal.md
+docs/flow/worklog/<TICKET-ID>/journal.md
 ```
 
 One file per task. Never split across multiple files.
@@ -37,4 +37,4 @@ Risk: budget cache invalidation must be explicit. See decision 0042.
   appended as entries; prefix the content with `[agent]` to distinguish.
 - The journal is not a summary document — it is a log. Readers use
   `steps/shared/resume.md` to extract the relevant tail.
-- An empty journal (`touch worklog/<TICKET-ID>/journal.md`) is valid at task start.
+- An empty journal (`touch docs/flow/worklog/<TICKET-ID>/journal.md`) is valid at task start.

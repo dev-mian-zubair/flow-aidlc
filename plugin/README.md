@@ -39,7 +39,7 @@ Then, in your target repo:
 ```
 pipx install flow-aidlc      # the CLI half
 cd your-repo
-flow init                    # scaffold .flow/ (+ knowledge/, config)
+flow init                    # scaffold .flow/ (+ docs/flow/knowledge/, config)
 flow doctor                  # verify the install
 ```
 

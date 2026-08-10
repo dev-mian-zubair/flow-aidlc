@@ -1,7 +1,7 @@
 """Guard against reintroducing ADR references in the shipped engine.
 
 The Flow engine is scaffolded into a consumer's repo by `flow init`. That repo
-has no `knowledge/decisions/NNNN-*.md` ADR files, so any dangling ADR link (a
+has no `docs/flow/knowledge/decisions/NNNN-*.md` ADR files, so any dangling ADR link (a
 `decisions/NNNN` path) or bare `ADR NNNN` mention in an engine markdown file is
 a broken reference for every consumer. The decision was to inline the rationale
 and drop ADR references entirely; this test makes a regression impossible.
@@ -36,6 +36,6 @@ def test_engine_has_zero_dangling_adr_refs():
 
     assert not offenders, (
         "Found dangling ADR reference(s) in the engine — inline the rationale "
-        "and drop the ADR tag (a scaffolded repo has no knowledge/decisions/ ADRs):\n"
+        "and drop the ADR tag (a scaffolded repo has no docs/flow/knowledge/decisions/ ADRs):\n"
         + "\n".join(offenders)
     )

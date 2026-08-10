@@ -49,8 +49,8 @@ Before starting a Flow session, confirm the following:
 | `/flow-scope <idea>` | Run the Scope front door (clarify → story → publish) |
 | `/flow-ship` | Enter the Ship phase (branch-hardening → learnings → open-pr). Terminal at the open PR; the team owns the merge |
 | `/flow-changes <desc>` | Record a change request at the current checkpoint |
-| `/flow-decide <title>` | Graduate a cross-cutting decision to `knowledge/decisions/` |
-| `/flow-refresh` | Dispatch the curator to verify `knowledge/map/` invariants against current code |
+| `/flow-decide <title>` | Graduate a cross-cutting decision to `docs/flow/knowledge/decisions/` |
+| `/flow-refresh` | Dispatch the curator to verify `docs/flow/knowledge/map/` invariants against current code |
 
 ---
 
@@ -94,8 +94,8 @@ Ship is **terminal at the open PR** — the team owns the merge, required checks
 | `.claude/commands/` | Slash-command definitions (`/flow-*`) |
 | `.claude/agents/` | Subagent definitions (build, shape, review, etc.) |
 | `.claude/hooks/` | Claude Code lifecycle hooks (prompt-journal, scope-guard, etc.) |
-| `knowledge/` | Persistent codebase knowledge: `map/` (invariants) and `decisions/` |
-| `worklog/<ID>-NNN/` | Per-task artifacts: `progress.md`, `journal.md`, `shape/`, `build/`, `ship/` |
+| `docs/flow/knowledge/` | Persistent codebase knowledge: `map/` (invariants) and `decisions/` |
+| `docs/flow/worklog/<ID>-NNN/` | Per-task artifacts: `progress.md`, `journal.md`, `shape/`, `build/`, `ship/` |
 
 The quality gate runs as `flow check` (offline self-test: `flow selftest`).
 

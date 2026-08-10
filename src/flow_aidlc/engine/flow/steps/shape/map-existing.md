@@ -21,8 +21,8 @@ callers/dependents/contracts **deterministically**:
 1. **Seed from the ticket.** Take the `Area` label and the **Affected
    file(s)/module(s)** from the ticket body as your starting coordinates.
 2. **Seed from the Knowledge Map (invariants).** For each area the ticket touches,
-   read the matching `knowledge/map/<subsystem>.md` (index:
-   `knowledge/map/README.md`). These docs hold the **invariants and rationale** a graph can't know (e.g. "X is
+   read the matching `docs/flow/knowledge/map/<subsystem>.md` (index:
+   `docs/flow/knowledge/map/README.md`). These docs hold the **invariants and rationale** a graph can't know (e.g. "X is
    the single source of truth", "this toggle fails closed"); the *structure* lives in
    the graph (step 3).
 3. **Resolve structure from the code graph (primary).** For each seed symbol/file,
@@ -73,7 +73,7 @@ and its immediate callers, not the whole `WHO_CALLS` transitive closure.
 Write the map to:
 
 ```
-worklog/<TICKET-ID>/shape/map-existing.md
+docs/flow/worklog/<TICKET-ID>/shape/map-existing.md
 ```
 
 Format:

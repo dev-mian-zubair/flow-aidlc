@@ -13,7 +13,7 @@ Depth controls how much detail goes into those artifacts, not whether they exist
 
 ## How to apply
 
-The depth level is set in `worklog/<TICKET-ID>/progress.md` under
+The depth level is set in `docs/flow/worklog/<TICKET-ID>/progress.md` under
 `Extension Configuration`. If no level is recorded, use **standard**.
 
 Depth affects:

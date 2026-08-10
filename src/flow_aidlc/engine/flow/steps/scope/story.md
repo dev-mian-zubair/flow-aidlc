@@ -37,7 +37,7 @@ if a criterion can't be checked by running something, rewrite it.
 the board Priority field must all carry the same value — don't let them drift.
 
 **Ground in the Knowledge Map:** fill **Affected file(s)/module(s)** and choose
-`area` labels from `knowledge/map/` — module-level names via the
+`area` labels from `docs/flow/knowledge/map/` — module-level names via the
 `.flow/knowledge-map.yaml` `derives-from` globs (see `steps/shared/knowledge-map.md`).
 Exact `file:line` stays optional at Scope; Shape/map-existing confirms it.
 

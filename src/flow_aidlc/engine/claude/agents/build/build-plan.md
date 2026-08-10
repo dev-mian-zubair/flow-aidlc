@@ -14,7 +14,7 @@ Read `.flow/steps/build/code-plan.md` and follow it exactly. Do not restate its 
 
 ## Inputs
 
-- `worklog/<TICKET-ID>/build/<slice-id>/design.md` — the completed slice design (signatures, edge cases, acceptance criteria).
+- `docs/flow/worklog/<TICKET-ID>/build/<slice-id>/design.md` — the completed slice design (signatures, edge cases, acceptance criteria).
 - `.flow/config.yaml` — read `guardrails.always_on[]` so you know which domains to flag.
 
 ## Skill invocation
@@ -23,7 +23,7 @@ Invoke `superpowers:writing-plans` **before drafting any checkbox items**. Follo
 
 ## Output
 
-Write `worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` with the section structure
+Write `docs/flow/worklog/<TICKET-ID>/build/<slice-id>/code-plan.md` with the section structure
 its guide prescribes (the downstream verify sensor requires these exact headings):
 - A `## Steps` section — one `- [ ]` checkbox per file to create or modify, migrations first.
 - A `## Tests` section — the test checkboxes, listed last.
@@ -38,4 +38,4 @@ its guide prescribes (the downstream verify sensor requires these exact headings
 
 ## Least privilege
 
-You write only to `worklog/<TICKET-ID>/`. Never write to workspace source files.
+You write only to `docs/flow/worklog/<TICKET-ID>/`. Never write to workspace source files.

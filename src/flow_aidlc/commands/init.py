@@ -18,6 +18,7 @@ import sys
 from pathlib import Path
 
 from flow_aidlc import __version__
+from flow_aidlc.paths import KNOWLEDGE_DIR, WORKLOG_DIR
 from flow_aidlc.engine_assets import TOKEN_DEFAULTS, engine_dir, merge_settings, render
 
 # Files under engine/flow/ that are rendered separately (skip on the verbatim copy).
@@ -137,8 +138,8 @@ def run(argv: list[str]) -> int:
         _copy_tree(eng / "claude", claude_dir, skip_names=_CLAUDE_SPECIAL)
         _chmod_hooks(claude_dir / "hooks")
 
-    # ---- 3. knowledge/ → knowledge/ ---------------------------------------
-    know_dir = target / "knowledge"
+    # ---- 3. engine/knowledge/ → docs/flow/knowledge/ ----------------------
+    know_dir = target / KNOWLEDGE_DIR
     action(f"copy engine/knowledge/ -> {know_dir}")
     if not dry:
         _copy_tree(eng / "knowledge", know_dir)
@@ -158,10 +159,10 @@ def run(argv: list[str]) -> int:
     if not dry:
         _render_file(eng / "claude" / "mcp.tmpl.json", target / ".mcp.json", values)
 
-    # ---- 7. worklog/ dir --------------------------------------------------
-    action(f"ensure {target / 'worklog'} exists")
+    # ---- 7. worklog dir ---------------------------------------------------
+    action(f"ensure {target / WORKLOG_DIR} exists")
     if not dry:
-        (target / "worklog").mkdir(parents=True, exist_ok=True)
+        (target / WORKLOG_DIR).mkdir(parents=True, exist_ok=True)
 
     # ---- settings.json merge ----------------------------------------------
     action(f"merge Claude hooks into {claude_dir / 'settings.json'}")
@@ -179,7 +180,7 @@ def run(argv: list[str]) -> int:
         _ensure_gitignore(
             target / ".gitignore",
             [
-                "worklog/.active",
+                "docs/flow/worklog/.active",
                 ".superpowers/",
                 ".env",
                 # Code graph: only graphify-out/graph.json is committed; ignore the
@@ -313,9 +314,9 @@ def _print_summary(target: Path, values: dict[str, str], dry: bool) -> None:
     print("  Created:")
     print("    .flow/            playbook, steps, templates, guardrails, config.yaml")
     print("    .claude/          agents, commands, hooks, settings.json")
-    print("    knowledge/        map + decisions scaffolding")
     print("    .mcp.json         MCP server wiring (repo root)")
-    print("    worklog/          per-ticket worklogs land here")
+    print("    docs/flow/knowledge/  map + decisions scaffolding")
+    print("    docs/flow/worklog/    per-ticket worklogs land here")
     print()
     print("  Prerequisites (install once in Claude Code — not repo-local):")
     print("    /plugin install superpowers        — the per-phase skills Flow invokes")

@@ -1,7 +1,7 @@
 # Practices
 
 Curated, revisable working practices distilled from completed tasks by the
-Ship-time learnings retro (steps/ship/learnings.md). Unlike knowledge/decisions/
+Ship-time learnings retro (steps/ship/learnings.md). Unlike docs/flow/knowledge/decisions/
 (immutable ADRs about specific architectural choices), practices are revisable
 methodology guidance. Loaded at kickoff so every task benefits. Each carries an
 idempotency marker so the retro never duplicates one.

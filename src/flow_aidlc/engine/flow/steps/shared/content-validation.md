@@ -52,7 +52,7 @@ begin with the following line immediately after its H1:
 ```
 
 Worklog artifacts are point-in-time snapshots of thinking at a given session;
-they are not living documents. `knowledge/` docs keep their richer provenance
+they are not living documents. `docs/flow/knowledge/` docs keep their richer provenance
 frontmatter — do not conflate the two. The blockquote does not count as a
 heading; exactly one H1 per file is still required.
 
