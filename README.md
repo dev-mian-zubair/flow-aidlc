@@ -23,54 +23,105 @@ deterministic CI. See [Execution modes](#execution-modes).
 
 ---
 
-## Prerequisites
+## Setup
 
-These are installed in your **Claude Code environment** (or, for Graphify, your
-machine), not by `flow init` — the scaffolder is repo-local, while these are
-shared across projects. `flow doctor` verifies all three are present and warns if
-one is missing, so a `/flow-*` run never fails mid-stage on an absent dependency.
+Flow is a Python-based CLI, but it governs a repo in **any language** — Python is
+just the CLI's own runtime (like `ruff` or `aws-cli`). You point Flow at your
+project's own test/build commands; nothing about your codebase is assumed.
 
-- **[superpowers](https://github.com/obra/superpowers) skills** *(required)* — Flow
-  delegates brainstorming, plan-writing, TDD, and code review to the `superpowers`
-  skill ecosystem; it is invoked at nearly every stage of the playbook. Install in
-  Claude Code: `/plugin install superpowers`.
-- **`pr-review-toolkit` agents** *(required)* — the Ship/branch-hardening gate runs
-  a whole-branch review through these specialized agents (code review, silent-failure
-  hunting, test analysis, type-design, comments) before opening a PR. Install in
-  Claude Code: `/plugin install pr-review-toolkit`.
-- **[Graphify](https://pypi.org/project/graphifyy/)** *(recommended)* — Flow's source
-  of truth for code *structure*. Structure is not maintained as prose; it is extracted
-  into a committed **code graph** that agents query over MCP. Install with
-  `uv tool install "graphifyy[mcp]"` (the `[mcp]` extra powers the agent-facing
-  `graphify` MCP server; the base package alone builds the graph for CI). Without it,
-  the structural steps degrade to a read-only `Explore`/grep fallback — nothing breaks,
-  but caller/dependent resolution is no longer deterministic.
-
-## Quickstart
+### 1. Install the CLI
 
 ```bash
-pipx install flow-aidlc          # or: pip install flow-aidlc
-uv tool install "graphifyy[mcp]" # the code-graph backend (structure source of truth)
+pipx install flow-aidlc      # recommended (isolated) — or: uv tool install flow-aidlc
+flow version
+```
+
+### 2. Install the Claude Code prerequisites (once per machine, not per repo)
+
+Flow delegates process work to two Claude Code plugins and queries a code graph.
+`flow doctor` checks all three and **warns** (never fails a run) if one is missing.
+
+| Prereq | Install in Claude Code | Why |
+|---|---|---|
+| **superpowers** *(required)* | `/plugin install superpowers` | brainstorming, plan-writing, TDD, review — invoked all over the playbook |
+| **pr-review-toolkit** *(required)* | `/plugin install pr-review-toolkit` | the whole-branch review at Ship/branch-hardening |
+| **[Graphify](https://pypi.org/project/graphifyy/)** *(recommended)* | `uv tool install "graphifyy[mcp]"` | the code graph (who-calls / dependents / impact), queried over MCP |
+
+Without Graphify the structural steps degrade to a read-only `Explore`/grep
+fallback — nothing breaks, but caller/dependent resolution is no longer deterministic.
+
+### 3. Scaffold Flow into your repo
+
+```bash
 cd your-repo
-flow init                        # scaffold .flow/, .claude/, docs/flow/, git hooks (--base sets vcs.base)
-flow setup                       # one-command onboarding: graph tool + graph build + flow doctor
-flow check                       # run the quality gate
+flow init                    # interactive; or pass flags (below) to skip the prompts
 ```
 
-`flow init --base <branch>` sets `config.yaml → vcs.base` — the default base branch
-for feature branches and PR targets (per-task override: the `Base branch:` line in a
-worklog's `progress.md`). `flow setup` is the portable onboarding chain: it detects
-`uv` and installs the graph tool, runs the configured `graph.build`, and finishes with
-`flow doctor` — never failing hard on a missing external tool.
+`flow init` creates the following and **never touches your source**:
 
-Then, in Claude Code:
+- **`.flow/`** — the engine + your `config.yaml`, guardrails, and knowledge-map
+- **`.claude/`** — the `/flow-*` commands, phase agents, and governance hooks
+- **`docs/flow/`** — `worklog/` (per-ticket run history) + `knowledge/` (invariants, decisions)
+- **`.mcp.json`**, **`.env.example`**, `.gitignore` entries, and a `CLAUDE.md` pointer
+
+Flags: `--tracker <github|jira|linear|azure-devops|shortcut|asana|clickup>` (default `github`),
+`--base <branch>` (default base for feature branches + PR targets),
+`--id-prefix <PREFIX>` (ticket id prefix, default `TASK`), `--yes` (accept defaults).
+
+### 4. Configure the instance
+
+- **Test / build commands** — set `.flow/config.yaml → commands` (`test`, `build`,
+  `lint`, `typecheck`) to your toolchain: `pytest`, `npm test`, `go test ./...`,
+  `make test`, … Flow's TDD stage runs *your* `test` command.
+- **Tracker credentials** — `.mcp.json` holds only `${VAR}` references. Supply them by
+  copying `.env.example` → `.env` (gitignored) and filling in, **or** a secrets manager
+  (`flow secrets use infisical` / `doppler`), **or** a provider CLI (`gh auth token`).
+
+### 5. Build the graph and verify
+
+```bash
+flow setup      # detect uv, install the graph tool, build the code graph, then run flow doctor
+flow doctor     # health-check: hooks installed, MCP reachable, graph wired, credentials resolve
+flow check      # the offline quality gate (guardrail-lint, structure, config-consistency)
+```
+
+`flow check` should end with **`gate PASSED`**. You're ready to run the lifecycle.
+
+## Quickstart: your first feature
+
+Everything below runs **inside a Claude Code session** in your initialized repo.
+Flow drives one lifecycle — **Scope → Shape → Build → Ship** — and stops at each
+checkpoint for your `/flow-approve` (in the default `controlled` mode).
 
 ```
+# 1. SCOPE — turn an idea into a tracker ticket
 /flow-scope "add a read-only endpoint listing departments over budget"
-/flow-shape        # requirements → design → slices (gated)
-/flow-build        # per-slice: plan → generate (TDD) → verify (guardrails)
-/flow-ship         # branch-hardening → learnings retro → open-pr (terminal; the team owns the merge)
+#   clarifies intent → proposes a ticket type → drafts the ticket
+#   → /flow-approve   (creates the ticket; returns an id, e.g. TASK-42)
+
+# 2. SHAPE — requirements → design → slices, from the ticket id
+/flow-start TASK-42
+#   (brownfield: maps the touched code first) → requirements → design → slices
+#   → /flow-approve at each checkpoint (research, requirements, design)
+
+# 3. BUILD — one slice at a time, test-first
+/flow-slice
+#   slice-design → code-plan → /flow-approve → generate (TDD) → verify (guardrails) → /flow-approve
+#   repeat /flow-slice until every slice is complete
+
+# 4. SHIP — harden, retro, open the PR
+/flow-ship
+#   whole-branch review → learnings retro → /flow-approve → opens the PR
+#   Flow stops at the open PR; your team owns the merge.
 ```
+
+Handy any time: **`/flow-status <id>`** (where a ticket sits in the pipeline),
+**`/flow-resume <id>`** (pick up after a break), **`/flow-approve`** (clear the
+current checkpoint).
+
+**Autonomous mode:** **`/flow-auto <id>`** runs the same lifecycle with **no human
+stops** — adversarial agent panels replace your approvals and it merges on green CI.
+See [Execution modes](#execution-modes).
 
 ## What you get
 
