@@ -17,3 +17,11 @@ def test_panel_review_step_exists():
     t = (_ENG / "flow/steps/discover/panel-review.md").read_text(encoding="utf-8")
     assert "product-critic" in t
     assert "high-severity" in t.lower() or "high severity" in t.lower()
+
+
+def test_product_critic_is_read_only():
+    t = (_ENG / "claude/agents/product/product-critic.md").read_text(encoding="utf-8")
+    fm = t.split("---")[1]
+    assert "Write" not in fm and "Agent" not in fm and "Task" not in fm
+    assert "model: inherit" in t
+    assert "## Return to caller" in t
