@@ -24,7 +24,7 @@ Follow the guide exactly:
 1. Read all three approved upstream artifacts.
 2. Fill `docs/flow/product/<slug>/prd.md` — problem, users/personas, success metrics tied to the North Star, Mermaid story map, scope, non-goals, key requirements (REQ-01…), and milestones. Cite `[vision]`, `[pr-faq]`, or `[research]` for every non-obvious claim.
 3. Tick `- [x] prd` in `docs/flow/product/<slug>/progress.md`.
-4. **If panels are enabled** (`config.product.review` present AND session started with `/flow-discover --panel` or auto mode): dispatch the adversarial critique panel per `.flow/steps/discover/panel-review.md` — one `product-critic` per configured lens, in parallel. Address all high-severity findings (fix-loop up to `config.product.review.max_rounds`), then proceed to the checkpoint with the improved PRD (residual high-severity findings surfaced to the human). **If panels are disabled, present directly (default Plan 1 behavior).**
+4. **If panels are enabled** (`config.product.review` present AND session started with `/flow-discover --panel`): dispatch the adversarial critique panel per `.flow/steps/discover/panel-review.md` — one `product-critic` per configured lens, in parallel. Address all high-severity findings (fix-loop up to `config.product.review.max_rounds`), then proceed to the checkpoint with the improved PRD (residual high-severity findings surfaced to the human). **If panels are disabled, present directly (default Plan 1 behavior).**
 5. **CHECKPOINT** — present the PRD; wait for `/flow-approve` before advancing.
 
 ## Return to caller

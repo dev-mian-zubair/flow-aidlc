@@ -33,8 +33,7 @@ product:
   framework: working-backwards   # greenfield lead artifact = PR-FAQ
   prioritization: rice           # rice | ice
   diagram: mermaid               # diagrams-as-code backend
-  review:                          # opt-in adversarial critique panel (/flow-discover --panel, or auto)
-    panel_size: 4                  # critics per checkpoint panel
+  review:                          # opt-in adversarial critique panel (/flow-discover --panel)
     max_rounds: 3                  # revise/re-critique rounds before surfacing residuals
     lenses: [market-realist, feasibility, customer-advocate, scope-hawk]
 

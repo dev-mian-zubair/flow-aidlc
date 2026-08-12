@@ -10,7 +10,7 @@ def test_product_review_config_renders(tmp_path):
     subprocess.run(["git", "init", "-q"], cwd=tmp_path, check=True)
     assert init.run(["--yes", "--repo", "o/n", "--path", str(tmp_path)]) == 0
     cfg = (tmp_path / ".flow/config.yaml").read_text(encoding="utf-8")
-    assert "review:" in cfg and "panel_size:" in cfg and "market-realist" in cfg
+    assert "max_rounds:" in cfg and "market-realist" in cfg and "lenses:" in cfg
 
 
 def test_panel_review_step_exists():

@@ -27,7 +27,7 @@ Follow the guide exactly:
 4. Fill `docs/flow/product/<slug>/research.md` with all sections from the template.
 5. Graduate the tech-stack decision to `docs/flow/knowledge/decisions/`.
 6. Tick `- [x] research` in `docs/flow/product/<slug>/progress.md`.
-7. **If panels are enabled** (`config.product.review` present AND session started with `/flow-discover --panel` or auto mode): dispatch the adversarial critique panel per `.flow/steps/discover/panel-review.md` — one `product-critic` per configured lens, in parallel — critiquing the recommendation, tech-stack, and governance screen. Address all high-severity findings (fix-loop up to `config.product.review.max_rounds`), then proceed to the checkpoint with the improved research (residual high-severity findings surfaced to the human). **If panels are disabled, present directly (default Plan 1 behavior).**
+7. **If panels are enabled** (`config.product.review` present AND session started with `/flow-discover --panel`): dispatch the adversarial critique panel per `.flow/steps/discover/panel-review.md` — one `product-critic` per configured lens, in parallel — critiquing the recommendation, tech-stack, and governance screen. Address all high-severity findings (fix-loop up to `config.product.review.max_rounds`), then proceed to the checkpoint with the improved research (residual high-severity findings surfaced to the human). **If panels are disabled, present directly (default Plan 1 behavior).**
 8. **CHECKPOINT** — present the findings and recommendation; wait for `/flow-approve` before advancing.
 
 ## Return to caller

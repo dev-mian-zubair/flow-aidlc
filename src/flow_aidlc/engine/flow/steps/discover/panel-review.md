@@ -7,11 +7,12 @@ panels are enabled, to adversarially stress-test the stage artifact before appro
 
 This step is ONLY active when:
 1. `config.product.review` is present in `.flow/config.yaml`, AND
-2. the session was started with `/flow-discover --panel` (controlled) or auto mode is running.
+2. the session was started with `/flow-discover --panel`.
 
 When neither condition holds, the stage presents its artifact directly for
-`/flow-approve` (controlled) or advances to the next stage (auto) — exactly the
-Plan 1 behavior. No panel is dispatched; this file is not read.
+`/flow-approve` — exactly the Plan 1 behavior. No panel is dispatched; this file is not read.
+
+Auto-mode Discover is not wired this iteration; Discover panels are controlled-mode-only, enabled via `/flow-discover --panel`.
 
 ## Dispatch
 
@@ -46,11 +47,10 @@ On a failed gate (any high-severity finding remains open):
 ## Outcome
 
 **Convergence (no high-severity findings):**
-- Controlled mode → present the improved artifact for `/flow-approve`.
-- Auto mode → advance to the next stage automatically.
+- Present the improved artifact for `/flow-approve`.
 
 **Cap without convergence (max_rounds exhausted):**
-- Controlled mode → present the artifact WITH residual high-severity findings
-  surfaced clearly to the human at the checkpoint for a decision.
-- Auto mode → carry the residual findings to the stage report; the conductor
-  surfaces them at the end of the Discover phase run.
+- Present the artifact WITH residual high-severity findings surfaced clearly
+  to the human at the checkpoint for a decision.
+
+Auto-mode Discover is not wired this iteration; Discover panels are controlled-mode-only, enabled via `/flow-discover --panel`.

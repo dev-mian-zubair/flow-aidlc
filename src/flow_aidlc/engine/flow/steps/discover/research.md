@@ -77,7 +77,7 @@ abstract; each question maps to one riskiest assumption. Apply
 
 ## Critique panel (opt-in)
 
-This section is active **only when panels are enabled** (`config.product.review` present AND the session was started with `/flow-discover --panel` or auto mode is running). When disabled, skip directly to CHECKPOINT — this is the default Plan 1 behavior.
+This section is active **only when panels are enabled** (`config.product.review` present AND the session was started with `/flow-discover --panel`). When disabled, skip directly to CHECKPOINT — this is the default Plan 1 behavior.
 
 When panels are enabled:
 
