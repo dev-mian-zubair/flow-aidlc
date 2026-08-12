@@ -21,7 +21,7 @@ def test_only_orchestrators_hold_the_agent_tool():
     # product-prd/product-research dispatch the critique panel (Plan 2); the rest stay leaf.
     for n in _NAMES + ["product-critic"]:
         fm = (_A / f"{n}.md").read_text(encoding="utf-8").split("---")[1]
-        has_agent = "Agent" in fm
+        has_agent = ("Agent" in fm) or ("Task" in fm)
         if n in _MAY_ORCHESTRATE:
             assert has_agent, f"{n} should carry Agent for the panel"
         else:
