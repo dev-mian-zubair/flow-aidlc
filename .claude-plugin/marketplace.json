@@ -7,8 +7,8 @@
   "plugins": [
     {
       "name": "flow",
-      "description": "The Flow AI-DLC methodology as a Claude Code surface: the /flow-* commands, the phase agents (Scope -> Shape -> Build -> Ship), and the governance hooks. Pairs with the `flow` CLI \u2014 run `flow init` in your repo to scaffold the .flow/ instance these commands and hooks operate on.",
-      "version": "0.1.0",
+      "description": "The Flow AI-DLC methodology as a Claude Code surface: the /flow-* commands, the delivery phase agents (Scope -> Shape -> Build -> Ship), a greenfield product-definition Discover phase (/flow-discover), and the governance hooks. Pairs with the `flow` CLI \u2014 run `flow init` in your repo to scaffold the .flow/ instance these commands and hooks operate on.",
+      "version": "0.3.0",
       "source": "./plugin",
       "author": {
         "name": "Flow (flow-aidlc)"

@@ -69,3 +69,41 @@ def test_ignores_dot_dirs_and_falls_back_to_dirname(tmp_path, capsys):
     out = capsys.readouterr().out
     assert "PI-3" in out
     assert ".active" not in out
+
+
+def _product(root: Path, unit: str = "acme") -> None:
+    d = root / "docs/flow/product" / unit
+    d.mkdir(parents=True)
+    # frontmatter carries inline YAML comments, exactly like the shipped template
+    (d / "progress.md").write_text(
+        "---\n"
+        "id: acme\n"
+        "kind: product            # product | feature | increment\n"
+        "parent: null             # <parent-slug> for features/increments\n"
+        "status: in-discovery     # in-discovery | approved | parked | superseded\n"
+        "links: {}                # filled as stages complete\n"
+        "---\n"
+        "## Stages\n- [x] vision\n- [ ] pr-faq\n- [ ] research\n- [ ] prd\n- [ ] roadmap\n",
+        encoding="utf-8")
+
+
+def test_status_lists_product_units_without_worklog(tmp_path, capsys):
+    # Primary Discover use case: product defined, NO worklog dir/tickets yet.
+    _product(tmp_path)
+    assert status.run(["--path", str(tmp_path)]) == 0
+    out = capsys.readouterr().out
+    assert "acme" in out
+    assert "Discover" in out
+    assert "1/5" in out                     # 1 of the 5 actual stages, derived not hardcoded
+    assert "product | feature" not in out   # inline YAML comment stripped from the KIND column
+
+
+def test_status_lists_product_units_alongside_worklog(tmp_path, capsys):
+    _worklog(tmp_path, "PI-1")
+    _product(tmp_path)
+    assert status.run(["--path", str(tmp_path)]) == 0
+    out = capsys.readouterr().out
+    assert "PI-1" in out          # worklog table still present
+    assert "acme" in out
+    assert "Discover" in out
+    assert "1/5" in out

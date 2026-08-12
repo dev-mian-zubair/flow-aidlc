@@ -14,7 +14,7 @@ import re
 from pathlib import Path
 
 from flow_aidlc.checks._root import find_repo_root
-from flow_aidlc.paths import WORKLOG_DIR
+from flow_aidlc.paths import PRODUCT_DIR, WORKLOG_DIR
 
 _PHASES = ("Scope", "Shape", "Build", "Ship")
 _STAGE_RE = re.compile(r"^\s*- \[([ xX])\]\s+(.+?)\s*$")
@@ -36,20 +36,20 @@ def run(argv: list[str]) -> int:
     worklog = root / WORKLOG_DIR
     if not worklog.is_dir():
         print("no worklog dir (docs/flow/worklog) — run `flow init` first")
-        return 0
+    else:
+        rows = []
+        for d in sorted(worklog.iterdir()):
+            if not d.is_dir() or d.name.startswith("."):
+                continue
+            progress = d / "progress.md"
+            if progress.exists():
+                rows.append(_summarize(d, progress.read_text(encoding="utf-8")))
+        if not rows:
+            print("No worklogs yet — start one with `/flow-scope`.")
+        else:
+            _print_table(rows)
 
-    rows = []
-    for d in sorted(worklog.iterdir()):
-        if not d.is_dir() or d.name.startswith("."):
-            continue
-        progress = d / "progress.md"
-        if progress.exists():
-            rows.append(_summarize(d, progress.read_text(encoding="utf-8")))
-
-    if not rows:
-        print("No worklogs yet — start one with `/flow-scope`.")
-        return 0
-    _print_table(rows)
+    _print_product(root)
     return 0
 
 
@@ -93,3 +93,49 @@ def _print_table(rows: list[dict]) -> None:
     for r in rows:
         bar = f"{r['done']}/{r['total']}" if r["total"] else "-"
         print(f"{r['ticket']:<{w}}  {r['phase']:<6}  {r['stage']:<16}  {bar}")
+
+
+def _product_row(text: str) -> tuple[str, str, str, int, int]:
+    """Parse a product unit's progress.md → (id, kind, status, checked, total)."""
+    fm: dict[str, str] = {}
+    lines = text.splitlines()
+    if lines and lines[0].strip() == "---":
+        for ln in lines[1:]:
+            if ln.strip() == "---":
+                break
+            if ":" in ln:
+                k, _, v = ln.partition(":")
+                v = v.strip()
+                cut = v.find(" #")          # strip inline YAML comment (space + #)
+                if cut != -1:
+                    v = v[:cut].rstrip()
+                fm[k.strip()] = v
+    checked = total = 0
+    for ln in lines:
+        m = _STAGE_RE.match(ln)
+        if m:
+            total += 1
+            if m.group(1).lower() == "x":
+                checked += 1
+    return fm.get("id", "?"), fm.get("kind", "?"), fm.get("status", "?"), checked, total
+
+
+def _print_product(root: Path) -> None:
+    """List Discover product workstreams — additive, only when the dir exists."""
+    product = root / PRODUCT_DIR
+    if not product.is_dir():
+        return
+    units = []
+    for d in sorted(product.iterdir()):
+        if not d.is_dir() or d.name.startswith("."):
+            continue
+        prog = d / "progress.md"
+        if prog.exists():
+            units.append(_product_row(prog.read_text(encoding="utf-8")))
+    if not units:
+        return
+    print("\nDiscover / product workstreams")
+    print(f"{'ID':<20}  {'KIND':<12}  {'STATUS':<20}  STAGES")
+    for uid, kind, st, checked, total in units:
+        bar = f"{checked}/{total}" if total else "-"
+        print(f"{uid:<20}  {kind:<12}  {st:<20}  {bar}")

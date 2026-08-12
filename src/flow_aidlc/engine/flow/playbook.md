@@ -18,6 +18,23 @@ Each stage's work is performed by the matching least-privilege subagent under `.
 Scope (front door) → Shape → Build (per slice) → Ship
 ```
 
+## Discover phase (greenfield) — `/flow-discover`
+
+A distinct entry point that turns a new-product idea into grounded, gated
+product-definition artifacts under `docs/flow/product/<slug>/`. Greenfield only this
+iteration; not part of the `/flow-start` path.
+
+| Phase | Stage | When | load: | skill: | checkpoint: |
+|-------|-------|------|-------|--------|-------------|
+| Discover | intake | ALWAYS (greenfield) | `steps/discover/intake.md` | — | no |
+| Discover | vision | ALWAYS | `steps/discover/vision.md` | `superpowers:brainstorming` | yes |
+| Discover | pr-faq | ALWAYS | `steps/discover/pr-faq.md` | — | yes |
+| Discover | research | ALWAYS | `steps/discover/research.md` | `deep-research` | yes |
+| Discover | prd | ALWAYS | `steps/discover/prd.md` | — | yes |
+| Discover | roadmap | OPTIONAL | `steps/discover/roadmap.md` | — | yes |
+
+**Critique panels (opt-in):** with `/flow-discover --panel`, the `research` and `prd` gated stages run an adversarial `product-critic` panel (`steps/discover/panel-review.md`) before `/flow-approve`; the default is human `/flow-approve` only. Auto-mode Discover is not wired this iteration.
+
 ## Per-Stage Table
 
 | Phase | Stage | When | load: | skill: | checkpoint: |
@@ -46,7 +63,7 @@ Scope (front door) → Shape → Build (per slice) → Ship
 
 ## Checkpoint Rule
 
-At each stage where `checkpoint: yes`, **stop and wait for `/flow-approve`** before advancing to the next stage. The `checkpoint-stop` hook enforces this automatically. Do not proceed past a checkpoint under any circumstance without explicit approval.
+At each stage where `checkpoint: yes`, **stop and wait for `/flow-approve`** before advancing to the next stage. For Scope/Shape/Build/Ship worklog stages, the `checkpoint-stop` hook reinforces this; that hook is worklog-keyed and does **not** fire for Discover product units — Discover checkpoints are cleared exclusively by the human running `/flow-approve` (the hook does not apply to product units this iteration). Do not proceed past a checkpoint under any circumstance without explicit approval.
 
 ## Execution modes
 

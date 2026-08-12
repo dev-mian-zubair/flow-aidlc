@@ -1,7 +1,7 @@
-"""Gate: compose guardrail_lint + structure_check + reference-selfcheck + config-consistency.
+"""Gate: compose guardrail_lint + structure_check + reference-selfcheck + config-consistency + product-consistency.
 
-Runs all four checks, prints a section per check, exits 1 if any blocking
-check fails. The reference self-consistency smoke (CHECK 3/4) is
+Runs all five checks, prints a section per check, exits 1 if any blocking
+check fails. The reference self-consistency smoke (CHECK 3/5) is
 non-fatal-if-absent (no reference cases found → OK) but fatal-if-regressed
 (a golden case scoring below its own threshold → exit 1).
 
@@ -26,6 +26,7 @@ from flow_aidlc.checks.guardrail_lint import lint as guardrail_lint
 from flow_aidlc.checks.structure_check import check as structure_check
 from flow_aidlc.checks.reference_check import check as reference_check
 from flow_aidlc.checks.config_consistency import check as config_consistency_check
+from flow_aidlc.checks.product_consistency import check as product_consistency_check
 
 
 def run(repo_root: Path | str, strict_freshness: bool = False) -> int:
@@ -41,7 +42,7 @@ def run(repo_root: Path | str, strict_freshness: bool = False) -> int:
 
     # ---- 1. Guardrail lint ----
     print("=" * 60)
-    print("CHECK 1/4  guardrail-lint")
+    print("CHECK 1/5  guardrail-lint")
     print("=" * 60)
     lint_errors = guardrail_lint(guardrails_dir)
     if lint_errors:
@@ -55,7 +56,7 @@ def run(repo_root: Path | str, strict_freshness: bool = False) -> int:
     # ---- 2. Structure check ----
     print()
     print("=" * 60)
-    print("CHECK 2/4  structure-check")
+    print("CHECK 2/5  structure-check")
     print("=" * 60)
     struct_errors = structure_check(flow_dir)
     if struct_errors:
@@ -69,7 +70,7 @@ def run(repo_root: Path | str, strict_freshness: bool = False) -> int:
     # ---- 3. Reference self-consistency smoke ----
     print()
     print("=" * 60)
-    print("CHECK 3/4  reference-selfcheck")
+    print("CHECK 3/5  reference-selfcheck")
     print("=" * 60)
     selfcheck_failed = _run_reference_selfcheck(repo_root)
     if selfcheck_failed:
@@ -78,12 +79,26 @@ def run(repo_root: Path | str, strict_freshness: bool = False) -> int:
     # ---- 4. Config consistency ----
     print()
     print("=" * 60)
-    print("CHECK 4/4  config-consistency")
+    print("CHECK 4/5  config-consistency")
     print("=" * 60)
     cfg_errors = config_consistency_check(repo_root)
     if cfg_errors:
         print("FAILED:")
         for e in cfg_errors:
+            print(f"  {e}")
+        exit_code = 1
+    else:
+        print("OK")
+
+    # ---- 5. Product consistency ----
+    print()
+    print("=" * 60)
+    print("CHECK 5/5  product-consistency")
+    print("=" * 60)
+    product_errors = product_consistency_check(repo_root)
+    if product_errors:
+        print("FAILED:")
+        for e in product_errors:
             print(f"  {e}")
         exit_code = 1
     else:

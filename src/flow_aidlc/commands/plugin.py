@@ -46,7 +46,8 @@ _PLUGIN_HOOK_PREFIX = "${CLAUDE_PLUGIN_ROOT}/hooks/"
 _PLUGIN_NAME = "flow"
 _PLUGIN_DESCRIPTION = (
     "The Flow AI-DLC methodology as a Claude Code surface: the /flow-* commands, "
-    "the phase agents (Scope -> Shape -> Build -> Ship), and the governance hooks. "
+    "the delivery phase agents (Scope -> Shape -> Build -> Ship), a greenfield "
+    "product-definition Discover phase (/flow-discover), and the governance hooks. "
     "Pairs with the `flow` CLI — run `flow init` in your repo to scaffold the "
     ".flow/ instance these commands and hooks operate on."
 )

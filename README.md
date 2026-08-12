@@ -62,7 +62,7 @@ something" becomes "the agent did the *approved* thing, provably":
 
 - **Guardrails** — always-on, *blocking* invariant checks you author for your codebase. The Build/verify gate refuses to pass while one is violated.
 - **Code graph** — structure (callers, dependents, contracts, impact) is extracted into a committed [Graphify](https://pypi.org/project/graphifyy/) graph and queried by agents over MCP, instead of hand-written docs that drift.
-- **Quality gate** — `flow check` runs offline checks (guardrail-lint, structure, config-consistency) locally *and* in CI.
+- **Quality gate** — `flow check` runs offline checks (guardrail-lint, structure, config-consistency, product-consistency) locally *and* in CI.
 - **Checkpoints** — the lifecycle stops at each gate for a human `/flow-approve` (controlled) or an adversarial agent panel (auto).
 
 ---
@@ -121,6 +121,10 @@ One path, four phases, gated at each `checkpoint`. In **controlled** mode you cl
 each checkpoint with `/flow-approve`; in **auto** mode an agent panel does.
 
 ```
+ DISCOVER  (greenfield product definition — optional entry) ─────────► product docs
+   vision ✋ → pr-faq ✋ → research ✋ → prd ✋ → roadmap ✋       (/flow-discover)
+   └ produces docs/flow/product/<slug>/ ; a distinct entry point, not yet wired into Scope
+
  SCOPE ─────────────────────────────────────────────────────────────► ticket
    clarify → story → publish ✋                       (/flow-scope)
 
@@ -148,6 +152,7 @@ Drive the lifecycle from a Claude Code session in your initialized repo.
 
 | Command | What it does | When |
 |---|---|---|
+| `/flow-discover "<idea>"` | Greenfield **Discover** phase — turn a new-product idea into gated product docs (vision → PR-FAQ → research → PRD → roadmap) under `docs/flow/product/<slug>/`; add `--panel` for adversarial critique panels | define a brand-new product |
 | `/flow-scope "<idea>"` | Clarify intent, classify the ticket type, draft & (on approval) create the tracker ticket | start a new idea |
 | `/flow-start <id>` | Open the Shape phase for a ticket: requirements → design → slices | after a ticket exists |
 | `/flow-slice` | Run the next unstarted Build slice (plan → TDD → verify) | per slice, in Build |
@@ -196,7 +201,7 @@ flow doctor [--fix]                 # --fix applies safe mechanical fixes (e.g. 
 ```
 
 ### `flow check`
-Run the quality gate — guardrail-lint, structure-check, reference-selfcheck, config-consistency. Runnable locally and in CI.
+Run the quality gate — guardrail-lint, structure-check, reference-selfcheck, config-consistency, product-consistency. Runnable locally and in CI.
 ```bash
 flow check [path]                   # exits non-zero on any failure; prints `gate PASSED` when clean
 ```
@@ -224,7 +229,7 @@ flow ci init [--gates semgrep,conftest,impeccable] [--force]
 `--gates` adds deterministic gates beside the LLM guardrails: **semgrep** (SAST), **conftest** (OPA policy-as-code), **impeccable** (design quality).
 
 ### `flow status`
-Show where each ticket sits in the `Scope → Shape → Build → Ship` pipeline (read from `docs/flow/worklog/`).
+Show where each ticket sits in the `Scope → Shape → Build → Ship` pipeline (read from `docs/flow/worklog/`), plus any Discover product workstreams (from `docs/flow/product/`).
 ```bash
 flow status
 ```
@@ -290,6 +295,7 @@ your-repo/
     │   ├── map/              #   subsystem invariants (curated)
     │   ├── decisions/        #   architectural decision records
     │   └── practices.md      #   promoted learnings
+    ├── product/              #   Discover product-definition units (per /flow-discover slug)
     └── worklog/              #   per-ticket run history (progress, journal, artifacts)
 ```
 
@@ -322,6 +328,9 @@ tracker:
 guardrails:
   always_on: []                      # your blocking invariants (empty until you add them)
   optional:  [security-baseline, resiliency-baseline, test-coverage, dependency-provenance]
+product:                             # the Discover phase (/flow-discover)
+  prioritization: rice               # rice | ice — roadmap scoring
+  review: { max_rounds: 3, lenses: [market-realist, feasibility, customer-advocate, scope-hawk] }  # opt-in --panel critique
 graph:
   backend: graphify                  # code-graph backend (queried over MCP)
   build: "graphify extract . --code-only --no-cluster --force"

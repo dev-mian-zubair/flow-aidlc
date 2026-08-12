@@ -8,3 +8,4 @@ from __future__ import annotations
 
 WORKLOG_DIR = "docs/flow/worklog"
 KNOWLEDGE_DIR = "docs/flow/knowledge"
+PRODUCT_DIR = "docs/flow/product"
