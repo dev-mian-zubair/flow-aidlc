@@ -48,3 +48,11 @@ graph TD
 | Milestone | Deliverable | Target date |
 |-----------|-------------|-------------|
 | M1 | <what ships> | <YYYY-MM-DD> |
+
+## Open questions
+
+<!-- Unresolved decisions and residual medium/low findings from the critique panel
+     (steps/discover/panel-review.md) land here — carried, not looped on. -->
+
+- <question or unresolved decision to revisit before Build>
+

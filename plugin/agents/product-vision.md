@@ -1,6 +1,6 @@
 ---
 name: product-vision
-description: Articulate the product vision — problem, target users, North Star metric, OKR, and non-goals — then stop for approval. Use after product-intake confirms greenfield and the slug is known, before product-prfaq.
+description: Articulates the product vision — problem, target users, North Star metric, OKR, and non-goals — then stops for approval. Use after product-intake confirms greenfield and the slug is known, before product-prfaq.
 tools: Read, Write
 model: inherit
 skills: [superpowers:brainstorming]

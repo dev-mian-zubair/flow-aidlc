@@ -1,6 +1,6 @@
 ---
 name: product-roadmap
-description: Extract candidate epics from the PRD story map, score them with RICE or ICE, sequence into a Now/Next/Later Mermaid roadmap, and stop for approval. Use after product-prd is approved to conclude the Discover phase. Skippable for single-epic products.
+description: Extracts candidate epics from the PRD story map, scores them with RICE or ICE, sequences them into a Now/Next/Later Mermaid roadmap, and stops for approval. Use after product-prd is approved to conclude the Discover phase. Skippable for single-epic products.
 tools: Read, Write
 model: inherit
 ---

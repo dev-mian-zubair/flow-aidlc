@@ -1,6 +1,6 @@
 ---
 name: product-research
-description: Validate the riskiest assumptions from the PR-FAQ with cited market and tech-stack research, run a governance screen, and graduate the stack decision — then stop for approval. Use after product-prfaq is approved, before product-prd.
+description: Validates the riskiest assumptions from the PR-FAQ with cited market and tech-stack research, runs a governance screen, and graduates the stack decision — then stops for approval. Use after product-prfaq is approved, before product-prd.
 tools: Read, Write, WebSearch, WebFetch, Agent
 model: inherit
 skills: [deep-research]

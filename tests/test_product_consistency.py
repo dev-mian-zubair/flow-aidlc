@@ -41,6 +41,49 @@ def test_no_product_dir_is_skipped(tmp_path):
     assert check(tmp_path) == []
 
 
+def test_bad_status_flagged(tmp_path):
+    fm = _OK_FM.replace("status: in-discovery", "status: shipped")
+    _unit(tmp_path, fm, {"vision.md": _VISION_OK})
+    assert any("status" in e for e in check(tmp_path))
+
+
+def test_missing_id_flagged(tmp_path):
+    fm = _OK_FM.replace("id: acme\n", "id:\n")
+    _unit(tmp_path, fm, {"vision.md": _VISION_OK})
+    assert any("'id'" in e for e in check(tmp_path))
+
+
+def test_non_product_without_parent_flagged(tmp_path):
+    # kind: feature (non-product) with parent: null must be flagged
+    fm = _OK_FM.replace("kind: product", "kind: feature")
+    _unit(tmp_path, fm, {"vision.md": _VISION_OK})
+    assert any("parent" in e for e in check(tmp_path))
+
+
+def test_broken_link_flagged(tmp_path):
+    # links.vision points at a file that does not exist
+    fm = _OK_FM.replace("links: {vision: vision.md}", "links: {vision: nope.md}")
+    _unit(tmp_path, fm, {"vision.md": _VISION_OK})
+    assert any("links.vision" in e for e in check(tmp_path))
+
+
+def test_malformed_frontmatter_flagged(tmp_path):
+    # no closing '---' → unparseable frontmatter
+    fm = "---\nid: acme\nkind: product\n## Stages\n- [ ] vision\n"
+    _unit(tmp_path, fm, {})
+    assert any("frontmatter" in e for e in check(tmp_path))
+
+
+def test_research_missing_required_section_flagged(tmp_path):
+    fm = ("---\nid: acme\nkind: product\nparent: null\ngrounding: greenfield\n"
+          "status: in-discovery\nsupersedes: null\nlinks: {research: research.md}\n---\n"
+          "## Stages\n- [x] research\n")
+    research_no_sources = ("## Research questions\nx\n## Market & demand\nx\n## Competitors\nx\n"
+                           "## Recommended tech stack\nx\n## Trade-offs\nx\n## Open questions\nx\n")
+    _unit(tmp_path, fm, {"research.md": research_no_sources})
+    assert any("## Sources" in e for e in check(tmp_path))
+
+
 import subprocess
 from flow_aidlc.commands import init
 from flow_aidlc.checks import gate

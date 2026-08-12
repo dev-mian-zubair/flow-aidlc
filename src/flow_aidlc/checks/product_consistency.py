@@ -70,6 +70,7 @@ _ARTIFACT_SECTIONS: dict[str, list[str]] = {
         "## Non-goals",
         "## Key requirements",
         "## Milestones",
+        "## Open questions",
     ],
     "roadmap.md": [
         "## Candidate epics",

@@ -1,6 +1,6 @@
 ---
 name: product-prd
-description: Consolidate the approved vision, PR-FAQ, and research findings into the authoritative Product Requirements Document with grounded success metrics and a Mermaid story map — then stop for approval. Use after product-research is approved, before product-roadmap.
+description: Consolidates the approved vision, PR-FAQ, and research findings into the authoritative Product Requirements Document with grounded success metrics and a Mermaid story map — then stops for approval. Use after product-research is approved, before product-roadmap.
 tools: Read, Write, Agent
 model: inherit
 ---

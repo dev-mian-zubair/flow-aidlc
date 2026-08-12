@@ -1,6 +1,6 @@
 ---
 name: product-critic
-description: Adversarially stress-test a Discover artifact through ONE assigned lens (market-realist | feasibility | customer-advocate | scope-hawk) and return severity-tagged findings. Use as a member of a Discover critique panel, dispatched by product-prd or product-research with a lens.
+description: Adversarially stress-tests a Discover artifact through ONE assigned lens (market-realist | feasibility | customer-advocate | scope-hawk) and returns severity-tagged findings. Use as a member of a Discover critique panel, dispatched by product-prd or product-research with a lens.
 tools: Read
 model: inherit
 ---

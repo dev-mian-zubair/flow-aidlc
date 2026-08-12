@@ -1,6 +1,6 @@
 ---
 name: product-intake
-description: Open the Discover workstream — classify the repository, derive a product slug, and scaffold the product folder. Use when starting a new greenfield product discovery run, before any other Discover-phase agent.
+description: Opens the Discover workstream — classifies the repository, derives a product slug, and scaffolds the product folder. Use when starting a new greenfield product discovery run, before any other Discover-phase agent.
 tools: Read, Write
 model: inherit
 ---

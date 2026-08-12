@@ -95,8 +95,8 @@ def _print_table(rows: list[dict]) -> None:
         print(f"{r['ticket']:<{w}}  {r['phase']:<6}  {r['stage']:<16}  {bar}")
 
 
-def _product_row(text: str) -> tuple[str, str, str, int]:
-    """Parse a product unit's progress.md → (id, kind, status, checked_stages)."""
+def _product_row(text: str) -> tuple[str, str, str, int, int]:
+    """Parse a product unit's progress.md → (id, kind, status, checked, total)."""
     fm: dict[str, str] = {}
     lines = text.splitlines()
     if lines and lines[0].strip() == "---":
@@ -105,9 +105,19 @@ def _product_row(text: str) -> tuple[str, str, str, int]:
                 break
             if ":" in ln:
                 k, _, v = ln.partition(":")
-                fm[k.strip()] = v.strip()
-    checked = sum(1 for ln in lines if ln.lstrip().startswith("- [x]"))
-    return fm.get("id", "?"), fm.get("kind", "?"), fm.get("status", "?"), checked
+                v = v.strip()
+                cut = v.find(" #")          # strip inline YAML comment (space + #)
+                if cut != -1:
+                    v = v[:cut].rstrip()
+                fm[k.strip()] = v
+    checked = total = 0
+    for ln in lines:
+        m = _STAGE_RE.match(ln)
+        if m:
+            total += 1
+            if m.group(1).lower() == "x":
+                checked += 1
+    return fm.get("id", "?"), fm.get("kind", "?"), fm.get("status", "?"), checked, total
 
 
 def _print_product(root: Path) -> None:
@@ -126,5 +136,6 @@ def _print_product(root: Path) -> None:
         return
     print("\nDiscover / product workstreams")
     print(f"{'ID':<20}  {'KIND':<12}  {'STATUS':<20}  STAGES")
-    for uid, kind, st, checked in units:
-        print(f"{uid:<20}  {kind:<12}  {st:<20}  {checked}/5")
+    for uid, kind, st, checked, total in units:
+        bar = f"{checked}/{total}" if total else "-"
+        print(f"{uid:<20}  {kind:<12}  {st:<20}  {bar}")
