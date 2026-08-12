@@ -34,6 +34,7 @@ flow-aidlc (this package)                 target-repo/ (after `flow init`)
                                                │   ├── map/             (INSTANCE — seeded, curated)
                                                │   ├── decisions/       (INSTANCE)
                                                │   └── practices.md     (INSTANCE, seeded)
+                                               ├── product/             (runtime, Discover units)
                                                └── worklog/             (runtime, per-task)
 ```
 
@@ -75,6 +76,19 @@ queried by agents over MCP through a backend-neutral adapter
 - **`flow check` config-consistency** enforces the graph is wired: `graph.backend` must
   be implemented in the adapter (C6) and `graph.root` / `graph.focus` / `graph.ignore_file`
   must resolve on disk (C7).
+
+## Discover: a separate greenfield front door
+
+Alongside the delivery lifecycle, Flow has a **Discover** phase (slash command
+`/flow-discover`, greenfield only this iteration) that turns a new-product idea into
+gated product-definition artifacts — vision → PR-FAQ → research → PRD → roadmap — under
+`docs/flow/product/<slug>/`. It reuses the same machinery: a per-unit `progress.md` with a
+`## Stages` checklist, templated artifacts, human `/flow-approve` at each `checkpoint: yes`
+stage, and a `flow check` module (`product-consistency`) that validates artifact
+completeness. It is a **distinct entry point**, not part of the `/flow-start` Shape path,
+and does not yet hand off to Scope. An opt-in `--panel` flag dispatches a nested adversarial
+`product-critic` panel (`config.product.review.lenses`) to stress-test the research and PRD
+before their checkpoints. See the playbook's *Discover phase* table.
 
 ## Two execution modes
 
@@ -130,9 +144,9 @@ Two complementary channels, same engine:
 | `flow guardrail add --from <pack>` | Install a curated starter-pack of guardrails (`flow guardrail packs` lists them) |
 | `flow secrets use <provider>` | Route MCP credentials through a secrets manager (Infisical/Doppler); `off` / `status` |
 | `flow doctor` | Health check — hooks installed, MCP reachable, structure valid, code graph wired, credentials + auto-mode readiness |
-| `flow check` | Run the quality gate (guardrail-lint, structure, reference-selfcheck, config-consistency) |
+| `flow check` | Run the quality gate (guardrail-lint, structure, reference-selfcheck, config-consistency, product-consistency) |
 | `flow ci init` | Scaffold a CI workflow that runs the gate (`--gates semgrep,conftest,impeccable` adds deterministic gates) |
-| `flow status` | Show where each ticket sits in the Scope→Shape→Build→Ship pipeline (from `docs/flow/worklog/`) |
+| `flow status` | Show where each ticket sits in the Scope→Shape→Build→Ship pipeline (from `docs/flow/worklog/`), plus Discover product units (from `docs/flow/product/`) |
 | `flow learnings` | Surface correction/redirection signals from task journals; `--promote` records them |
 | `flow selftest` | Mechanical offline self-test of the wiring (maintainer command; runs the vendored unit suite from a source checkout — end users verify installs with `flow check` + `flow doctor`) |
 | `flow refresh` | Rebuild the code graph (structure freshness); `/flow-refresh` curates map invariants |
