@@ -1,6 +1,6 @@
 ---
 description: Begin a greenfield product-definition workstream — scaffold product artifacts, then run the Discover phase.
-argument-hint: "<new product idea>"
+argument-hint: "\"<new product idea>\" [--panel]"
 ---
 
 **`/flow-discover` is a distinct entry point — it is NOT part of the `/flow-start` (Shape) path.** It turns a new-product idea into grounded, gated product-definition artifacts under `docs/flow/product/<slug>/`. This iteration supports **greenfield only** and does not hand off to Scope / Build / Ship.
@@ -10,6 +10,8 @@ argument-hint: "<new product idea>"
 **Step 2 — Dispatch `product-intake`.** Load `.flow/steps/discover/intake.md`. `product-intake` classifies the idea as **greenfield** or **brownfield** and, for greenfield, scaffolds `docs/flow/product/<slug>/`.
 
 - If `product-intake` reports **brownfield**, **stop immediately** and tell the user: *"This idea looks like brownfield work (it targets an existing product). `/flow-discover` is greenfield-only this iteration — use `/flow-start` with the relevant tracker ticket instead."* Do not advance to any further stage.
+
+**Adversarial critique panels (opt-in).** Pass `--panel` (or run in auto mode) to have the gated stages `product-research` and `product-prd` dispatch a parallel adversarial critique panel (`steps/discover/panel-review.md`, one `product-critic` per lens in `config.product.review.lenses`) that stress-tests the artifact and drives a fix-loop BEFORE the `/flow-approve` checkpoint. Without `--panel`, Discover runs the default sequential path (no panels). Panels reuse `config.product.review` (`panel_size`, `max_rounds`, `lenses`).
 
 **Step 3 — Run the Discover phase stages in order.** For a confirmed greenfield classification, load and execute each stage guide in sequence, pausing at every `checkpoint: yes` stage for `/flow-approve` before advancing:
 

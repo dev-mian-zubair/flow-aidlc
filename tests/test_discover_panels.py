@@ -25,3 +25,14 @@ def test_product_critic_is_read_only():
     assert "Write" not in fm and "Agent" not in fm and "Task" not in fm
     assert "model: inherit" in t
     assert "## Return to caller" in t
+
+
+def test_flow_discover_documents_panel_flag():
+    cmd = (_ENG / "claude/commands/flow-discover.md").read_text(encoding="utf-8")
+    assert "--panel" in cmd
+    assert "panel-review.md" in cmd
+
+
+def test_playbook_notes_critique_panel():
+    pb = (_ENG / "flow/playbook.md").read_text(encoding="utf-8")
+    assert "product-critic" in pb or "critique panel" in pb.lower()
