@@ -50,6 +50,20 @@ upstream artifact — no new uncited market assertions. This step is a
    - [x] prd
    ```
 
+## Critique panel (opt-in)
+
+This section is active **only when panels are enabled** (`config.product.review` present AND the session was started with `/flow-discover --panel` or auto mode is running). When disabled, skip directly to CHECKPOINT — this is the default Plan 1 behavior.
+
+When panels are enabled:
+
+1. Invoke `steps/discover/panel-review.md` on the drafted PRD.
+2. Dispatch one `product-critic` subagent per lens in `config.product.review.lenses` — all in parallel.
+3. **Consensus** = no open high-severity finding across all critics after a round.
+4. **Fix loop** — on any high-severity finding: the `product-prd` agent (not the critics) revises the PRD to address each open high-severity finding, then the panel re-critiques the change only. Repeat up to `config.product.review.max_rounds` rounds (default 3).
+5. Proceed to CHECKPOINT with the improved PRD. If max_rounds is exhausted without convergence, surface residual high-severity findings clearly to the human at the checkpoint for a decision.
+
+Medium and low findings are recorded in the PRD's open-questions section and are NOT looped on.
+
 ## CHECKPOINT
 
 Before presenting for `/flow-approve`, verify:

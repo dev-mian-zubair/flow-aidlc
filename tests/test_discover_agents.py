@@ -14,11 +14,18 @@ def test_all_agents_inherit_model():
         assert "model: inherit" in (_A / f"{n}.md").read_text(encoding="utf-8"), n
 
 
-def test_no_agent_holds_the_agent_tool():
-    # leaf agents this iteration — none may carry the Agent/Task tool
-    for n in _NAMES:
+_MAY_ORCHESTRATE = {"product-prd", "product-research"}
+
+
+def test_only_orchestrators_hold_the_agent_tool():
+    # product-prd/product-research dispatch the critique panel (Plan 2); the rest stay leaf.
+    for n in _NAMES + ["product-critic"]:
         fm = (_A / f"{n}.md").read_text(encoding="utf-8").split("---")[1]
-        assert "Agent" not in fm and "Task" not in fm, n
+        has_agent = "Agent" in fm
+        if n in _MAY_ORCHESTRATE:
+            assert has_agent, f"{n} should carry Agent for the panel"
+        else:
+            assert not has_agent, f"{n} must stay leaf"
 
 
 def test_research_agent_has_web_and_deep_research():

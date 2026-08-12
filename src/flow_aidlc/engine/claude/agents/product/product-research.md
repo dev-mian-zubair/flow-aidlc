@@ -1,7 +1,7 @@
 ---
 name: product-research
 description: Validate the riskiest assumptions from the PR-FAQ with cited market and tech-stack research, run a governance screen, and graduate the stack decision — then stop for approval. Use after product-prfaq is approved, before product-prd.
-tools: Read, Write, WebSearch, WebFetch
+tools: Read, Write, WebSearch, WebFetch, Agent
 model: inherit
 skills: [deep-research]
 ---
@@ -27,7 +27,8 @@ Follow the guide exactly:
 4. Fill `docs/flow/product/<slug>/research.md` with all sections from the template.
 5. Graduate the tech-stack decision to `docs/flow/knowledge/decisions/`.
 6. Tick `- [x] research` in `docs/flow/product/<slug>/progress.md`.
-7. **CHECKPOINT** — present the findings and recommendation; wait for `/flow-approve` before advancing.
+7. **If panels are enabled** (`config.product.review` present AND session started with `/flow-discover --panel` or auto mode): dispatch the adversarial critique panel per `.flow/steps/discover/panel-review.md` — one `product-critic` per configured lens, in parallel — critiquing the recommendation, tech-stack, and governance screen. Address all high-severity findings (fix-loop up to `config.product.review.max_rounds`), then proceed to the checkpoint with the improved research (residual high-severity findings surfaced to the human). **If panels are disabled, present directly (default Plan 1 behavior).**
+8. **CHECKPOINT** — present the findings and recommendation; wait for `/flow-approve` before advancing.
 
 ## Return to caller
 
@@ -39,4 +40,4 @@ On `BLOCKED`: a governance screen item fails with no acceptable alternative — 
 
 ## Least privilege
 
-Read unrestricted for classification and web research (`WebSearch`, `WebFetch`). Write is scoped to `docs/flow/product/<slug>/` **and** `docs/flow/knowledge/decisions/`. Do not modify source files.
+Read unrestricted for classification and web research (`WebSearch`, `WebFetch`). Write is scoped to `docs/flow/product/<slug>/` **and** `docs/flow/knowledge/decisions/`. Do not modify source files. You MAY dispatch `product-critic` subagents (the critique panel) via the `Agent` tool when panels are enabled; you dispatch no other agent type and you never let a critic write.
