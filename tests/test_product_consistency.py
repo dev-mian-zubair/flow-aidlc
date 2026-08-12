@@ -67,6 +67,13 @@ def test_broken_link_flagged(tmp_path):
     assert any("links.vision" in e for e in check(tmp_path))
 
 
+def test_link_path_traversal_flagged(tmp_path):
+    # a link that escapes the unit dir must be rejected, not probed
+    fm = _OK_FM.replace("links: {vision: vision.md}", "links: {vision: ../../etc/passwd}")
+    _unit(tmp_path, fm, {"vision.md": _VISION_OK})
+    assert any("relative path inside" in e for e in check(tmp_path))
+
+
 def test_malformed_frontmatter_flagged(tmp_path):
     # no closing '---' → unparseable frontmatter
     fm = "---\nid: acme\nkind: product\n## Stages\n- [ ] vision\n"

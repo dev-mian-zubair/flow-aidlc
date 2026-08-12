@@ -30,9 +30,7 @@ knowledge:
   map_index: docs/flow/knowledge/map/README.md   # curated Knowledge Map — Scope/Shape read it for grounding (see steps/shared/knowledge-map.md)
   map_machine_index: .flow/knowledge-map.yaml  # derives-from globs for naming affected file(s)/module(s)
 product:
-  framework: working-backwards   # greenfield lead artifact = PR-FAQ
-  prioritization: rice           # rice | ice
-  diagram: mermaid               # diagrams-as-code backend
+  prioritization: rice           # rice | ice — roadmap scoring (read by steps/discover/roadmap.md)
   review:                          # opt-in adversarial critique panel (/flow-discover --panel)
     max_rounds: 3                  # revise/re-critique rounds before surfacing residuals
     lenses: [market-realist, feasibility, customer-advocate, scope-hawk]

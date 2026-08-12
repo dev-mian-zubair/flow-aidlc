@@ -329,8 +329,7 @@ guardrails:
   always_on: []                      # your blocking invariants (empty until you add them)
   optional:  [security-baseline, resiliency-baseline, test-coverage, dependency-provenance]
 product:                             # the Discover phase (/flow-discover)
-  framework: working-backwards       # greenfield lead artifact = PR-FAQ
-  prioritization: rice               # rice | ice
+  prioritization: rice               # rice | ice — roadmap scoring
   review: { max_rounds: 3, lenses: [market-realist, feasibility, customer-advocate, scope-hawk] }  # opt-in --panel critique
 graph:
   backend: graphify                  # code-graph backend (queried over MCP)

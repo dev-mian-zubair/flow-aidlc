@@ -242,7 +242,15 @@ def check(repo_root: Path | str) -> list[str]:
         links = fm.get("links")
         if isinstance(links, dict):
             for link_key, link_file in links.items():
-                if not link_file:
+                if not link_file or not isinstance(link_file, str):
+                    continue
+                # A link must stay inside the unit directory — reject absolute paths
+                # and parent-traversal rather than probing outside the tree.
+                if Path(link_file).is_absolute() or ".." in Path(link_file).parts:
+                    errors.append(
+                        f"product-consistency: {unit_id}: links.{link_key} → '{link_file}' "
+                        f"must be a relative path inside the unit directory"
+                    )
                     continue
                 link_path = unit_dir / link_file
                 if not link_path.exists():

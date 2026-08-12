@@ -26,7 +26,7 @@ def test_init_scaffolds_and_gate_passes(tmp_path):
     assert "PI-{n}" in config_text
     assert "{{" not in config_text, "unrendered tokens remain in config.yaml"
     assert "product:" in config_text
-    assert "framework: working-backwards" in config_text
+    assert "prioritization: rice" in config_text
 
     # Core scaffolded files exist.
     assert (tmp_path / ".flow" / "playbook.md").exists()
