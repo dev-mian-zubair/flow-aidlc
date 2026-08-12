@@ -18,6 +18,21 @@ Each stage's work is performed by the matching least-privilege subagent under `.
 Scope (front door) → Shape → Build (per slice) → Ship
 ```
 
+## Discover phase (greenfield) — `/flow-discover`
+
+A distinct entry point that turns a new-product idea into grounded, gated
+product-definition artifacts under `docs/flow/product/<slug>/`. Greenfield only this
+iteration; not part of the `/flow-start` path.
+
+| Phase | Stage | When | load: | skill: | checkpoint: |
+|-------|-------|------|-------|--------|-------------|
+| Discover | intake | ALWAYS (greenfield) | `steps/discover/intake.md` | — | no |
+| Discover | vision | ALWAYS | `steps/discover/vision.md` | `superpowers:brainstorming` | yes |
+| Discover | pr-faq | ALWAYS | `steps/discover/pr-faq.md` | — | yes |
+| Discover | research | ALWAYS | `steps/discover/research.md` | `deep-research` | yes |
+| Discover | prd | ALWAYS | `steps/discover/prd.md` | — | yes |
+| Discover | roadmap | OPTIONAL | `steps/discover/roadmap.md` | — | yes |
+
 ## Per-Stage Table
 
 | Phase | Stage | When | load: | skill: | checkpoint: |
