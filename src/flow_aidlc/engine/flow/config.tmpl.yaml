@@ -29,6 +29,10 @@ tracker:
 knowledge:
   map_index: docs/flow/knowledge/map/README.md   # curated Knowledge Map — Scope/Shape read it for grounding (see steps/shared/knowledge-map.md)
   map_machine_index: .flow/knowledge-map.yaml  # derives-from globs for naming affected file(s)/module(s)
+product:
+  framework: working-backwards   # greenfield lead artifact = PR-FAQ
+  prioritization: rice           # rice | ice
+  diagram: mermaid               # diagrams-as-code backend
 
 review:
   branch_hardening:              # pr-review-toolkit agents run at Ship/branch-hardening (whole-branch, pre-PR)
