@@ -61,7 +61,7 @@ iteration; not part of the `/flow-start` path.
 
 ## Checkpoint Rule
 
-At each stage where `checkpoint: yes`, **stop and wait for `/flow-approve`** before advancing to the next stage. The `checkpoint-stop` hook enforces this automatically. Do not proceed past a checkpoint under any circumstance without explicit approval.
+At each stage where `checkpoint: yes`, **stop and wait for `/flow-approve`** before advancing to the next stage. For Scope/Shape/Build/Ship worklog stages, the `checkpoint-stop` hook reinforces this; that hook is worklog-keyed and does **not** fire for Discover product units — Discover checkpoints are cleared exclusively by the human running `/flow-approve` (the hook does not apply to product units this iteration). Do not proceed past a checkpoint under any circumstance without explicit approval.
 
 ## Execution modes
 

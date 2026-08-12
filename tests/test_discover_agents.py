@@ -1,7 +1,7 @@
 from pathlib import Path
 
 _A = Path(__file__).resolve().parents[1] / "src/flow_aidlc/engine/claude/agents/product"
-_NAMES = ["product-intake", "product-outcome", "product-prfaq", "product-research", "product-prd", "product-roadmap"]
+_NAMES = ["product-intake", "product-vision", "product-prfaq", "product-research", "product-prd", "product-roadmap"]
 
 
 def test_all_six_agents_exist():

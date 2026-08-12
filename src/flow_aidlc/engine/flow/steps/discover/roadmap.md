@@ -13,9 +13,7 @@ and is **skippable for a single-epic product** (see Notes).
 
 ## Skippable condition
 
-If the PRD story map has exactly one user activity (single epic), this stage may
-be skipped. Document the decision in `docs/flow/product/<slug>/progress.md` with
-a note: `roadmap skipped — single-epic product`. Still tick the stage checkbox.
+This stage is optional — skip for a single-epic product (the PRD story map has exactly one user activity) or if the user declines. Document the decision in `docs/flow/product/<slug>/progress.md` with a note: `roadmap skipped — single-epic product` or `roadmap skipped — user declined`. Still tick the stage checkbox.
 
 ## Workflow
 
@@ -78,9 +76,7 @@ conclude the Discover phase.
 
 ## Notes
 
-- For a single-epic product this stage may be skipped (tick the checkbox and
-  note the reason). The PRD story map and milestones table already provides
-  sufficient sequencing in that case.
+- This stage is optional — skip for a single-epic product or if the user declines (tick the checkbox and note the reason). The PRD story map and milestones table already provides sufficient sequencing in that case.
 - If two epics have equal scores, prefer the one with higher Confidence — it
   reduces the risk of misjudged assumptions.
 - The roadmap is a planning artifact, not a commitment. Horizons will shift as

@@ -13,12 +13,12 @@ argument-hint: "<new product idea>"
 
 **Step 3 — Run the Discover phase stages in order.** For a confirmed greenfield classification, load and execute each stage guide in sequence, pausing at every `checkpoint: yes` stage for `/flow-approve` before advancing:
 
-1. **vision** — load `.flow/steps/discover/vision.md`; invoke `superpowers:brainstorming`; **checkpoint** → wait for `/flow-approve`.
-2. **pr-faq** — load `.flow/steps/discover/pr-faq.md`; **checkpoint** → wait for `/flow-approve`.
-3. **research** — load `.flow/steps/discover/research.md`; invoke `deep-research`; **checkpoint** → wait for `/flow-approve`.
-4. **prd** — load `.flow/steps/discover/prd.md`; **checkpoint** → wait for `/flow-approve`.
-5. **roadmap** (`product-roadmap`) — load `.flow/steps/discover/roadmap.md` (**optional** — skip if the user declines); **checkpoint** → wait for `/flow-approve`.
+1. **vision** — load `.flow/steps/discover/vision.md`; invoke `superpowers:brainstorming`; **checkpoint** → present the artifact to the human; wait for `/flow-approve`.
+2. **pr-faq** — load `.flow/steps/discover/pr-faq.md`; **checkpoint** → present the artifact to the human; wait for `/flow-approve`.
+3. **research** — load `.flow/steps/discover/research.md`; invoke `deep-research`; **checkpoint** → present the artifact to the human; wait for `/flow-approve`.
+4. **prd** — load `.flow/steps/discover/prd.md`; **checkpoint** → present the artifact to the human; wait for `/flow-approve`.
+5. **roadmap** (`product-roadmap`) — load `.flow/steps/discover/roadmap.md` (**optional** — skip for a single-epic product or if the user declines); **checkpoint** → present the roadmap to the human; wait for `/flow-approve`.
 
-All product-definition artifacts are written under `docs/flow/product/<slug>/`. At each checkpoint, the `checkpoint-reviewer` subagent verifies stage completeness before `/flow-approve` may be granted.
+All product-definition artifacts are written under `docs/flow/product/<slug>/`. At each checkpoint, the human reviews the stage artifact and runs `/flow-approve` to advance; `flow check` (product-consistency) validates artifact completeness. The worklog-scoped `checkpoint-reviewer` subagent does NOT run in Discover — it operates on `docs/flow/worklog/<TICKET-ID>/` paths and does not apply to product units.
 
 **This path terminates after `roadmap`.** It does not chain into `/flow-start`, Scope, Build, or Ship. If the user wants to progress from product definition to ticket-tracked delivery, they should open a Scope workstream manually using the outputs from this phase as source material.

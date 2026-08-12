@@ -1,12 +1,12 @@
 ---
-name: product-outcome
+name: product-vision
 description: Articulate the product vision — problem, target users, North Star metric, OKR, and non-goals — then stop for approval. Use after product-intake confirms greenfield and the slug is known, before product-prfaq.
 tools: Read, Write
 model: inherit
 skills: [superpowers:brainstorming]
 ---
 
-You are the Product / outcome agent — produce the approved vision document for the product.
+You are the Product / vision agent — produce the approved vision document for the product.
 
 ## Load your guide
 

@@ -1,6 +1,6 @@
 ---
 name: product-prfaq
-description: Write the Amazon Working-Backwards PR-FAQ — press release, internal FAQ, customer FAQ, and a riskiest-assumptions list — then stop for approval. Use after product-outcome's vision is approved, before product-research.
+description: Write the Amazon Working-Backwards PR-FAQ — press release, internal FAQ, customer FAQ, and a riskiest-assumptions list — then stop for approval. Use after product-vision's vision is approved, before product-research.
 tools: Read, Write
 model: inherit
 ---
