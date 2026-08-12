@@ -33,7 +33,7 @@ iteration; not part of the `/flow-start` path.
 | Discover | prd | ALWAYS | `steps/discover/prd.md` | — | yes |
 | Discover | roadmap | OPTIONAL | `steps/discover/roadmap.md` | — | yes |
 
-**Critique panels (opt-in):** with `/flow-discover --panel` (or auto mode), the `research` and `prd` gated stages run an adversarial `product-critic` panel (`steps/discover/panel-review.md`) before `/flow-approve`; the default is human `/flow-approve` only.
+**Critique panels (opt-in):** with `/flow-discover --panel`, the `research` and `prd` gated stages run an adversarial `product-critic` panel (`steps/discover/panel-review.md`) before `/flow-approve`; the default is human `/flow-approve` only. Auto-mode Discover is not wired this iteration.
 
 ## Per-Stage Table
 
