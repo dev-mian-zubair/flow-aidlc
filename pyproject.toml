@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "flow-aidlc"
-version = "0.3.0"
+version = "0.3.1"
 description = "Flow — a governed, project-agnostic AI-DLC methodology (Scope → Shape → Build → Ship) you can drop into any repo."
 readme = "README.md"
 requires-python = ">=3.10"
