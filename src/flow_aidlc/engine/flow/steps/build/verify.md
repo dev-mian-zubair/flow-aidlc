@@ -42,14 +42,16 @@ Record each guardrail result in `docs/flow/worklog/<TICKET-ID>/build/<slice-id>/
 
 ### 3 — Request code review
 
-Invoke `superpowers:requesting-code-review` to open the review request.
-Attach the slice diff and the completed `code-plan.md`.
+The conductor invokes `superpowers:requesting-code-review` to open the review
+request, attaching the slice diff and the completed `code-plan.md`. (This guide's
+agent is read-only — it consumes the review result; it does not invoke the skill,
+so it needs no `Skill` tool.)
 
 ### 4 — Verification before completion
 
-Invoke `superpowers:verification-before-completion` to perform the final
-cross-check: confirm the implementation matches the slice design, all edge
-cases are covered by tests, and no guardrail is outstanding.
+The conductor invokes `superpowers:verification-before-completion` for the final
+cross-check: that the implementation matches the slice design, all edge cases are
+covered by tests, and no guardrail is outstanding.
 
 ## Checkpoint
 
