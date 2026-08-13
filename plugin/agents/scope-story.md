@@ -1,6 +1,6 @@
 ---
 name: scope-story
-description: Draft the tracker ticket from the structured intent produced by scope-clarify — title, description, acceptance criteria, and required labels. Use after scope-clarify, before scope-publish. Read-only.
+description: Drafts the tracker ticket from the structured intent produced by scope-clarify — title, description, acceptance criteria, and required labels. Use after scope-clarify, before scope-publish. Read-only.
 tools: Read
 model: inherit
 ---

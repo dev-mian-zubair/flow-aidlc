@@ -30,8 +30,8 @@ fi
 # Count STALE docs: files under docs/flow/knowledge/map/ with frontmatter status: STALE
 root="$(flow_repo_root)"
 stale_count=0
-if [ -n "$root" ] && [ -d "$root/knowledge/map" ]; then
-    stale_count="$(grep -rl '^status: STALE' "$root/knowledge/map/" 2>/dev/null | wc -l | tr -d ' ')" || stale_count=0
+if [ -n "$root" ] && [ -d "$root/docs/flow/knowledge/map" ]; then
+    stale_count="$(grep -rl '^status: STALE' "$root/docs/flow/knowledge/map/" 2>/dev/null | wc -l | tr -d ' ')" || stale_count=0
 fi
 
 echo "=== Flow: Active Workstream ==="

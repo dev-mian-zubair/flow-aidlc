@@ -23,7 +23,7 @@ Read `.flow/steps/shared/kickoff.md` and follow it exactly.
 4. Route the conditional pre-steps, then `shape-requirements`:
    - **Brownfield** (existing code touched) → `shape-map` first.
    - **Needs an external dependency** the stack lacks → `shape-research`.
-   - Run whichever apply (map, then research); pure greenfield with no new dependency → straight to `shape-requirements`.
+   - Determine which pre-steps apply (map, then research); pure greenfield with no new dependency → straight to `shape-requirements`. Include the decision in `ROUTE` — the conductor (`/flow-start`) dispatches the routed agents; this agent does not.
 5. Announce: `Powered by superpowers — governed path active. Task: <TICKET-ID>  Stage: Shape/intake`.
 
 ## Return to caller
