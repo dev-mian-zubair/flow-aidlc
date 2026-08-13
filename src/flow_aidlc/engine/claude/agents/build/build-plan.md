@@ -1,6 +1,6 @@
 ---
 name: build-plan
-description: Produce a checkboxed, file-by-file implementation plan for the current Build slice before any code is written. Use after slice-design, before build-generate.
+description: Produce a checkboxed, file-by-file implementation plan for the current Build slice before any code is written. Use after the slice design doc (`build/<slice-id>/design.md`) is written, before build-generate.
 tools: Read, Write
 model: inherit
 skills: [superpowers:writing-plans]

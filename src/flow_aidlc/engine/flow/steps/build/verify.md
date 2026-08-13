@@ -42,18 +42,20 @@ Record each guardrail result in `docs/flow/worklog/<TICKET-ID>/build/<slice-id>/
 
 ### 3 — Request code review
 
-Invoke `superpowers:requesting-code-review` to open the review request.
-Attach the slice diff and the completed `code-plan.md`.
+The conductor invokes `superpowers:requesting-code-review` to open the review
+request, attaching the slice diff and the completed `code-plan.md`. (This guide's
+agent is read-only — it consumes the review result; it does not invoke the skill,
+so it needs no `Skill` tool.)
 
 ### 4 — Verification before completion
 
-Invoke `superpowers:verification-before-completion` to perform the final
-cross-check: confirm the implementation matches the slice design, all edge
-cases are covered by tests, and no guardrail is outstanding.
+The conductor invokes `superpowers:verification-before-completion` for the final
+cross-check: that the implementation matches the slice design, all edge cases are
+covered by tests, and no guardrail is outstanding.
 
 ## Checkpoint
 
-Before presenting for `/flow-approve`, dispatch the read-only `checkpoint-reviewer` subagent to verify stage completeness (and traceability at the Shape→Build boundary).
+This is a checkpoint stage: the conductor dispatches the read-only `checkpoint-reviewer` (after the `guardrail-verifier`) to verify stage completeness before `/flow-approve`. This guide's agent does not dispatch it — it presents its artifact and returns.
 
 Stop here. Wait for `/flow-approve` before entering `steps/ship/branch-hardening.md` (the first Ship stage).
 
@@ -61,6 +63,7 @@ Approval requires:
 - All guardrails passed (recorded in `verify.md`).
 - Code review completed and concerns addressed.
 - `superpowers:verification-before-completion` sign-off.
+- `checkpoint-reviewer` verdict: APPROVED.
 
 ## Output
 

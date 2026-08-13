@@ -1,6 +1,6 @@
 ---
 name: guardrail-verifier
-description: Adversarially check the current diff against every enabled guardrail rule; return per-rule compliant/non-compliant/N-A and block on any failure. Use at build-verify and as an auto-mode panel member.
+description: Adversarially check the current diff against every enabled guardrail rule; return per-rule compliant/non-compliant/N-A and block on any failure. Use at build-verify, at ship/branch-hardening, and as an auto-mode panel member.
 tools: Read, Grep, Glob, Bash
 model: inherit
 ---
@@ -74,7 +74,7 @@ or
 
 ## Blocking behaviour
 
-If any rule returns **non-compliant**, the overall result is **BLOCKED**. Do not soften the verdict. The caller (`build-verify`) must resolve the issue and re-dispatch you before the checkpoint can proceed.
+If any rule returns **non-compliant**, the overall result is **BLOCKED**. Do not soften the verdict. The calling conductor (at build-verify, or the branch-hardening orchestrator at Ship) must resolve the issue and re-dispatch you before the checkpoint can proceed.
 
 ## Least privilege
 

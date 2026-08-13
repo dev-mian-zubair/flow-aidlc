@@ -35,9 +35,9 @@ artefact that drives `generate.md`; generate nothing without it.
 
 ## Checkpoint
 
-Stop here. Wait for `/flow-approve` before entering `generate.md`.
+This is a checkpoint stage: the conductor dispatches the read-only `checkpoint-reviewer` to confirm the plan before `/flow-approve`. Stop here; wait for `/flow-approve` before entering `generate.md`.
 
-The reviewer must confirm:
+The `checkpoint-reviewer` must confirm:
 - All files in scope are accounted for.
 - Guardrail-flagged items are acknowledged.
 - No scope creep beyond the slice boundary.

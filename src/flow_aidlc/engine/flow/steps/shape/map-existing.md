@@ -37,21 +37,14 @@ callers/dependents/contracts **deterministically**:
 
    Cite results by their graph `file:line`. Do **not** hand-grep for callers when the
    graph can answer.
-4. **Fallback to `Explore`/grep — only where the graph can't answer.** Delegate to the
-   read-only `Explore` agent for: code **not yet in the committed graph** (new or
-   uncommitted work), an **HTTP boundary between services** (an HTTP call is not an
-   AST edge, so the regions don't connect — see the adapter), non-code config, or a
-   **graph outage / staleness** (rebuild with the configured `graph.build`). State in
-   the map when a fact came from the fallback rather than the graph.
-
-   ```
-   Agent: Explore
-   Scope: only the surface the graph could not resolve (above) — seeded from the
-          ticket's Area + Affected file(s)/module(s).
-   Depth: medium (adjust to deep if that surface is large)
-   ```
-
-   The `Explore` agent must **read only** — no edits, no writes.
+4. **Fallback to your own grep/glob survey — only where the graph can't answer.** For
+   code **not yet in the committed graph** (new or uncommitted work), an **HTTP boundary
+   between services** (an HTTP call is not an AST edge, so the regions don't connect — see
+   the adapter), non-code config, or a **graph outage / staleness** (rebuild with the
+   configured `graph.build`), survey that surface yourself with your `Grep` / `Glob` /
+   `Read` tools — scoped to only the surface the graph could not resolve, seeded from the
+   ticket's Area + Affected file(s)/module(s). Read only — make no edits or writes. State
+   in the map when a fact came from this fallback rather than the graph.
 
 ## What to map
 

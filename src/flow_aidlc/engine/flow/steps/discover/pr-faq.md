@@ -21,7 +21,7 @@ Always. Every greenfield product needs a PR-FAQ before research and PRD.
    metric, and non-goals.
 
 2. **Draft the PR-FAQ.** Fill `docs/flow/product/<slug>/pr-faq.md` in place
-   using `templates/product/pr-faq.tmpl.md` as the structure:
+   using `.flow/templates/product/pr-faq.tmpl.md` as the structure:
 
    - **Press release** — headline, dateline, problem paragraph, solution
      paragraph, customer quote, call to action.

@@ -1,6 +1,6 @@
 ---
 name: scope-clarify
-description: Turn a raw idea into structured intent — extract the real goal, surface ambiguity, and agree success criteria and ticket type before any ticket is written. Use as the Scope-phase front door, before scope-story. Repo-less.
+description: Turns a raw idea into structured intent — extracts the real goal, surfaces ambiguity, and agrees success criteria and ticket type before any ticket is written. Use as the Scope-phase front door, before scope-story. Repo-less.
 tools: Read, mcp__github, mcp__jira, mcp__linear, mcp__azure-devops, mcp__shortcut, mcp__asana, mcp__clickup, mcp__graphify, WebSearch
 model: inherit
 skills: [superpowers:brainstorming]

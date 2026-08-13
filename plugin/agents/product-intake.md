@@ -22,7 +22,7 @@ Follow the guide exactly:
 
 1. Detect greenfield vs brownfield; stop immediately and report "brownfield/revamp not supported this iteration — greenfield only" if brownfield.
 2. Derive `<slug>` from the idea and confirm if ambiguous.
-3. Scaffold `docs/flow/product/<slug>/` from `templates/product/`.
+3. Scaffold `docs/flow/product/<slug>/` from `.flow/templates/product/`.
 4. Announce the slug and route to `product-vision`.
 
 ## Return to caller

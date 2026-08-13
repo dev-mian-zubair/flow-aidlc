@@ -1,5 +1,6 @@
 ---
 description: Run Flow in auto mode — grind the flow-auto-labeled backlog autonomously (no checkpoints; adversarial panels gate each stage; merge on green CI). Terminal only when the queue is empty, a cap is hit, or .flow/STOP appears.
+argument-hint: "[ticket e.g. ABC-123 — omit to grind the whole queue]"
 ---
 
 Read `.flow/playbook.md` (the "Execution modes" section) and load `.flow/steps/auto/loop.md`, then run the autonomous loop.

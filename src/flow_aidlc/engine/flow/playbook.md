@@ -10,7 +10,7 @@
 
 ## Agents
 
-Each stage's work is performed by the matching least-privilege subagent under `.claude/agents/<phase>/` — Claude selects the correct agent by its `description` field. At every `checkpoint: yes` stage, the read-only `checkpoint-reviewer` subagent verifies stage completeness before `/flow-approve`; at the Shape→Build boundary it also checks traceability. At Build/verify the `guardrail-verifier` subagent adversarially checks the diff against every enabled always-on guardrail in `config.yaml` (plus any enabled optional guardrails) before the checkpoint can be approved.
+Each stage's work is performed by the matching least-privilege subagent under `.claude/agents/<phase>/` — Claude selects the correct agent by its `description` field. (The Build `slice-design` stage is the one exception: it is performed inline by the conductor, has no delegated agent, and is not a checkpoint — its output `build/<slice-id>/design.md` feeds `build-plan`.) At every `checkpoint: yes` stage, the read-only `checkpoint-reviewer` subagent verifies stage completeness before `/flow-approve`; at the Shape→Build boundary it also checks traceability. At Build/verify the `guardrail-verifier` subagent adversarially checks the diff against every enabled always-on guardrail in `config.yaml` (plus any enabled optional guardrails) before the checkpoint can be approved.
 
 ## The Path
 

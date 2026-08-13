@@ -38,7 +38,7 @@ and **STOP**. Do not proceed.
    mkdir -p docs/flow/product/<slug>
    ```
 
-   Copy and fill `templates/product/progress.tmpl.md` → `docs/flow/product/<slug>/progress.md`.
+   Copy and fill `.flow/templates/product/progress.tmpl.md` → `docs/flow/product/<slug>/progress.md`.
    Fill the frontmatter fields:
 
    - `id: <slug>`
@@ -52,11 +52,11 @@ and **STOP**. Do not proceed.
    they will be filled by their respective stage agents):
 
    ```
-   templates/product/vision.tmpl.md   → docs/flow/product/<slug>/vision.md
-   templates/product/pr-faq.tmpl.md   → docs/flow/product/<slug>/pr-faq.md
-   templates/product/research.tmpl.md → docs/flow/product/<slug>/research.md
-   templates/product/prd.tmpl.md      → docs/flow/product/<slug>/prd.md
-   templates/product/roadmap.tmpl.md  → docs/flow/product/<slug>/roadmap.md
+   .flow/templates/product/vision.tmpl.md   → docs/flow/product/<slug>/vision.md
+   .flow/templates/product/pr-faq.tmpl.md   → docs/flow/product/<slug>/pr-faq.md
+   .flow/templates/product/research.tmpl.md → docs/flow/product/<slug>/research.md
+   .flow/templates/product/prd.tmpl.md      → docs/flow/product/<slug>/prd.md
+   .flow/templates/product/roadmap.tmpl.md  → docs/flow/product/<slug>/roadmap.md
    ```
 
 4. **Route to vision.** Announce the slug, confirm the folder is scaffolded,
