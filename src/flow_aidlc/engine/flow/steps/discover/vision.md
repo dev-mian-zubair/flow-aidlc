@@ -33,7 +33,7 @@ Use the brainstorming output to surface:
 
 2. **Draft the vision document.** Fill `docs/flow/product/<slug>/vision.md` in
    place (the stub was created by intake). Produce all five sections from
-   `templates/product/vision.tmpl.md`:
+   `.flow/templates/product/vision.tmpl.md`:
 
    - Problem
    - Target users

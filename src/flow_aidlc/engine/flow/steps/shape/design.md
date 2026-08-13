@@ -63,7 +63,7 @@ Decisions that affect only this task stay in the worklog and are not graduated.
 
 ## CHECKPOINT
 
-Before presenting for `/flow-approve`, dispatch the read-only `checkpoint-reviewer` subagent to verify stage completeness (and traceability at the Shape→Build boundary).
+This is a checkpoint stage: the conductor dispatches the read-only `checkpoint-reviewer` to verify stage completeness (and traceability at the Shape→Build boundary) before `/flow-approve`. This agent does not dispatch it — it presents its artifact and returns.
 
 **Stop here.** Present the design document and any graduated decision records to
 the user. Wait for `/flow-approve` before advancing to Shape / slicing.

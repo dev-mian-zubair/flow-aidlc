@@ -78,7 +78,7 @@ Print this note exactly once at the start of a new task session (not on resume):
 
 ```
 Powered by superpowers — governed path active.
-Task: <TICKET-ID>  Stage: Scope/clarify
+Task: <TICKET-ID>  Stage: <STAGE-NAME>
 ```
 
 After announcing, load the first stage guide and proceed.

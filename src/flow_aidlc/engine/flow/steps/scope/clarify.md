@@ -64,9 +64,9 @@ type with a one-line rationale and confirm with the user** — never infer silen
 
 | Type | Test | Outcome |
 |------|------|---------|
-| `bug`  | Corrects broken or unintended behavior in existing code | one ticket → `templates/scope/bug.tmpl.md` |
-| `task` | Trivial, mechanical, narrow; a single observable criterion | one ticket → `templates/scope/small-task.tmpl.md` |
-| `feat` | Net-new capability that fits **one** Shape→Build→Ship cycle | one ticket → `templates/scope/feature.tmpl.md` |
+| `bug`  | Corrects broken or unintended behavior in existing code | one ticket → `.flow/templates/scope/bug.tmpl.md` |
+| `task` | Trivial, mechanical, narrow; a single observable criterion | one ticket → `.flow/templates/scope/small-task.tmpl.md` |
+| `feat` | Net-new capability that fits **one** Shape→Build→Ship cycle | one ticket → `.flow/templates/scope/feature.tmpl.md` |
 | `epic` | Initiative too large for one cycle — multiple independent deliverables, spans subsystems, or would produce many unrelated slices | **parent + child stubs** (see below) |
 
 The `feat`↔`epic` line is the decomposition test: if the idea is several
@@ -86,7 +86,7 @@ child is picked up in its own Shape phase.
 2. Review interactively with the user — add / merge / split / drop children until
    the set is agreed. Apply `steps/shared/overconfidence-prevention.md`.
 3. The agreed breakdown is handed to **Scope / story**, which drafts the Epic
-   parent (`templates/scope/epic.tmpl.md`) plus one stub per child.
+   parent (`.flow/templates/scope/epic.tmpl.md`) plus one stub per child.
 
 ## Output
 

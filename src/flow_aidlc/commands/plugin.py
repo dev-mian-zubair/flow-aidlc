@@ -37,10 +37,12 @@ from flow_aidlc import __version__
 from flow_aidlc.engine_assets import engine_dir
 
 # The engine references its hook scripts by the in-repo path a `flow init`
-# install lays down (``.claude/hooks/foo.sh``). Inside a plugin the same scripts
-# live under the plugin root, addressed via Claude Code's ``${CLAUDE_PLUGIN_ROOT}``
-# convention. This rewrites the former into the latter.
-_HOOK_PATH_RE = re.compile(r"\.claude/hooks/([A-Za-z0-9_.-]+)")
+# install lays down (``.claude/hooks/foo.sh``), optionally anchored at the project
+# root (``${CLAUDE_PROJECT_DIR}/.claude/hooks/foo.sh``). Inside a plugin the same
+# scripts live under the plugin root, addressed via Claude Code's
+# ``${CLAUDE_PLUGIN_ROOT}`` convention. This rewrites the former into the latter,
+# consuming any ``${CLAUDE_PROJECT_DIR}/`` anchor so the two never stack.
+_HOOK_PATH_RE = re.compile(r"(?:\$\{CLAUDE_PROJECT_DIR\}/)?\.claude/hooks/([A-Za-z0-9_.-]+)")
 _PLUGIN_HOOK_PREFIX = "${CLAUDE_PLUGIN_ROOT}/hooks/"
 
 _PLUGIN_NAME = "flow"

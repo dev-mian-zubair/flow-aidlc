@@ -61,7 +61,7 @@ abstract; each question maps to one riskiest assumption. Apply
    than discovering it during Build.
 
 4. **Fill the research document.** Fill `docs/flow/product/<slug>/research.md`
-   in place using `templates/product/research.tmpl.md` as the structure. Produce
+   in place using `.flow/templates/product/research.tmpl.md` as the structure. Produce
    all sections: Research questions, Market & demand, Competitors, Recommended
    tech stack (with governance screen), Trade-offs, Open questions, Sources.
 
@@ -81,7 +81,7 @@ This section is active **only when panels are enabled** (`config.product.review`
 
 When panels are enabled:
 
-1. Invoke `steps/discover/panel-review.md` on the drafted research document.
+1. Invoke `.flow/steps/discover/panel-review.md` on the drafted research document.
 2. Dispatch one `product-critic` subagent per lens in `config.product.review.lenses` — all in parallel — critiquing the recommendation, tech-stack choice, and governance screen.
 3. **Consensus** = no open high-severity finding across all critics after a round.
 4. **Fix loop** — on any high-severity finding: the `product-research` agent (not the critics) revises the research document to address each open high-severity finding, then the panel re-critiques the change only. Repeat up to `config.product.review.max_rounds` rounds (default 3).

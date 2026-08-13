@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/session-start.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start.sh"
           }
         ]
       }
@@ -15,7 +15,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/prompt-journal.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/prompt-journal.sh"
           }
         ]
       }
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/scope-guard.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/scope-guard.sh"
           }
         ]
       }
@@ -36,7 +36,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/checkpoint-stop.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/checkpoint-stop.sh"
           }
         ]
       }
@@ -46,7 +46,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/backprop-guard.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/backprop-guard.sh"
           }
         ]
       }
@@ -56,7 +56,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/precompact-save.sh"
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/precompact-save.sh"
           }
         ]
       }

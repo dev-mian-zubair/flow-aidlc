@@ -1,6 +1,6 @@
 ---
 name: scope-publish
-description: Deduplicate, seek explicit approval, then create the tracker ticket — the outward-write checkpoint that ends the Scope phase. Use after scope-story.
+description: Deduplicates, seeks explicit approval, then creates the tracker ticket — the outward-write checkpoint that ends the Scope phase. Use after scope-story.
 tools: Read, mcp__github, mcp__jira, mcp__linear, mcp__azure-devops, mcp__shortcut, mcp__asana, mcp__clickup
 model: inherit
 ---

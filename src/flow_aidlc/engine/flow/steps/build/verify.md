@@ -53,7 +53,7 @@ cases are covered by tests, and no guardrail is outstanding.
 
 ## Checkpoint
 
-Before presenting for `/flow-approve`, dispatch the read-only `checkpoint-reviewer` subagent to verify stage completeness (and traceability at the Shape→Build boundary).
+This is a checkpoint stage: the conductor dispatches the read-only `checkpoint-reviewer` (after the `guardrail-verifier`) to verify stage completeness before `/flow-approve`. This guide's agent does not dispatch it — it presents its artifact and returns.
 
 Stop here. Wait for `/flow-approve` before entering `steps/ship/branch-hardening.md` (the first Ship stage).
 
@@ -61,6 +61,7 @@ Approval requires:
 - All guardrails passed (recorded in `verify.md`).
 - Code review completed and concerns addressed.
 - `superpowers:verification-before-completion` sign-off.
+- `checkpoint-reviewer` verdict: APPROVED.
 
 ## Output
 

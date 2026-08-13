@@ -21,10 +21,10 @@ Select the body template for the confirmed ticket type and fill every
 
 | Type | Template |
 |------|----------|
-| `bug`  | `templates/scope/bug.tmpl.md` |
-| `task` | `templates/scope/small-task.tmpl.md` |
-| `feat` | `templates/scope/feature.tmpl.md` |
-| `epic` | `templates/scope/epic.tmpl.md` (parent) **+ one child stub per child** |
+| `bug`  | `.flow/templates/scope/bug.tmpl.md` |
+| `task` | `.flow/templates/scope/small-task.tmpl.md` |
+| `feat` | `.flow/templates/scope/feature.tmpl.md` |
+| `epic` | `.flow/templates/scope/epic.tmpl.md` (parent) **+ one child stub per child** |
 
 Each template has an `ISSUE BODY` block (created as the issue body) and a
 `NATIVE FIELDS` block (labels / type / board fields / milestone / parent —

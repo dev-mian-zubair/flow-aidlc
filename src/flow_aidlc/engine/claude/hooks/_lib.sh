@@ -53,14 +53,14 @@ flow_active_worklog() {
     root="$(flow_repo_root)"
     [ -z "$root" ] && echo "" && return 0
 
-    local active_ptr="$root/worklog/.active"
+    local active_ptr="$root/docs/flow/worklog/.active"
 
     # (1) explicit pointer
     if [ -f "$active_ptr" ]; then
         local slug
         slug="$(cat "$active_ptr" 2>/dev/null | tr -d '[:space:]')"
         if [ -n "$slug" ]; then
-            local candidate="$root/worklog/$slug"
+            local candidate="$root/docs/flow/worklog/$slug"
             if [ -d "$candidate" ]; then
                 echo "$candidate"
                 return 0
@@ -69,9 +69,9 @@ flow_active_worklog() {
     fi
 
     # (2) most-recently-modified progress.md — worklog dir must exist first
-    if [ -d "$root/worklog" ]; then
+    if [ -d "$root/docs/flow/worklog" ]; then
         local newest
-        newest="$(find "$root/worklog" -maxdepth 2 -name "progress.md" 2>/dev/null \
+        newest="$(find "$root/docs/flow/worklog" -maxdepth 2 -name "progress.md" 2>/dev/null \
             | xargs -r ls -t 2>/dev/null \
             | head -1)"
         if [ -n "$newest" ]; then

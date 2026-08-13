@@ -18,7 +18,7 @@ upstream artifact — no new uncited market assertions. This step is a
    content. Do not introduce new market claims that do not appear in research.md.
 
 2. **Draft the PRD.** Fill `docs/flow/product/<slug>/prd.md` in place using
-   `templates/product/prd.tmpl.md` as the structure:
+   `.flow/templates/product/prd.tmpl.md` as the structure:
 
    - **Problem** — restate the validated problem from Vision in one crisp
      paragraph, tying in research evidence.

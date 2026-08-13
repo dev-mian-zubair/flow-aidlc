@@ -46,9 +46,10 @@ Per `steps/shared/content-validation.md`, keep every section — mark one
 
 ## CHECKPOINT
 
-Before presenting for `/flow-approve`, dispatch the read-only `checkpoint-reviewer`
-subagent to verify completeness (every option cited, the governance screen
-complete, a clear recommendation).
+This is a checkpoint stage: the conductor dispatches the read-only `checkpoint-reviewer`
+to verify completeness (every option cited, the governance screen complete, a clear
+recommendation) before `/flow-approve`. This agent does not dispatch it — it presents
+its artifact and returns.
 
 **Stop here.** Present the recommendation + governance screen to the user. Wait
 for `/flow-approve` before advancing to Shape / requirements. Adopting the chosen

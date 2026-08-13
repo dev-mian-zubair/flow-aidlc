@@ -49,7 +49,7 @@ This stage is optional — skip for a single-epic product (the PRD story map has
    - **Later** — backlog / future; desirable but lower priority.
 
 4. **Fill the roadmap document.** Fill `docs/flow/product/<slug>/roadmap.md` in
-   place using `templates/product/roadmap.tmpl.md` as the structure:
+   place using `.flow/templates/product/roadmap.tmpl.md` as the structure:
 
    - The RICE/ICE scoring table with all epics and rationales.
    - The Now / Next / Later Mermaid `graph LR` diagram.

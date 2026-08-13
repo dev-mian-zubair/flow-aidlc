@@ -6,7 +6,7 @@ discrepancies, and handoffs — one line per event, kept in `progress.md`.
 ## File location
 
 ```
-docs/flow/worklog/<TICKET-ID>/progress.md   (## Decision log section)
+docs/flow/worklog/<TICKET-ID>/progress.md   (## Decision log (append-only) section)
 ```
 
 Not a standalone file. Lives at the bottom of the task's `progress.md`.
